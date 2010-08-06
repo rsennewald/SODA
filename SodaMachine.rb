@@ -468,9 +468,11 @@ class SodaMachine < App
       menu = Menu.new()
       tmp = MenuItem.new(menu, $TREE_MENU_EVENT_APPEND['delete'],
          "Delete")
-      bmap = Bitmap.new()
-      bmap.load_file($IMAGES[$IMAGE_INDEX['delete']], BITMAP_TYPE_PNG)
-      tmp.set_bitmap(bmap)
+      if (!@NO_ICONS)
+         bmap = Bitmap.new()
+         bmap.load_file($IMAGES[$IMAGE_INDEX['delete']], BITMAP_TYPE_PNG)
+         tmp.set_bitmap(bmap)
+      end
       menu.append_item(tmp)
       evt_menu(tmp, :OnTreeMenuItem)
 
@@ -502,20 +504,22 @@ class SodaMachine < App
 
       $SODA_INFO.each do |k, v|
          next if (k =~ /root/i)
-
-         bmap = Bitmap.new()
-         bmap.load_file($IMAGES[v['image_index']], BITMAP_TYPE_PNG)
+         
+         if (!@NO_ICONS)
+            bmap = Bitmap.new()
+            bmap.load_file($IMAGES[v['image_index']], BITMAP_TYPE_PNG)
+         end
 
          if (append)
             tmp_append = MenuItem.new(menu, v['append_menu_id'], k)
-            tmp_append.set_bitmap(bmap)
+            tmp_append.set_bitmap(bmap) if (!@NO_ICONS)
             submenu_append.append_item(tmp_append)
             evt_menu(tmp_append, :OnTreeMenuItem)
          end
 
          if (child)
             tmp_child = MenuItem.new(menu, v['child_menu_id'], k)
-            tmp_child.set_bitmap(bmap)
+            tmp_child.set_bitmap(bmap) if (!@NO_ICONS)
             submenu_child.append_item(tmp_child)
             evt_menu(tmp_child, :OnTreeMenuItem)
          end
@@ -532,26 +536,33 @@ class SodaMachine < App
       if (!isroot)
          tmp = MenuItem.new(menu, $TREE_MENU_EVENT_APPEND['delete'],
             "Delete")
-         bmap = Bitmap.new()
-         bmap.load_file($IMAGES[$IMAGE_INDEX['delete']], BITMAP_TYPE_PNG)
-         tmp.set_bitmap(bmap)
+         if (!@NO_ICONS)
+            bmap = Bitmap.new()
+            bmap.load_file($IMAGES[$IMAGE_INDEX['delete']], BITMAP_TYPE_PNG)
+            tmp.set_bitmap(bmap)
+         end
          menu.append_item(tmp)
          evt_menu(tmp, :OnTreeMenuItem)
       end
       
       tmp = MenuItem.new(menu, $TREE_MENU_EVENT_APPEND['breakpoint'],
          "BreakPoint")
-      bmap = Bitmap.new()
-      bmap.load_file($IMAGES[$IMAGE_INDEX['breakpoint']], BITMAP_TYPE_PNG)
-      tmp.set_bitmap(bmap)
+      if (!@NO_ICONS)
+         bmap = Bitmap.new()
+         bmap.load_file($IMAGES[$IMAGE_INDEX['breakpoint']], BITMAP_TYPE_PNG)
+         tmp.set_bitmap(bmap)
+      end
       menu.append_item(tmp)
       evt_menu(tmp, :OnTreeMenuItem)
 
       tmp = MenuItem.new(menu, $BREAK_POINT_UNSET_MENU_ID,
          "Delete BreakPoint")
-      bmap = Bitmap.new()
-      bmap.load_file($IMAGES[$IMAGE_INDEX['breakpoint']], BITMAP_TYPE_PNG)
-      tmp.set_bitmap(bmap)
+
+      if (!@NO_ICONS)
+         bmap = Bitmap.new()
+         bmap.load_file($IMAGES[$IMAGE_INDEX['breakpoint']], BITMAP_TYPE_PNG)
+         tmp.set_bitmap(bmap)
+      end
       menu.append_item(tmp)
       evt_menu(tmp, :OnTreeMenuItem)
 
@@ -758,7 +769,6 @@ class SodaMachine < App
       root_kids.each do |kid|
          data = @TREE.get_item_data(kid)
          next if (data.key?('comment'))
-#         data.delete('line_numner') if (data.key?('line_number'))
 
          events = [ data ]
          @SODA_DEBUG.handleEvents(events)
@@ -872,7 +882,6 @@ class SodaMachine < App
             break
          end
 
-#         data.delete('line_numner') if (data.key?('line_number'))
          events = [ data ]
          @SODA_DEBUG.handleEvents(events)
          
@@ -1271,6 +1280,16 @@ class SodaMachine < App
    end
    private :OnKillFocus
 
+   def GenerateImageList()
+      @APPIMAGE_LIST = ImageList.new(16, 16)
+
+      $IMAGES.each do |img|
+         bmp = Bitmap.new()
+         bmp.load_file(img, BITMAP_TYPE_PNG)
+         @APPIMAGE_LIST.add(bmp)
+      end
+   end
+
 ###############################################################################
 # on_init --  Event Method
 #     This is the method that gets called when the wxapp is started.
@@ -1284,6 +1303,7 @@ class SodaMachine < App
 ###############################################################################
    def on_init
       @SODA_CONFIG_FILE = "soda-config.xml"
+      @NO_ICONS = false
       @SODA_INFO_NUMS = {}
       @MAIN_SPLITTER = nil
       @DEBUG_PANEL = nil
@@ -1320,7 +1340,13 @@ class SodaMachine < App
       menu_bar = nil
       menu_s = nil
       left_box = BoxSizer.new(Wx::HORIZONTAL)
+      os = SodaUtils.GetOsType()
 
+      if (os =~ /osx/i)
+         @NO_ICONS = true
+      end
+      
+      @NO_ICONS = true if (!File.exist?($ICON_DIR))
 
       $SODA_INFO.each do |k, v|
          v['append_menu_id'] = (600 + v['image_index'])
@@ -1344,13 +1370,9 @@ class SodaMachine < App
 
       @FRAME_HANDLE = Frame.new(nil, -1, "SodaMachine", @APP_POSITION, 
             @APP_SIZE)
-
-      @APPIMAGE_LIST = ImageList.new(16, 16)
-      
-      $IMAGES.each do |img|
-         bmp = Bitmap.new()
-         bmp.load_file(img, BITMAP_TYPE_PNG)
-         @APPIMAGE_LIST.add(bmp)
+ 
+      if (!@NO_ICONS) 
+         GenerateImageList()
       end
 
       menu_s = Menu.new()
