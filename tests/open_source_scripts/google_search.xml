@@ -1,0 +1,18 @@
+<soda>
+	<!-- simple script using data from a CSV file -->
+
+	<browser url="http://www.google.com" />
+
+	<csv file="tests/open_source_scripts/Search.csv" var="search_data">
+		<textfield name="q" set="{@search_data.text}" />
+	</csv>
+
+	<button name="btnG" />
+	<wait timeout="1" />
+	<div id="center_col">
+		<browser assert="Images for 2001 Audi S4" />
+	</div>
+
+	<browser action="close" />
+</soda>
+

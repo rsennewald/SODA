@@ -1,0 +1,8 @@
+<soda>
+	<browser url="http://www.google.com" />
+	<textfield name="q" set="sugarcrm" />
+	<button name="btnG" />
+	<browser assert="/sugarcrm/i" />
+	<browser action="close" />
+</soda>
+

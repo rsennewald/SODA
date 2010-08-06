@@ -1,0 +1,286 @@
+###############################################################################
+# SodaField -- Class
+#
+#
+#
+#
+###############################################################################
+class SodaField
+   
+###############################################################################
+#
+###############################################################################
+   def self.assert(field, value)
+      comp = (!field.value.empty?)? field.value: field.text
+      $curSoda.rep.log("Field Value: #{field.value}\n")
+      if value.kind_of? Regexp
+         return value.match(comp)
+      end
+      return value == comp
+   end
+  
+###############################################################################
+# jsevent - Method
+#     THis method fires a javascript event.
+#
+# Params:
+#     field: The field to fire the event on.
+#     jsevent: The event to fire: onmoseover...
+#
+# Results:
+#     None.
+#
+###############################################################################
+   def self.jsevent(field, jsevent)
+      $curSoda.rep.log("Firing JavaScript Event: \"#{jsevent}\".\n")
+
+      if (Watir::Browser.default !~ /ie/i)
+         self.focus(field)
+      end
+
+      field.fire_event("#{jsevent}")
+      $curSoda.rep.log("Finished JavaScript Event: \"#{jsevent}\".\n") 
+   end
+
+###############################################################################
+#
+###############################################################################
+   def self.uploadFile(fieldname, file)
+      $curSoda.file_field(:value, fieldname).set(file)
+   end
+
+###############################################################################
+# set -- Method
+#     This method sets the value for the field.  Checks to make sure that the
+#     field is enabled before trying to set.
+#
+# Params: 
+#     field: this is the watir object for the field.
+#     value: The vale to set the field to.
+#
+# Results:
+#     returns 0 on success, or -1 on error
+#
+###############################################################################
+   def self.set(field, value)
+      result = 0
+
+      if (!field.enabled?)
+         $curSoda.rep.ReportFailure(
+            "Error: Trying to set a value for a disabled Element!\n")
+         result = -1
+      else
+         begin
+            field.set(value)
+            result = 0
+         rescue Exception => e
+            $curSoda.rep.ReportException(e, true)
+            result = -1
+         ensure
+         end
+      end
+
+      return result 
+   end
+
+###############################################################################
+# append -- Method:
+#     This method appends a value to the existing value for a watir text
+#     field.  Checks that the field is enabled before appending.
+#
+# Params:
+#     field: this is the watir object for the field.
+#     value: this is the vale to append to the field.
+#
+# Results:
+#     returns -1 on error, or 0 on success.
+#
+###############################################################################
+   def self.append(field, value)
+      result = 0
+
+      if (!field.enabled?)
+         $curSoda.rep.ReportFailure(
+            "Error: Trying to set a value for a disabled Element!\n")
+            result = -1
+       else
+         field.append(value)
+         result = 0
+       end
+
+      return result 
+   end
+
+###############################################################################
+# alertHack -- Method
+#     This method auto answers java alerts & confirms.
+#
+# Input: alert: true or false, to cancel or ok dialog.
+#
+# Output: always retutns true.
+#     
+###############################################################################
+   def self.alertHack(alert = nil, modify = true)
+      if (alert == nil) 
+         return true
+      end
+
+      begin
+         if (modify)
+            if (Watir::Browser.default == 'firefox')
+               alertConfirm = "var old_alert = browser.contentWindow.alert;"
+               alertConfirm += "var old_confirm = browser.contentWindow."+
+                  "confirm;"
+               alertConfirm += "browser.contentWindow.alert = function()"+
+                  "{return #{alert};};"
+               alertConfirm += "browser.contentWindow.confirm = function()"+
+                  "{return #{alert};};"
+
+               $jssh_socket.send(alertConfirm + "\n", 0)
+               $curSoda.browser.read_socket();
+            end
+
+            if (Watir::Browser.default == 'ie')
+               alertConfirm = "var old_alert = window.alert;"
+               alertConfirm += "var old_confirm = window.confirm;"
+               alertConfirm += "window.alert = function(){return #{alert};};"
+               alertConfirm += "window.confirm = function(){return #{alert};};"
+               $curSoda.browser.document.parentWindow.eval(alertConfirm + "\n")
+            end
+         else
+            if (Watir::Browser.default == 'firefox')
+               alertConfirm = "browser.contentWindow.alert = old_alert;"
+               alertConfirm += "browser.contentWindow.confirm = old_confirm;"
+               $jssh_socket.send(alertConfirm + "\n", 0)
+               $curSoda.browser.read_socket();
+            end
+
+            if (Watir::Browser.default == 'ie')
+               alertConfirm = "var old_alert = window.alert;"
+               alertConfirm += "var old_confirm = window.confirm;"
+               alertConfirm += "window.alert = old_alert;"
+               alertConfirm += "window.confirm = old_confirm;"
+               $curSoda.browser.document.parentWindow.eval(alertConfirm + "\n")
+            end
+         end
+      rescue Exception => e
+         $curSoda.rep.ReportException(e, true)
+      ensure
+      end
+   end
+ 
+###############################################################################
+# click -- Method
+#     This method fires a watir element object's click method.
+#
+# Params:
+#     field: This is the watir object to click.
+#
+# Results:
+#     Always returns 0
+#
+###############################################################################
+   def self.click(field, type = "")
+      info = nil
+      elm_type = nil
+      result = 0
+      msg = "Clicking element: "
+            
+      begin
+         self.focus(field)
+      rescue Exception => e
+         if (Watir::Browser.default !~ /ie/i)
+            $curSoda.rep.ReportException(e, true)
+         end
+      ensure
+      end
+      
+      begin
+
+         info = field.inspect()
+         info = info.chomp()
+         info =~ /#\<\w+::(\w+):/
+         elm_type = "#{$1}"
+         msg << "#{elm_type}:"
+
+         info = info.split(/\s/)
+         info.each do |i|
+            if (i =~ /how/i)
+               msg << " #{i}"
+            end
+         end
+
+         $curSoda.rep.log("#{msg}.\n")
+         field.click()
+         $curSoda.browser.wait()
+      rescue Exception => e
+         result = -1
+         $curSoda.rep.ReportException(e, true)
+      ensure
+      end
+
+      $curSoda.rep.log("Click finished.\n")
+
+      return result 
+   end
+   
+###############################################################################
+#
+###############################################################################
+   def self.focus(field)
+      return field.focus
+   end
+
+###############################################################################
+#
+###############################################################################
+   def self.clear(field)
+      return field.clear
+   end
+   
+###############################################################################
+#
+###############################################################################
+   def self.getValue(field)
+      return field.value
+   end
+           
+###############################################################################
+#
+###############################################################################
+   def self.getText(field)
+      return field.text()
+   end
+  
+###############################################################################
+#
+###############################################################################
+   def self.enabled(field)
+      return field.enabled?()
+   end
+  
+###############################################################################
+#
+###############################################################################
+   def self.disabled(field)
+      return !(field.enabled?())
+   end
+
+###############################################################################
+# return true or false based on a string value 
+###############################################################################
+   def self.getStringTrue(value)
+      if value.is_a?(String)
+         value.downcase!
+         
+         if value == 'true' or value == 'yes' or value == '1'
+            return true
+         else
+            return false
+         end 
+      end
+
+      return value    
+   end
+
+end

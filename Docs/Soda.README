@@ -1,0 +1,100 @@
+-- SODA --
+
+(*)Setup:
+1.) Install Ruby and Watir: http://www.watir.com
+2.) Install libxml: http://libxml.rubyforge.org/
+3.) Set up your browser.
+
+--)Browser Setup:
+
+--)Firefox
+1.) Install JSSH for the correct Firefox version
+   http://wiki.openqa.org/display/WTR/FireWatir+Installation
+
+--)IE
+1.) Find autoitx3.dll on your system and run "regsvr32 /s" on it
+
+(*)Example running a Soda test suite:
+--) ruby SodaSuite.rb --browser=firefox --test=scripts/sugarcrm_60/test/accounts.xml
+
+(*)Soda command programs: Usage
+--) Notes: All Soda programs support the --help option on all platforms.
+--) SodaSuite.rb: This is the main user interface to the Soda testing framework.
+
+(*)SodaSuite: Suites
+   Soda suites are simply XML files, each of which contains a collection of tests to
+   be executed in order.
+
+--) Soda Suite Example: Using only the <script> "file" attiirbute.  This script
+will execute tests 1 thru 4 in order.
+
+ <soda>       
+    <script file="scripts/tests/test1.xml" />
+    <script file="scripts/tests/test2.xml" />
+    <script file="scripts/tests/test3.xml" />
+    <script file="scripts/tests/test4.xml" />
+ </soda>
+
+--) Soda Suite Example: Using only the <script> "fileset" attiirbute.  This 
+script will execute all tests in the given directory in random order.
+
+ <soda>       
+    <script fileset="scripts/tests" />
+ </soda>
+
+--) Soda Suite Example: Using both the <script> "fileset" & "file" attiirbutes.
+This script will execute tests 1 thru 2, then all of the tests in the given 
+directory, followed by test 3 thru 4 in order.
+
+ <soda>
+    <script file="scripts/tests/test1.xml" />
+    <script file="scripts/tests/test2.xml" />
+    <script fileset="scripts/tests" />
+    <script file="scripts/tests/test3.xml" />
+    <script file="scripts/tests/test4.xml" />
+ </soda>
+
+(*)SodaLog2HTML.rb: This program takes a raw soda <log-name>.log file and
+generates an HTML report from it.
+
+(*)SodaSyntaxChecker.rb: This is a simple program that checks the syntax of a 
+Soda XML test file.
+
+(*)SodaSuite.rb: Test Results:
+All test results are stored in a directory that is created every time 
+SodaSuite.rb is executed. The directory name is formatted as follows:
+
+  <datetime stamp>-results
+
+(*)Soda Logging:
+The basic format of the raw log looks like this:
+   "[<datetime stamp>](<message type>)Message.\n"
+
+Each log message is on it's own line, so the log is newline separated.
+Aka: However your current OS handles "\n".
+
+--) Raw log file example:
+ [02/01/2010-10:11:08](*)Retrieving Field @browser.send(:text_field ,:id=>'last_name')
+ [02/01/2010-10:11:08](*)eventFieldAction: Started.
+ [02/01/2010-10:11:08](*)Setting value to qauser
+ [02/01/2010-10:11:08](*)eventFieldAction: Finished.
+ [02/01/2010-10:11:08](*)Retrieving Value For "SugarInit.pass"
+ [02/01/2010-10:11:08](*)Value for "SugarInit" => "qauser".
+ [02/01/2010-10:11:08](*)Retrieving Field @browser.send(:text_field ,:id=>'new_password')
+ [02/01/2010-10:11:08](*)eventFieldAction: Started.
+ [02/01/2010-10:11:08](*)Setting value to qauser
+ [02/01/2010-10:11:08](*)eventFieldAction: Finished.
+
+--) SodaSuite.rb: STDOUT running output:
+ (*)Retrieving Field @browser.send(:button ,:value=>'Search')
+ (*)eventFieldAction: Started.
+ (*)eventFieldAction: Finished.
+ (*)eventLink: Starting,
+ (*)Retrieving Value For "opp_record_0043.team_name"
+ (*)Value for "opp_record_0043" => "Administrator".
+ (*)Retrieving Field @browser.send(:link ,:text=>'Administrator')
+ (*)eventLink: Finished.
+ (*)eventFieldAction: Started.
+ (*)eventFieldAction: Finished.
+ (*)Retrieving Field @browser.send(:button ,:id=>'Opportunities_subpanel_save_button')
+

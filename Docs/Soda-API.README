@@ -1,0 +1,399 @@
+SODA-API:
+
+(-1-) Setup:                                                               
+(-2-) Available Soda 2 Elements:                                           
+(-3-) Browser: Action elements:                                            
+    * (-3.1-) Browser Examples:                                             
+(-4-) Script: Action elements:                                             
+    * (-4.1-) Script Examples:                                              
+(-5-) Timestamp: Action elements:                                          
+    * (-5.1-) Timestamp Example:                                            
+(-6-) Puts: Action elements:                                               
+    * (-6.1-) Puts Example:                                                 
+(-7-) Wait: Action elements:                                               
+    * (-7.1-) Wait: Examples:                                               
+(-8-) Requires: Action elements:                                           
+    * (-8.1-) Requires: Examples:                                           
+(-9-) Attach: Action elements:                                             
+    * (-9.1-) Attach: Examples:                                             
+(-10-) Javascript: Action elements:                                        
+    * (-10.1-) JavaScript: Examples:                                        
+(-11-) Textfield: Action elements:                                         
+    * (-11.1-) Textfield: Example:                                          
+(-12-) Div: Action elements:                                               
+(-13-) Image: Action elements:                                             
+(-14-) Csv: Action elements:                                               
+    * (-14.1-) Csv: Examples:                                               
+(-15-) Var: Action elements:                                               
+    * (-15.1-) Var: Examples:                                               
+(-16-) FileField: Action elements:                                         
+(-17-) TextArea: Action elements:                                          
+(-18-) Checkbox: Action elements:                                          
+(-19-) Select: Action elements:                                            
+    * (-19.1-) Select: Example:                                             
+(-20-) Soda HTML Reference Manual:                                         
+    * (-20.1-) Soda Supported HTML Tags & Accessors:                        
+         * (-20.1.1-) HTML CODE                                             
+         * (-20.1.2-) Access By                                             
+         * (-20.1.3-) Actions                                               
+         * (-20.1.4-) Examples                                              
+         * (-20.1.5-) Notes                                                 
+    * (-20.2-) button                                                       
+         * (-20.2.1-) HTML CODE                                             
+         * (-20.2.2-) Access By                                             
+         * (-20.2.3-) Actions                                               
+         * (-20.2.4-) Examples                                              
+         * (-20.2.5-) Notes                                                 
+    * (-20.3-) link                                                         
+         * (-20.3.1-) HTML CODE                                             
+         * (-20.3.2-) Access By                                             
+         * (-20.3.3-) Actions                                               
+         * (-20.3.4-) Examples                                              
+    * (-20.4-) form                                                         
+         * (-20.4.1-) HTML CODE                                             
+         * (-20.4.2-) Access By                                             
+         * (-20.4.3-) Actions                                               
+         * (-20.4.4-) Examples                                              
+         * (-20.4.5-) Notes                                                 
+    * (-20.5-) textfield(textfield,password, textarea),hidden, radio,       
+               select,checkbox                                                   
+         * (-20.5.1-) HTML CODE                                             
+         * (-20.5.2-) Access By                                             
+         * (-20.5.3-) Actions                                               
+         * (-20.5.4-) Examples                                              
+    * (-20.6-) image                                                        
+         * (-20.6.1-) HTML CODE                                             
+         * (-20.6.2-) Access By                                             
+         * (-20.6.3-) Actions                                               
+         * (-20.6.4-) Examples                                              
+    * (-20.7-) filefield                                                    
+         * (-20.7.1-) HTML CODE                                             
+         * (-20.7.2-) Access By                                             
+         * (-20.7.3-) Actions                                               
+         * (-20.7.4-) Examples                                              
+    * (-20.8-) Quick Reference for Accessors                                
+
+
+(-1-) Setup:
+--) For Soda setup information see file: Soda.README
+
+(-2-) Available Soda 2 Elements:
+--) <ruby>
+--) <browser>
+--) <script>
+--) <timestamp>
+--) <puts>
+--) <wait>
+--) <requires>
+--) <attach>
+--) <javascript>
+--) <textfield>
+--) <div>
+--) <image>
+--) <csv>
+--) <var>
+--) <filefield>
+--) <textarea>
+--) <checkbox>
+--) <select>
+--) <radio>
+--) <link>
+--) <td>
+
+(-3-)Browser: Action elements:
+--) url - go to the specified url
+--) assert - assert the browser window contains the specified text
+--) assertnot - assert the browser window does not contains the specified text
+--) action - action can be used to fire the following browser actions:
+  1. close: Closes the browser window.
+  2. back: Clicks the browsers back button.
+  3. forward: Clicks the browsers forward button.
+  4. refresh: Click the browsers refresh button.
+
+(-3.1-) Browser Examples:
+--) Example 3.1.a:
+     <soda>
+      <browser url="http://cnn.com" />
+      <browser assert="Lastest News" />
+      <browser action="close" />
+     </soda>
+
+--) This example does the following:
+  1. Browse to: http://cnn.com.
+  2. Assert check the page source for 'Latest News'.
+  3. Close the browser.
+
+--) Example 3.1.b:
+     <soda>
+       <browser url="http://cnn.com" />
+       <browser assertnot="Latest News" />
+       <browser action="close" />
+     </soda>
+
+(-4-) Script: Action elements:
+--) file - A Soda test file.
+--) fileset - A directory with one or more Soda tests.
+
+(-4.1-) Script Examples:
+--) Example 4.1.a:
+     <soda>
+      <script file="scripts/SugarCRM/modules/Users/login.xml" />
+     </soda>
+
+--) This example does the following:
+  1. Executes 1 Soda test file.
+
+--) Example 4.1.b:
+     <soda>
+      <script fileset="scripts/SugarCRM/modules/Accounts" />
+     </soda>
+
+--) This example does the following:
+  1. Executes all of the Soda test script in the directory.
+
+
+(-5-) Timestamp: Action elements:
+--) Timestamp updates Soda's internal timestamp var that is used by tests.
+
+(-5.1-) Timestamp Example:
+
+--) Example 5.1.a:
+     <soda>
+      <timestamp />
+      <puts text="{@stamp}" />
+     </soda>
+
+--) This example does the following:
+  1. Sets the internal Soda 'stamp' var to be used by calling functions, and 
+     logs the new date to the Soda log file.
+
+(-6-)Puts: Action elements:
+--) text: This action sets the text that will be printed to the Soda log & Soda
+          STDOUT.
+--) var: This action prints a Soda variable.
+
+(-6.1-) Puts Example:
+
+--) Example 6.1.a:
+     <soda>
+       <puts text="Accounts_0104: Account Detail - Bugs sub-panel" />
+     </soda>
+
+--) This example does the following:
+  1. Prints the "text" string to the Soda log file, and STDOUT.
+
+--) Example 6.1.b:
+     <soda>
+      <puts var="{@account_record}" />
+     </soda>
+
+--) This example does the following:
+  1. Prints the variable value to the Soda log file, and STDOUT.
+
+(-7-) Wait: Action elements:
+--) timeout: This action sets a timeout value in seconds.
+--) condition: This action will allow you to break from the timeout when the 
+               encapsulated action is found.
+
+(-7.1-) Wait: Examples:
+
+--) Example 7.1.a:
+     <soda>
+       <wait />
+     </soda>
+
+--) This example does the following:
+  1. Waits for 10 seconds. When the "timeout" action is not set the default
+     timeout is 10 seconds.
+
+--) Example 7.1.b:
+    <soda>
+      <wait timeout="5" />
+    </soda>
+
+--) This example does the following:
+  1. Waits for 5 seconds.
+
+--) Example 7.1.c:
+     <soda>
+      <wait timeout="8" condition="true">
+         <button id="search_from_submit" />
+      </wait>
+     </soda>
+
+--) This example does the following:
+  1. Waits until the timeout value is reached or until a button is found where
+     the id="search_from_submit".
+
+(-8-) Requires: Action elements:
+--) sugarflavor: This tells Soda that the actions encapsulated in between the 
+                <requires></requires> needs to be run against a specific flavor
+                of SugarCRM.
+          
+--) Supported sugarflavors:
+  1. "ENT": Enterprise
+  2. "PRO": Professional
+  3. "CE" : Community Edition
+  
+--) Notes:
+  sugarflavor, supports a comma separated string of different flavors: 
+  sugarflavor="CE,ENT"
+
+(-8.1-) Requires: Examples:
+
+--) Example 1:
+     <soda>
+       <puts text="Starting Google Soda Test..." />
+       <requires sugarflavor="ce,ent">
+         <browser url="http://www.google.com" />
+         <text_field name="q" set="slayer" />
+         <button name="btnG" click="true" />
+         <wait timeout="1" />
+         <link text="Order World Painted Blood | The Official Slayer Site" />
+         <wait timeout="5" />
+         <puts text="Closing browser..." />
+       </requires>
+       <browser close="true" />
+       <puts text="Stopping test..." />
+     </soda>
+
+--) This example does the following:
+  1. Prints the string "Starting Google Soda Test..." to the Soda log and 
+      STDOUT.
+  2. If the Sugar flaovr under test is either Enterprise or Community
+      Edition the following actions are executed:
+       a. Browse to "http://www.google.com".
+       b. Set the google search field to "slayer"
+       c. Click the search button.
+       d. Wait for 1 second.
+       e. Click the link with the text "Order World Painted Blood | The Official Slayer Site".
+       f. Wait 5 seconds.
+       g. Print "Closing browser..." to the Soda log and STDOUT.
+  3.) Close the browser.
+  4.) Print "Stop test..." to the Soda log and STDOUT.
+
+(-9-) Attach: Action elements:
+--) title: This tells soda to attach to the browser window with the given title.
+--) url: This tells soda to attach to the browser window with the given url.
+**) Note: With both title & url they can be a regex or a string.
+
+(-9.1-) Attach: Examples:
+     <soda>
+       <button id="new_window" />
+       <attach title="The new Window">
+         <button id="save" />
+         <browser action="close" />
+       </attach>
+       <button id="done" />
+       <browser action="close" />
+     </soda>
+
+
+(-10-) Javascript: Action elements:
+Description: Runs java script in the browser for the currently loaded page.
+
+**) None: This action has no action elements associated with it.
+
+(-10.1-) JavaScript: Examples:
+     <soda>
+       <browser url="http://www.google.com" />
+       <javascript>
+         alert("This is a message!");
+       </javascript>
+     </soda>
+
+(-11-) Textfield: Action elements:
+Description: Access a text element in the HTML dom.
+--) set: Sets the vale of the text field.
+--) clear: Clears any data in the textfield.
+--) jscriptevent: Fires a javascript event for the control.
+--) append: Appends text to the existing text without stomping on existing text.
+--) assert: Asserts the value of the textfield.
+--) assertnot:Asserts that the value isn't in the textfield.
+
+(-11.1-) Textfield: Example:
+     <soda>
+       <textfield id="foo" set="tree" jscriptevent="onkeyup" />
+     </soda>
+
+--) This example does the following:
+  1.) Sets the textfield to have the value "tree".
+  2.) After the value is set, it fires the onkeyup javascript event for the 
+      textfield.
+
+(-12-) Div: Action elements:
+Description: Access a div element in the HTML dom.
+
+--)click: Clicks the div element.
+
+(-13-) Image: Action elements:
+Description: Access a img element in the HTML dom.
+--) click: Clicks the div element.
+
+(-14-) Csv: Action elements:
+Description: Loads a csv file into soda with a given var name.
+--) file: This is the full path to the csv file to load into soda.
+--) var: This is the var name to give to the csv data, to be used in the soda 
+         test to access the csv data.
+
+(-14.1-) Csv: Examples:
+     <soda>
+       <csv file="scripts/sugarcrm/csvs/users.csv var="user" />
+       <puts text="{@user.username}" />
+
+       <csv file="scripts/sugarcrm/csvs/data.csv var="data">
+         <puts text="{@data.address}" />
+       </csv>
+     </soda>
+
+--) This example does the following:
+  1. Loads the users.csv file into soda to be accessed by the user var.
+  2. Prints the username from the csv file data.
+  3. Loads the data.csv file into soda to be accessed by the data var.
+  4. For each record in the csv file soda logs the address value.
+
+(-15-) Var: Action elements:
+Description: Creates a new var inside soda to be accessed by soda tests.
+--) var: The name for the new var.
+--) set: Sets the var's value.
+
+(-15.1-) Var: Examples:
+     <soda>
+       <var var="test" set="777" />
+       <textfield id="foo" set="{@test}" />
+     </soda>
+
+--) This example does the following:
+  1.) Creates a new soda var called test, and sets it value to 777.
+  2.) Sets the textfield's value to 777 from the new soda var.
+
+(-16-) FileField: Action elements:
+Description: Sets the value for a filefield.
+--) set: The full path to the file to be uploaded.
+
+(-17-) TextArea: Action elements:
+Description: Sets the value for a TextArea.
+--) Actions:: This elemet shares all of the same actions as a textfield.
+
+(-18-) Checkbox: Action elements:
+Description: Sets the value for a Checkbox.
+--) set: Can be true or false, true sets the checkbox to be checked, false 
+         unchecks.
+--) click: Can be true or false. Clicks the checkbox, which can either check or 
+           uncheck the box depending on it's current state.
+
+(-19-) Select: Action elements:
+Description: Sets values in for an HTML select element.
+--) set: Selects the item by name or value of the option.
+
+(-19.1-) Select: Example:
+     <soda>
+       <select id="sel" set="1" />
+       <select id="sel" set="9" />
+     </soda>
+
+--) This example selects two options in the HTML select element.
+
+(-20-) Watir HTML Reference Manual:
+--) http://wiki.openqa.org/display/WTR/HTML+Elements+Supported+by+Watir
+
