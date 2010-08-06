@@ -35,28 +35,29 @@ module SodaMachineInfo
    $BREAK_POINT_MENU_ID = 904
    $DEBUG_MENU_ID = 905
    $BREAK_POINT_UNSET_MENU_ID = 906
+   $ICON_DIR = "icons"
    $IMAGES = [
-      'icons/root.png',
-      'icons/mozicon16.png',
-      'icons/textfield.png',
-      'icons/puts.png',
-      'icons/button.png',
-      'icons/wait.png',
-      'icons/table.png',
-      'icons/form.png',
-      'icons/checkbox.png',
-      'icons/radio.png',
-      'icons/csv.png',
-      'icons/script.png',
-      'icons/select.png',
-      'icons/link.png',
-      'icons/div.png',
-      'icons/hidden.png',
-      'icons/var.png',
-      'icons/comment.png',
-      'icons/delete.png',
-      'icons/append.png',
-      'icons/breakpoint.png'
+      "#{$ICON_DIR}/root.png",
+      "#{$ICON_DIR}/browser.png",
+      "#{$ICON_DIR}/textfield.png",
+      "#{$ICON_DIR}/puts.png",
+      "#{$ICON_DIR}/button.png",
+      "#{$ICON_DIR}/wait.png",
+      "#{$ICON_DIR}/table.png",
+      "#{$ICON_DIR}/form.png",
+      "#{$ICON_DIR}/checkbox.png",
+      "#{$ICON_DIR}/radio.png",
+      "#{$ICON_DIR}/csv.png",
+      "#{$ICON_DIR}/script.png",
+      "#{$ICON_DIR}/select.png",
+      "#{$ICON_DIR}/link.png",
+      "#{$ICON_DIR}/div.png",
+      "#{$ICON_DIR}/hidden.png",
+      "#{$ICON_DIR}/var.png",
+      "#{$ICON_DIR}/comment.png",
+      "#{$ICON_DIR}/delete.png",
+      "#{$ICON_DIR}/append.png",
+      "#{$ICON_DIR}/breakpoint.png"
    ]
    $IMAGE_INDEX = {
       'delete' => 18,
