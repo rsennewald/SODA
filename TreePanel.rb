@@ -44,12 +44,13 @@ class TreePanel < Wx::Panel
             "treepanel")
 
       @IMAGE_LIST = imagelist
-
-      @TREE_BUTTONS = ImageList.new(16, 16)      
-      $TREE_IMAGES.each do |img|
-         bmp = Bitmap.new()
-         bmp.load_file(img, BITMAP_TYPE_PNG)
-         @TREE_BUTTONS.add(bmp)
+      if (@IMAGE_LIST != nil)
+         @TREE_BUTTONS = ImageList.new(16, 16) 
+         $TREE_IMAGES.each do |img|
+            bmp = Bitmap.new()
+            bmp.load_file(img, BITMAP_TYPE_PNG)
+            @TREE_BUTTONS.add(bmp)
+         end
       end
 
       BuildTreePanel()
