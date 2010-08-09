@@ -66,40 +66,41 @@ include Wx
 class SodaOptions < Dialog
 
    def initialize(settings=nil)
-      super(nil, -1, 'Soda Options')
+      super(nil, -1, 'SodaMachine Options', DEFAULT_POSITION, 
+           Size.new(480, 530))
       @rows = []
-      @my_panel = Panel.new(self)
       @panel_sizer = BoxSizer.new(VERTICAL)
-      @my_panel.set_sizer(@panel_sizer)
 
-      @browser_dropdown = SodaDropdown.new(@my_panel, ['Firefox', 'IE'], 
+      set_sizer(@panel_sizer)
+
+      @browser_dropdown = SodaDropdown.new(self, ['Firefox', 'IE'], 
             'browser')
       addRow(@browser_dropdown, 'Choose Browser:')
 
-      @flavor_textbox = SodaTextCtrl.new(@my_panel, '', 'flavor')
+      @flavor_textbox = SodaTextCtrl.new(self, '', 'flavor')
       addRow(@flavor_textbox, 'Flavor:')
 
-      @resultsdir_chooser = FileChooserPanel.new(@my_panel, 'results_dir', true)
+      @resultsdir_chooser = FileChooserPanel.new(self, 'results_dir', true)
       addRow(@resultsdir_chooser, 'Results Directory:')
 
-      @summary_chooser = FileChooserPanel.new(@my_panel, 'summaryfile')
+      @summary_chooser = FileChooserPanel.new(self, 'summaryfile')
       addRow(@summary_chooser, 'Results Summary File:')
       
-      @hijack_kvpanel = KeyValPanel.new(@my_panel, 'hijacks')
+      @hijack_kvpanel = KeyValPanel.new(self, 'hijacks')
       addRow(@hijack_kvpanel, 'Soda Hijacks:')
       
-      @gvar_kvpanel = KeyValPanel.new(@my_panel, 'gvars')
+      @gvar_kvpanel = KeyValPanel.new(self, 'gvars')
       addRow(@gvar_kvpanel, 'Global Variables:')
 
-      @checkboxes_panel = CheckBoxPanel.new(@my_panel)
+      @checkboxes_panel = CheckBoxPanel.new(self)
       addRow(@checkboxes_panel, 'Options:')
 
-      @save_button = Button.new(@my_panel, -1, 'Save')
-      @cancel_button = Button.new(@my_panel, -1, 'Cancel')
+      @save_button = Button.new(self, -1, 'Save')
+      @cancel_button = Button.new(self, -1, 'Cancel')
       @button_sizer = BoxSizer.new(HORIZONTAL)
       @button_sizer.add(@save_button)
       @button_sizer.add(@cancel_button)
-      @panel_sizer.add(@button_sizer, 0, ALIGN_RIGHT|ALL, 2)
+      @panel_sizer.add(@button_sizer, 0, ALIGN_RIGHT | ALL, 2)
 
       evt_button(@save_button, :onSaveClicked)
       evt_button(@cancel_button, :onCancelClicked)
@@ -123,7 +124,7 @@ class SodaOptions < Dialog
 ##############################################################################
    def addRow(element, title)
       sizer = BoxSizer.new(HORIZONTAL)
-      label = StaticText.new(@my_panel, -1, title, DEFAULT_POSITION, 
+      label = StaticText.new(self, -1, title, DEFAULT_POSITION, 
          DEFAULT_SIZE, ALIGN_LEFT)
       sizer.add(label, 1, ALIGN_LEFT|ALL, 2)
       sizer.add(element, 3, ALIGN_RIGHT|ALL, 2)
@@ -175,7 +176,7 @@ class SodaOptions < Dialog
    def onSaveClicked
       dupes = [@hijack_kvpanel, @gvar_kvpanel].any? {|e| e.hasDuplicateKeys()}
       if dupes
-         dialog = MessageDialog.new(@my_panel, 
+         dialog = MessageDialog.new(self, 
             'Error: One of your grids contains duplicate keys.', 
             'Duplicate Key Error', ICON_HAND, DEFAULT_POSITION)
          dialog.show_modal()
@@ -324,7 +325,9 @@ end
 class KeyValPanel < Panel
 
    def initialize(parent, key)
-      super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, RAISED_BORDER, 
+      size = Size.new(500, 500)
+
+      super(parent, -1, DEFAULT_POSITION, size, RAISED_BORDER, 
          'kvpanel')
       @key = key
       @num_rows = 5
@@ -460,8 +463,10 @@ end
 #
 ##############################################################################
 class FileChooserPanel < Panel
+
    def initialize(parent, key, dir=false)
-      super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, RAISED_BORDER, 
+      size = Size.new(500, 500)
+      super(parent, -1, DEFAULT_POSITION, size, RAISED_BORDER, 
          'filechooser')
       @key = key
       @parent = parent
@@ -535,7 +540,6 @@ end
 #
 ##############################################################################
 class CheckBoxPanel < Panel
-
    def initialize(parent)
       super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, RAISED_BORDER, 
          'checkboxrow')
