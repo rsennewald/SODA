@@ -253,17 +253,15 @@ end
 class SodaDropdown < ComboBox
 
    def initialize(parent, opts, key)
-      @VALUE = key
       super(parent, -1, '', DEFAULT_POSITION, DEFAULT_SIZE, opts, CB_READONLY)
    end
 
    def updateSetting(str)
-      @VALUE = str
-      self.set_value(str)
+      set_value(str)
    end
 
    def getSetting
-      return @VALUE
+      return get_value()   
    end
 
 end
