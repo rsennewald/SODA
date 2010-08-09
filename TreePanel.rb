@@ -69,14 +69,14 @@ class TreePanel < Wx::Panel
 #
 ###############################################################################
    def BuildTreePanel()
-
-      @TREE = TreeCtrl.new(self, -1, Point.new(0,0), Size.new(-1,-1),
+      tree_size = Size.new(220, 120)
+      @TREE = TreeCtrl.new(self, -1, DEFAULT_POSITION, tree_size,
            TR_HAS_BUTTONS | TR_LINES_AT_ROOT | TR_ROW_LINES | TR_SINGLE)
       @TREE.set_image_list(@IMAGE_LIST)
 #      @TREE.set_buttons_image_list(@TREE_BUTTONS)
       tree_root = @TREE.add_root("Soda-Test", 0)
       grid_sizer = BoxSizer.new(Wx::VERTICAL)
-      grid_sizer.add(@TREE, 1, Wx::EXPAND | Wx::ALL, 1)
+      grid_sizer.add(@TREE, 100, Wx::EXPAND | Wx::ALL, 1)
       grid_sizer.set_size_hints(self)
       self.set_sizer(grid_sizer)
 

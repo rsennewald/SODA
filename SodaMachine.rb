@@ -1453,7 +1453,7 @@ class SodaMachine < App
 
       @CURRENT_TREE_ITEM = @TREE.get_root_item()
       @TREE.expand(@CURRENT_TREE_ITEM)
-      @EDIT_SPLITTER.split_vertically(@TREEPANEL, @EDITPANEL, 0) 
+      @EDIT_SPLITTER.split_vertically(@TREEPANEL, @EDITPANEL, 50) 
       @MAIN_SPLITTER.split_horizontally(@EDIT_SPLITTER, @DEBUG_PANEL)
 
       evt_kill_focus(:OnKillFocus)

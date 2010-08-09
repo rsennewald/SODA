@@ -49,6 +49,7 @@ class DebugPanel < Wx::Panel
       grid_sizer = nil
       text_sizer = nil
       panel_sizer = nil
+      tree_size = Size.new(220, 100)
 
       panel_sizer = BoxSizer.new(Wx::VERTICAL)
       @TREE_PANEL = Panel.new(self, -1, DEFAULT_POSITION, DEFAULT_SIZE,
@@ -67,7 +68,7 @@ class DebugPanel < Wx::Panel
             DEFAULT_SIZE, TE_MULTILINE | TE_RICH2 | HSCROLL)
       @TEXT.set_editable(false)
 
-      @TREE = TreeCtrl.new(@SPLITTER, -1, DEFAULT_POSITION, DEFAULT_SIZE,
+      @TREE = TreeCtrl.new(@SPLITTER, -1, DEFAULT_POSITION, tree_size,
             TR_HAS_BUTTONS | TR_LINES_AT_ROOT | TR_ROW_LINES | TR_SINGLE)
       @TREE.add_root("Borwser-Debug-Info", 0)
 
