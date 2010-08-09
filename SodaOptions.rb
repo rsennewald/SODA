@@ -331,7 +331,7 @@ class KeyValPanel < Panel
       @key = key
       @num_rows = 5
       
-      @grid = Grid.new(self, -1)
+      @grid = Grid.new(self, -1, DEFAULT_POSITION, DEFAULT_SIZE, SIMPLE_BORDER)
       @grid.create_grid(5, 2)
       @grid.set_row_label_size(0)
       @grid.set_col_label_value(0, 'Name:')
