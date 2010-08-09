@@ -30,6 +30,7 @@
 ###############################################################################
 require 'rubygems'
 require 'wx'
+require 'pp'
 include Wx
 
 ##############################################################################
@@ -65,11 +66,29 @@ include Wx
 ##############################################################################
 class SodaOptions < Dialog
 
-   def initialize(settings=nil)
+   def initialize(settings = nil)
       super(nil, -1, 'SodaMachine Options', DEFAULT_POSITION, 
            Size.new(480, 500), CAPTION)
       @rows = []
       @panel_sizer = BoxSizer.new(VERTICAL)
+      @NeededSettingsKeys = {
+         "browser" => "Firefox",
+         "flavor" => "",
+         "results_dir" => "",
+         "summary" => "",
+         "hijacks" => {},
+         "gvars" => {},
+         "savehtml" => false,
+         "debug" => false
+      }
+
+      if (settings != nil)
+         @NeededSettingsKeys.each do |k, v|
+            if (!settings.key?(k))
+               settings[k] = @NeededSettingsKeys[k]
+            end
+         end
+      end
 
       set_sizer(@panel_sizer)
 
@@ -77,19 +96,19 @@ class SodaOptions < Dialog
             'browser')
       addRow(@browser_dropdown, 'Choose Browser:')
 
-      @flavor_textbox = SodaTextCtrl.new(self, '', 'flavor')
+      @flavor_textbox = SodaTextCtrl.new(self, settings['flavor'])
       addRow(@flavor_textbox, 'Flavor:')
 
-      @resultsdir_chooser = FileChooserPanel.new(self, 'results_dir', true)
+      @resultsdir_chooser = FileChooserPanel.new(self, true)
       addRow(@resultsdir_chooser, 'Results Directory:')
 
-      @summary_chooser = FileChooserPanel.new(self, 'summaryfile')
+      @summary_chooser = FileChooserPanel.new(self)
       addRow(@summary_chooser, 'Results Summary File:')
       
-      @hijack_kvpanel = KeyValPanel.new(self, 'hijacks')
+      @hijack_kvpanel = KeyValPanel.new(self)
       addRow(@hijack_kvpanel, 'Soda Hijacks:')
       
-      @gvar_kvpanel = KeyValPanel.new(self, 'gvars')
+      @gvar_kvpanel = KeyValPanel.new(self)
       addRow(@gvar_kvpanel, 'Global Variables:')
 
       @checkboxes_panel = CheckBoxPanel.new(self)
@@ -105,7 +124,7 @@ class SodaOptions < Dialog
       evt_button(@save_button, :onSaveClicked)
       evt_button(@cancel_button, :onCancelClicked)
 
-      updateSettings(settings) unless settings == nil
+      updateSettings(settings) if (settings != nil)
       self.set_size_hints(700, 700, 700, 700)
       show()
    end
@@ -129,7 +148,6 @@ class SodaOptions < Dialog
       sizer.add(label, 1, ALIGN_LEFT|ALL, 2)
       sizer.add(element, 3, ALIGN_RIGHT|ALL, 2)
       @panel_sizer.add(sizer, 0, EXPAND|ALL, 2)
-      @rows << element
    end
    private :addRow
 
@@ -145,7 +163,13 @@ class SodaOptions < Dialog
 #                 
 ##############################################################################
    def updateSettings(settings)
-      @rows.each { |element| element.updateSetting(settings) }
+      @flavor_textbox.updateSetting(settings['flavor'])
+      @resultsdir_chooser.updateSetting(settings['results_dir'])
+      @hijack_kvpanel.updateSetting(settings['hijacks'])
+      @gvar_kvpanel.updateSetting(settings['gvars'])
+      @summary_chooser.updateSetting(settings['summary'])
+      @checkboxes_panel.updateSetting(settings)
+      @browser_dropdown.updateSetting(settings['browser'])
    end
 
 ##############################################################################
@@ -160,7 +184,16 @@ class SodaOptions < Dialog
 #                 
 ##############################################################################
    def getSettings
-      @rows.reduce({}) { |result, element| result.merge(element.getSetting()) }
+      data = Hash.new()
+      data.merge!(@checkboxes_panel.getSetting())
+      data['flavor'] = @flavor_textbox.getSetting()
+      data['results_dir'] = @resultsdir_chooser.getSetting()
+      data['hijacks'] = @hijack_kvpanel.getSetting()
+      data['gvars'] = @gvar_kvpanel.getSetting()
+      data['summary'] = @summary_chooser.getSetting()
+      data['browser'] = @browser_dropdown.getSetting()
+
+      return data
    end
 
 ##############################################################################
@@ -202,49 +235,6 @@ class SodaOptions < Dialog
    end
    private :onCancelClicked
 
-
-##############################################################################
-#  testGetSettings -- Method
-#     For testing - prints current settings hash
-#
-# Input:
-#     None
-#
-# Output:
-#     None                 
-##############################################################################
-   def testGetSettings
-      result = getSettings()
-      puts "getSettings(): result = "
-      puts result.inspect
-      #result.each do |k, v|
-      #   puts "#{k} -> #{v}"
-      #end
-   end
-
-##############################################################################
-#  testUpdateSettings -- Method
-#     For testing - calls updateSettings with a certain settings hash
-#
-# Input:
-#     None
-#
-# Output:
-#     None                 
-##############################################################################
-   def testUpdateSettings
-      settings = {}
-      settings['browser'] = 'IE'
-      settings['flavor'] = 'some flavor text'
-      settings['results_dir'] = 'directory'
-      settings['summaryfile'] = 'file'
-      settings['hijacks'] = {'a' => 'b', 'c' => 'd'}
-      settings['gvars'] = {'e' => 'f', 'g' => 'h'}
-      settings['savehtml'] = true
-      settings['debug'] = true
-      updateSettings(settings)
-   end
-
 end
 
 ##############################################################################
@@ -263,16 +253,17 @@ end
 class SodaDropdown < ComboBox
 
    def initialize(parent, opts, key)
+      @VALUE = key
       super(parent, -1, '', DEFAULT_POSITION, DEFAULT_SIZE, opts, CB_READONLY)
-      @key = key
    end
 
-   def updateSetting(settings)
-      self.set_value(settings[@key])
+   def updateSetting(str)
+      @VALUE = str
+      self.set_value(str)
    end
 
    def getSetting
-      {@key => self.get_value}
+      return @VALUE
    end
 
 end
@@ -288,24 +279,20 @@ end
 #     -  parent: Parent on which to place the element.  Should be a Wx::Window
 #        or nil.
 #     -  text: Default value of the field
-#     -  key: Key to identify the value in the settings hash
 #
 ##############################################################################
 class SodaTextCtrl < TextCtrl
 
-   def initialize(parent, text, key)
+   def initialize(parent, text = "")
       super(parent, -1, text)
-      @key = key
    end
 
-   def updateSetting(settings)
-      if (settings.key?(@key))
-         self.change_value(settings[@key])
-      end
+   def updateSetting(text)
+      change_value(text)
    end
 
-   def getSetting
-      {@key => self.get_value}
+   def getSetting()
+      return get_value()
    end
 
 end
@@ -324,12 +311,12 @@ end
 ##############################################################################
 class KeyValPanel < Panel
 
-   def initialize(parent, key)
+   def initialize(parent)
 
       super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, 0, 
          'kvpanel')
-      @key = key
       @num_rows = 5
+      @grid = nil
       
       @grid = Grid.new(self, -1, DEFAULT_POSITION, DEFAULT_SIZE, SIMPLE_BORDER)
       @grid.create_grid(5, 2)
@@ -382,33 +369,40 @@ class KeyValPanel < Panel
       return false
    end
 
+##############################################################################
+#
+##############################################################################
    def updateSetting(settings)
-      return 0 if (!settings.key?(@key))
+         count = 0
 
-      pairs = settings[@key]
-      @grid.delete_rows(0, @num_rows)
-      @num_rows = 0
-      pairs.each do |k, v|
-         @grid.append_rows(1)
-         #current_row = @grid.get_grid_cursor_row()
-         @grid.set_cell_value(@num_rows, 0, k)
-         @grid.set_cell_value(@num_rows, 1, v) 
-         @num_rows += 1
-      end
+         settings.each do |k, v|
+
+            if (count > @num_rows)
+               @grid.append_rows(1)
+            end
+
+            curr = @grid.get_number_rows() -1
+            @grid.set_cell_value(count, 0, k)
+            @grid.set_cell_value(count, 1, v)
+            count += 1
+         end
    end
 
+##############################################################################
+#
+##############################################################################
    def getSetting
-      rtn = {}
-
-      (0..@num_rows - 1).each do |row_num|
-         current_key = @grid.get_cell_value(row_num, 0)
-         current_val = @grid.get_cell_value(row_num, 1)
-         unless current_key == ''
-            rtn[current_key] = current_val
-         end
+      data = Hash.new()
+      row_count = @grid.get_number_rows() -1
+      
+      for i in 0..row_count
+         key = @grid.get_cell_value(i, 0)
+         val = @grid.get_cell_value(i, 1)
+         next if (key.empty? || val.empty?)
+         data[key] = val
       end
 
-      return {@key => rtn}
+      return data
    end
 
 ##############################################################################
@@ -463,11 +457,10 @@ end
 ##############################################################################
 class FileChooserPanel < Panel
 
-   def initialize(parent, key, dir=false)
+   def initialize(parent, dir=false)
       size = Size.new(500, 500)
       super(parent, -1, DEFAULT_POSITION, size, 0, 
          'filechooser')
-      @key = key
       @parent = parent
       @dir_chooser = dir
 
@@ -482,14 +475,12 @@ class FileChooserPanel < Panel
       evt_button @button, :chooseFile
    end
 
-   def updateSetting(settings)
-      if (settings.key?(@key))
-         @textbox.change_value(settings[@key])
-      end
+   def updateSetting(str)
+      @textbox.change_value(str)
    end
 
    def getSetting
-      {@key => @textbox.get_value}
+      return @textbox.get_value()
    end
 
 ##############################################################################
@@ -526,7 +517,6 @@ class FileChooserPanel < Panel
 
 end
 
-
 ##############################################################################
 #  CheckBoxPanel -- Class
 #     A panel with 'SaveHTML' and 'Enable Debug Printing' checkboxes.
@@ -553,6 +543,8 @@ class CheckBoxPanel < Panel
       @sizer.add(@debug_checkbox, 1, ALL, 2)
    end
 
+##############################################################################
+##############################################################################
    def updateSetting(settings)
       if (settings.key?('savehtml'))
          @savehtml_checkbox.set_value(settings['savehtml'])
@@ -561,10 +553,14 @@ class CheckBoxPanel < Panel
       end
    end
 
+##############################################################################
+##############################################################################
    def getSetting
-      rtn = {}
-      rtn['savehtml'] = @savehtml_checkbox.get_value()
-      rtn['debug'] = @debug_checkbox.get_value()
-      return rtn
+      data = {}
+      
+      data['savehtml'] = @savehtml_checkbox.get_value()
+      data['debug'] = @debug_checkbox.get_value()
+
+      return data
    end
 end
