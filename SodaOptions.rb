@@ -67,7 +67,7 @@ class SodaOptions < Dialog
 
    def initialize(settings=nil)
       super(nil, -1, 'SodaMachine Options', DEFAULT_POSITION, 
-           Size.new(480, 530))
+           Size.new(480, 500), CAPTION)
       @rows = []
       @panel_sizer = BoxSizer.new(VERTICAL)
 
@@ -325,9 +325,8 @@ end
 class KeyValPanel < Panel
 
    def initialize(parent, key)
-      size = Size.new(500, 500)
 
-      super(parent, -1, DEFAULT_POSITION, size, RAISED_BORDER, 
+      super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, 0, 
          'kvpanel')
       @key = key
       @num_rows = 5
@@ -466,7 +465,7 @@ class FileChooserPanel < Panel
 
    def initialize(parent, key, dir=false)
       size = Size.new(500, 500)
-      super(parent, -1, DEFAULT_POSITION, size, RAISED_BORDER, 
+      super(parent, -1, DEFAULT_POSITION, size, 0, 
          'filechooser')
       @key = key
       @parent = parent
@@ -541,7 +540,7 @@ end
 ##############################################################################
 class CheckBoxPanel < Panel
    def initialize(parent)
-      super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, RAISED_BORDER, 
+      super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, 0, 
          'checkboxrow')
 
       @sizer = BoxSizer.new(HORIZONTAL)
