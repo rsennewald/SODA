@@ -25,6 +25,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ###############################################################################
 
+###############################################################################
+# Needed Ruby libs:
+###############################################################################
+require 'pp'
 require 'rubygems'
 require 'wx'
 include Wx
@@ -71,7 +75,8 @@ class TreePanel < Wx::Panel
    def BuildTreePanel()
       tree_size = Size.new(220, 120)
       @TREE = TreeCtrl.new(self, -1, DEFAULT_POSITION, tree_size,
-           TR_HAS_BUTTONS | TR_LINES_AT_ROOT | TR_ROW_LINES | TR_SINGLE)
+           TR_HAS_BUTTONS | TR_LINES_AT_ROOT | TR_ROW_LINES | TR_SINGLE |
+           TR_FULL_ROW_HIGHLIGHT)
       @TREE.set_image_list(@IMAGE_LIST)
 #      @TREE.set_buttons_image_list(@TREE_BUTTONS)
       tree_root = @TREE.add_root("Soda-Test", 0)

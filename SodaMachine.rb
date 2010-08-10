@@ -606,16 +606,13 @@ class SodaMachine < App
          icon_index = $SODA_INFO[soda_id]['image_index']
          @TREE.append_item(select_id, soda_id, icon_index, -1, test)
       elsif (id == $DELETE_MENU_ID)
-         print "DELETE: ITEM ID: #{select_id}\n"
          next_item = @TREE.get_prev_sibling(select_id)
          next_item = root_id if (next_item <= 0)
          @TREE.select_item(next_item, false)
-         print "sib: #{next_item}\n"
          @TREE.delete(select_id)
       elsif (id == $BREAK_POINT_MENU_ID)
          @TREE.set_item_background_colour(select_id, Wx::RED)
          @BREAK_POINTS.push(select_id)
-         print "Set BP for item: #{select_id}\n"
       elsif (id == $BREAK_POINT_UNSET_MENU_ID)
          @TREE.set_item_background_colour(select_id, Wx::WHITE)
          @BREAK_POINTS.delete(select_id)
@@ -1227,8 +1224,6 @@ class SodaMachine < App
    
       if (result > 0)
          @SODA_OPTIONS = dlg.getSettings()
-         pp(@SODA_OPTIONS)
-         print "\n"
       end   
 
       dlg.destroy()

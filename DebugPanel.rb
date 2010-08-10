@@ -30,6 +30,9 @@ require 'wx'
 require 'EditPanel'
 include Wx
 
+###############################################################################
+#
+###############################################################################
 class DebugPanel < Wx::Panel
 
    def initialize(parent)
@@ -41,10 +44,12 @@ class DebugPanel < Wx::Panel
 
       super(parent, -1, DEFAULT_POSITION, DEFAULT_SIZE, SIMPLE_BORDER, 
             "debugpanel")
-      self.set_background_colour(Wx::BLACK)
       BuildPanel()
    end
 
+###############################################################################
+#
+###############################################################################
    def BuildPanel()
       grid_sizer = nil
       text_sizer = nil
@@ -53,7 +58,7 @@ class DebugPanel < Wx::Panel
 
       panel_sizer = BoxSizer.new(Wx::VERTICAL)
       @TREE_PANEL = Panel.new(self, -1, DEFAULT_POSITION, DEFAULT_SIZE,
-            0, "debugtreepanel")
+            SIMPLE_BORDER, "debugtreepanel")
 
       @SPLITTER = SplitterWindow.new(@TREE_PANEL, -1, Point.new(0, 0),
             DEFAULT_SIZE, SP_3DBORDER, "debugsplitter")
@@ -82,12 +87,18 @@ class DebugPanel < Wx::Panel
       self.set_sizer(grid_sizer)
    end
 
+###############################################################################
+#
+###############################################################################
    def DeleteGridData()
       grid = GetGrid()
       row_count = grid.get_number_rows()
       grid.delete_rows(0, row_count +1)
    end
 
+###############################################################################
+#
+###############################################################################
    def SetGridData(hash)
       row_count = 0
       grid = nil
@@ -110,14 +121,23 @@ class DebugPanel < Wx::Panel
 
    end
 
+###############################################################################
+#
+###############################################################################
    def GetTreeCtrl()
       return @TREE
    end
 
+###############################################################################
+#
+###############################################################################
    def GetTextCtrl()
       return @TEXT
    end
 
+###############################################################################
+#
+###############################################################################
    def GetGrid()
       return @GRID_PANEL.GetGrid()
    end
