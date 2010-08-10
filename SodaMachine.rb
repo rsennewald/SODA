@@ -1471,6 +1471,7 @@ class SodaMachine < App
          end
       end
 
+      print "DEV!\n"
       @FRAME_HANDLE.show()
    end
 
