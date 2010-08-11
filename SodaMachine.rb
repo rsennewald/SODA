@@ -605,6 +605,7 @@ class SodaMachine < App
          test = {'do' => "#{soda_id}"}
          icon_index = $SODA_INFO[soda_id]['image_index']
          @TREE.append_item(select_id, soda_id, icon_index, -1, test)
+         @TREE.expand(select_id)
       elsif (id == $DELETE_MENU_ID)
          next_item = @TREE.get_prev_sibling(select_id)
          next_item = root_id if (next_item <= 0)
@@ -1471,7 +1472,6 @@ class SodaMachine < App
          end
       end
 
-      print "DEV!\n"
       @FRAME_HANDLE.show()
    end
 
