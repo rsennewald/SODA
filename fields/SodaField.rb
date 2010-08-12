@@ -60,10 +60,12 @@ require 'FieldUtils'
 #     None.
 #
 ###############################################################################
-   def self.jsevent(field, jsevent)
+   def self.jsevent(field, jsevent, wait = true)
       info = nil
       elm_type = nil
       msg = "Firing JavaScript Event: '#{jsevent}' for Element: "
+
+      print "Wait: #{wait}\n"
 
       begin
          tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
@@ -74,7 +76,7 @@ require 'FieldUtils'
             self.focus(field)
          end
 
-         field.fire_event("#{jsevent}")
+         field.fire_event("#{jsevent}", wait)
       rescue Exception => e
          $curSoda.rep.ReportException(e, true)
       ensure
