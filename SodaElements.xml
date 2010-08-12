@@ -112,6 +112,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor>timeout</accessor>
          <accessor>required</accessor>
          <accessor>jscriptevent</accessor>
+         <accessor>jswait</accessor>
       </soda_attributes>
    </textfield>
 
@@ -183,6 +184,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor>required</accessor>
          <accessor>timeout</accessor>
          <accessor>jscriptevent</accessor>
+         <accessor>jswait</accessor>
          <accessor>assertPage</accessor>
 		</soda_attributes>
 	</button>
@@ -537,6 +539,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor>timeout</accessor>
 			<accessor>required</accessor>
 			<accessor>jscriptevent</accessor>
+         <accessor>jswait</accessor>
 			<accessor>assertPage</accessor>
 		</soda_attributes>
 	</link>
@@ -619,6 +622,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor>vartext</accessor>
          <accessor>click</accessor>
          <accessor>jscriptevent</accessor>
+         <accessor>jswait</accessor>
 		</soda_attributes>
 	</span>
 
