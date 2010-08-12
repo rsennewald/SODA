@@ -307,6 +307,7 @@ Description: Access a text element in the HTML dom.
 --) set: Sets the vale of the text field.
 --) clear: Clears any data in the textfield.
 --) jscriptevent: Fires a javascript event for the control.
+--) jswait: true/false, this will cause soda to wait or not to wait for the event to return.
 --) append: Appends text to the existing text without stomping on existing text.
 --) assert: Asserts the value of the textfield.
 --) assertnot:Asserts that the value isn't in the textfield.
