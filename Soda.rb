@@ -447,7 +447,6 @@ class Soda
 # Results:
 #     returns the value for the given name.
 #
-#
 # Notes:
 #     This method will also overwrite any csv value of the key for that value
 #     is in the @hiJacks hash for this class.
@@ -496,6 +495,8 @@ class Soda
       else
          PrintDebug("Value for \"#{tmp_name}\" => \"#{val}\".\n")
       end
+
+      val = "" if (val == nil) # default it to be an empty string. #
 
       return val
    end
