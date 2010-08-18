@@ -558,7 +558,7 @@ def Main
       " #{params['browser']}\n--)Debug: #{params['debug']}\n--)Verbose:"+
       " #{params['verbose']}\n" +
       "--)Watir Version: #{CommonWatir::VERSION}\n")
-   SodaUtils.PrintSoda("Startting testing...\n")
+   SodaUtils.PrintSoda("Starting testing...\n")
 
    if (params['resultsdir'] != nil)
       err = CreateResultsDir(params['resultsdir'])
