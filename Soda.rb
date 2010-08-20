@@ -1886,7 +1886,11 @@ JSCode
             end
          when "link"
             if ( (js != nil) && (js =~ /onmouseover/i) )
-               fieldType.jsevent(@curEl, js)
+               jswait = true
+               if (event.key?('jswait'))
+                  jswait = false if (event['jswait'] =~ /false/i)
+               end
+               fieldType.jsevent(@curEl, js, jswait)
             end
             fieldType.click(@curEl, "link")
             @browser.wait()
@@ -2101,6 +2105,7 @@ JSCode
    def handleEvents(events)
       browser_closed = false
       result = 0
+      jswait = true
 
       if (@SIGNAL_STOP != false)
          exit(-1)
@@ -2273,13 +2278,21 @@ JSCode
                next
             end
 
+            jswait = true
             if (event.key?("jscriptevent") && 
                (replaceVars(event['jscriptevent']) == "onkeyup"))
+               if (event.key?('jswait'))
+                  jswait = false if (event['jswait'] =~ /false/i)
+               end
+
                js = replaceVars(event['jscriptevent'])
-               fieldType.jsevent(@curEl, js)
+               fieldType.jsevent(@curEl, js, jswait)
             elsif (event.key?("jscriptevent"))
+               if (event.key?('jswait'))
+                  jswait = false if (event['jswait'] =~ /false/i)
+               end
                js = replaceVars(event['jscriptevent'])
-               fieldType.jsevent(@curEl, js)
+               fieldType.jsevent(@curEl, js, jswait)
             end
 
             # If we have a field here is the default actions 
@@ -2288,10 +2301,10 @@ JSCode
                eventFieldAction(event, fieldType)
             end
 
-            if (browser_closed != true)
+            if (browser_closed != true && jswait != false)
                CheckJavaScriptErrors()
             end
-            
+
             rescue Exception=>e
                @exceptionExit = true
                @rep.log("Exception in test: \"#{@currentTestFile}\", Line: " +
