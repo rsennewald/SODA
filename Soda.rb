@@ -98,6 +98,7 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
+      @FAILEDTESTS = []
       @vars = Hash.new
       blocked_file_list = "scripts/sugarcrm/modules/blockScriptList.xml"
       whitelist_file = "scripts/sugarcrm/modules/whitelist.xml"
@@ -211,6 +212,25 @@ class Soda
    end
 
 ###############################################################################
+# GetFailedTests -- Method
+#     This method returns a list of failed tests.
+#
+# Input:
+#     None.
+#
+# Output:
+#     returns a list of failed tests.  The list can be empty of no tests 
+#     failed.
+#
+###############################################################################
+   def GetFailedTests()
+      @FAILEDTESTS.uniq!()
+
+      return @FAILEDTESTS
+   end
+   public :GetFailedTests
+
+###############################################################################
 # SetGlobalVars - Method
 #     This method reads all the vars passed to the constructor and sets them
 #     up for use for all soda tests.
@@ -247,102 +267,6 @@ class Soda
       end
 
       return 0
-   end
-
-###############################################################################
-# FindWatirGemInstall -- Method
-#     This method tracks down where the watir gem is installed.  Once found
-#     a path to the directory in the gem source is returned in order to get
-#     the location of the autoitx3.dll so we can reg the dll.
-#
-# Params:
-#     None.
-#
-# Results:
-#     return nil on error, else a unix path to the gems dir.
-#
-# Notes:
-#     This is only used for windows & IE and should be moved into its own lib.
-#
-###############################################################################
-   def FindWatirGemInstall
-      hash = Hash.new()
-      name = "watir"
-      gems_path = Gem.dir()
-      gems_path << "/gems"
-
-      if (!Gem.available?(name))
-         print "Gems can't find installed gem: \"#{name}\"\n"
-         return nil
-      end
-
-      src_index = Gem.source_index.find_name(name)
-      src_index = src_index.to_s()
-      src_index = src_index.split("\s")
-      src_index.shift()
-      
-      src_index.each do |v|
-         v = v.split("=")
-         if (v[0] =~ /version/i)
-            v[1] =~ /(\d+\.\d+\.\d+)/
-            v[1] = "#{$1}"  
-         end
-         hash["#{v[0]}"] = "#{v[1]}"
-      end
-       
-      gems_path << "/#{hash['name']}-#{hash['version']}/lib/#{name}"
-      if (!File.exist?(gems_path))
-         print "Error: Can't find directory: \"#{gems_path}\"!\n"
-         gems_path = nil
-      end
-      
-      return gems_path
-   end
-
-###############################################################################
-# SafeOleObjCheck -- Method
-#     This method checks to see of we can use the autoitx3 control.  Since
-#     the main reason for this creating this control failing is the control
-#     not being registered, we are going to handle this for everyone.     
-#
-# Params:
-#     None.
-#
-# Results:
-#     returns true when the control is usable, else false.       
-#
-###############################################################################
-   def SafeOleObjCheck
-      result = false
-      watir_path = nil
-      auto_dll = nil
-
-      watir_path = FindWatirGemInstall()
-      if (watir_path == nil)
-         return false
-      end
-
-      begin
-         ole = WIN32OLE.new("AutoItX3.Control")
-         ole = nil
-         result = true
-      rescue
-         msg = "#{$!}"
-         if (msg =~ /unknown\s+ole\s+server/i)
-            watir_path = "#{watir_path}/AutoItX3.dll"
-            watir_path = watir_path.gsub("/", '\\')
-            cmd = "regsvr32 /s #{watir_path}"
-            result = system(cmd)
-
-            if (result != true)
-               print "Failed calling command: \"#{cmd}\"!\n"
-               print "--)#{$!}\n\n"
-               result = false
-            end
-         end
-      end
-
-      return result
    end
 
 ###############################################################################
@@ -548,6 +472,7 @@ class Soda
             else
                @rep.Assert(false, "Failed to find #{event['do']} element!", 
                   @currentTestFile, "#{event['line_number']}")
+               @FAILEDTESTS.push(@currentTestFile)
             end
          else
             field = waitFor(eval(str), event['do'], timeout, false)      
@@ -557,6 +482,7 @@ class Soda
             else
                @rep.Assert(false, "#{event['do']} exists when it is not "+
                   "expected to!", @currentTestFile, "#{event['line_number']}")
+               @FAILEDTESTS.push(@currentTestFile)
             end
          end
       else
@@ -692,6 +618,7 @@ class Soda
             elsif (required && (found_field != true))
                @rep.log("waitFor: Element not found: \"#{name}\""+
                   " Timedout after #{timeout} seconds!\n")
+               @FAILEDTESTS.push(@currentTestFile)
                break
             else
                break
@@ -805,6 +732,7 @@ class Soda
 ###############################################################################
    def getDirScript(file, dir = nil)
       test_count = 0
+      results = 0
 
       file = File.expand_path(file, dir)
       
@@ -834,7 +762,10 @@ class Soda
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
-               handleEvents(script)
+               results = handleEvents(script)
+               if (results != 0)
+                  @FAILEDTESTS.push(@currentTestFile)
+               end
                @currentTestFile = parent_test_file
             else
                msg = "Failed opening script file: \"#{file}\"!\n"
@@ -1082,9 +1013,14 @@ class Soda
                found_error = true
          end
       end
+
+      if (found_error)
+         @FAILEDTESTS.push(@currentTestFile)
+      end
+
    end
    
-############################################################################### 
+############################################################################## 
 # kindsOfBrowserAssert -- Method
 #     This method does an assert on the text contained in the web browser.
 #     The assert can be either a regexp or a string.
@@ -1094,7 +1030,7 @@ class Soda
 #     flag: true or false, for an assert or an assertnot
 #
 # Output:
-#     None.
+#     returns -1 on error else 0 on success.
 #
 ###############################################################################
    def kindsOfBrowserAssert(event, flag = true)
@@ -1103,6 +1039,7 @@ class Soda
       ass = nil
       contains = ""
       is_regex = false
+      result = 0
 
       if (event['assert'].kind_of? Regexp)
          is_regex = true
@@ -1120,6 +1057,7 @@ class Soda
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}!\n", SodaUtils::EVENT)
             ass = false
+            result = -1
          end
       else
          contains = replaceVars(event['assert'] )
@@ -1140,7 +1078,11 @@ class Soda
                "\"#{contains}\""     
          end
 
-         @rep.Assert(ass, msg, @currentTestFile, "#{event['line_number']}")
+         result = @rep.Assert(ass, msg, @currentTestFile, 
+               "#{event['line_number']}")
+         if (result != 0)
+            @FAILEDTESTS.push(@currentTestFile)
+         end
       else
          if (!is_regex)
             msg = "Checking that browser does not contain text:"+
@@ -1150,8 +1092,14 @@ class Soda
                " \"#{contains}\" in page."
          end
 
-         @rep.Assert(!ass, msg, @currentTestFile, "#{event['line_number']}")
+         result = @rep.Assert(!ass, msg, @currentTestFile, 
+               "#{event['line_number']}")
+         if (result != 0)
+            @FAILEDTESTS.push(@currentTestFile)
+         end
       end
+
+      return result
   end
  
 ###############################################################################
@@ -1292,11 +1240,14 @@ class Soda
 #     event: This is the event to handle.
 #
 # Results:
-#     returns true if the browser was told to close, else false.
+#     returns a hash with keys: browser_close & error.
 #
 ###############################################################################
    def eventBrowser(event)
-      browser_closed = false
+      result = {
+         'browser_closed' => false,
+         'error' => 0 
+      }
 
       event = SodaUtils.ConvertOldBrowserClose(event, @rep, @currentTestFile)
 
@@ -1312,17 +1263,18 @@ class Soda
             when "close"
                if (@browser != nil)
                   CloseBrowser()
-                  browser_closed = true
+                  result['browser_closed'] = true
                else
                   PrintDebug("For some reason I got a nill @browser object!",
                      SodaUtils::WARN)
-                  browser_closed = true
+                  result['browser_closed'] = true
                end
             when "refresh"
                @browser.refresh
             else
                @rep.ReportFailure("Unknown browser action:"+
                   " \"#{action}\".\n")
+               result['error'] = -1
          end
       end
 
@@ -1337,14 +1289,14 @@ class Soda
    
       if (event.key?('assert'))
          PrintDebug("Asserting Browser Contains: #{event['assert']}\n");
-         kindsOfBrowserAssert(event)
+         result['error'] = kindsOfBrowserAssert(event)
       end
 
       if (event.key?('assertnot'))
          @rep.log("Asserting browser does not Contain: " +
             " #{event['assertnot']}\n");
          event['assert'] = event['assertnot'] # hack #
-         kindsOfBrowserAssert(event, false)
+         result['error'] = kindsOfBrowserAssert(event, false)
          event.delete('assert') # clean up hack #
       end
 
@@ -1365,10 +1317,11 @@ class Soda
          else
             msg = "Failed: This method Windows support only!\n"
             @rep.ReportFailure(msg)
+            result['error'] = -1
          end
       end
 
-      return browser_closed
+      return result
    end
 
 ############################################################################### 
@@ -1572,6 +1525,7 @@ class Soda
                (line !~ /SShStarter.js/i ))
                @rep.ReportJavaScriptError("Javascript Error:#{line}\n", 
                   $skip_css_errors)
+               
             end
          end
       end
@@ -1851,15 +1805,13 @@ JSCode
          foundaction = event['do']
       end
 
-#      PrintDebug("Starting: event FieldAction: \"#{foundaction}\".\n")
-
       if (event.key?("alert") )
 		 if event['alert'] == 'true'
-			 @rep.log("Enabling Alert Hack\n", SodaUtils::WARN)
+			 @rep.log("Enabling Alert Hack\n")
 			 fieldType.alertHack(event['alert'], true)                 
 		 else
 			 fieldType.alertHack(event['alert'], false)
-			 @rep.log("Disabeling alert!\n", SodaUtils::WARN)
+			 @rep.log("Disabeling alert!\n")
 			 
 			 PrintDebug("eventFieldAction: Finished.\n")
 			 return
@@ -1979,7 +1931,6 @@ JSCode
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)
       end
-
    end
 
 ############################################################################### 
@@ -1996,6 +1947,7 @@ JSCode
    def fieldEventAssert(event, fieldType)
       msg = ""
       assert_type = ""
+      result = 0
 
       if (event.key?('assertnot'))
          assert_type = 'assertnot'
@@ -2008,24 +1960,28 @@ JSCode
             contains = replaceVars(event['assertnot'] )
             msg = "Asserting that value doesn't exist: \"#{contains}\""
             @rep.log("#{msg}\n")
-            @rep.Assert(!(fieldType.assert(@curEl, contains)), msg,
+            result = @rep.Assert(!(fieldType.assert(@curEl, contains)), msg,
                @currentTestFile, "#{event['line_number']}")
          when /enabled/i
             msg = "Asserting that Element is enabled."
             @rep.log("#{msg}\n")
-            @rep.Assert(fieldType.enabled(@curEl), msg, @currentTestFile,
-               "#{event['line_number']}")
+            result = @rep.Assert(fieldType.enabled(@curEl), msg, 
+                  @currentTestFile, "#{event['line_number']}")
          when /disabled/i
             msg = "Asserting that Element is disabled."
             @rep.log("#{msg}\n")
-            @rep.Assert(fieldType.disabled(@curEl), msg, @currentTestFile,
-               "#{event['line_number']}")
+            result = @rep.Assert(fieldType.disabled(@curEl), msg, 
+                  @currentTestFile, "#{event['line_number']}")
          else
             contains = replaceVars(event['assert'])
             @rep.log("Asserting value: #{contains}\n")
             msg = "Asserting that value: \"#{contains}\" exists."
-            @rep.Assert(fieldType.assert(@curEl, contains), msg,
+            result = @rep.Assert(fieldType.assert(@curEl, contains), msg,
                @currentTestFile, "#{event['line_number']}")
+      end
+
+      if (result != 0)
+         @FAILEDTESTS.push(@currentTestFile)
       end
 
    end
@@ -2106,6 +2062,7 @@ JSCode
       browser_closed = false
       result = 0
       jswait = true
+      result = 0
 
       if (@SIGNAL_STOP != false)
          exit(-1)
@@ -2171,7 +2128,11 @@ JSCode
                      next
                   end
                when "browser" 
-                  browser_closed = eventBrowser(event)
+                  err = eventBrowser(event)
+                  if (err['error'] != 0)
+                     result = -1
+                  end
+
                   next 
                when "requires"
                   eventRequires(event)
@@ -2306,6 +2267,7 @@ JSCode
             end
 
             rescue Exception=>e
+               @FAILEDTESTS.push(@currentTestFile)
                @exceptionExit = true
                @rep.log("Exception in test: \"#{@currentTestFile}\", Line: " +
                   "#{event['line_number']}!\n", SodaUtils::ERROR)
@@ -2326,6 +2288,18 @@ JSCode
       return result
    end
 
+############################################################################### 
+# SetReporter -- method
+#     This method sets the reporter object for soda.  Really only used for
+#     sodamachine.
+#
+# Input:
+#     reporter: This is the reporter object for soda to use.
+#
+# Results:
+#     None.
+#
+############################################################################### 
    def SetReporter(reporter)
       @rep = reporter
    end

@@ -320,10 +320,11 @@ class SodaReporter
 #
 #
 # Results:
-#     None.
+#     returns -1 on assert failed, or 0 on success.
 #
 ###############################################################################
    def Assert(exp, msg = "", file = "", line_number = "")
+      result = 0
 		@asserts_count += 1
       url = nil
 
@@ -353,13 +354,17 @@ class SodaReporter
          log(ass_msg, 1)
 			SavePage(msg)
 			@assertFails_count += 1
+         result = -1
 		else
          if (msg.empty?)
    			log("Assertion: Passed.\n")
          else
    			log("Assertion: Passed: #{msg}.\n")
          end
+         result = 0
 		end
+
+      return result
 	end
 
 ###############################################################################

@@ -35,6 +35,7 @@ require 'getoptlong'
 require 'libxml'
 require 'commonwatir'
 require 'SodaReportSummery'
+require 'pp'
 
 ###############################################################################
 # SodaSuite -- Class
@@ -93,11 +94,14 @@ class SodaSuite
 ###############################################################################
 	def ExecuteSodaTest(sodatest)
       soda = nil
-      result = nil
+      result = {}
+      failed_tests = nil
       
       soda = Soda::Soda.new(@SodaParams)
-      result = soda.run(sodatest)
+      result['error'] = soda.run(sodatest)
+      result['failed_tests'] = soda.GetFailedTests()
       soda = nil
+
       return result
 	end
 
@@ -125,8 +129,22 @@ class SodaSuite
             SodaUtils.PrintSoda("Failed executing test file: #{test}!\n",
                SodaUtils::ERROR)
             master_result = -1
+         
+            begin
+               soda.browser.close()
+            rescue Exception => e
+               print "Exception: #{e.message}\n"
+            ensure
+            end
             soda = Soda::Soda.new(@SodaParams)
          end
+      end
+
+      begin
+         soda.browser.close()
+      rescue Exception => e
+         print "Exception: #{e.message}\n"
+      ensure
       end
 
       soda = nil
@@ -158,8 +176,8 @@ class SodaSuite
             SodaUtils.PrintSoda("Executing test file: #{testfile}\n")
 				report = ExecuteSodaTest(testfile)
             
-            if (report == -1)
-               return -1
+            if (report['error'] == -1)
+               return report
             end
 			end
 		elsif(File.file?(file))
@@ -167,8 +185,8 @@ class SodaSuite
 				report = ExecuteSodaTest(file)
             SodaUtils.PrintSoda("Finished executing test file: #{file}\n")
             
-            if (report == -1)
-               return -1
+            if (report['error'] == -1)
+               return report
             end
 	   else
             SodaUtils.PrintSoda("Failed To Load File: '#{file}'\n", 
@@ -231,8 +249,9 @@ Optional Flags:
 
    --debug: This turns on debug messages.
 
-   --help:  Prints this message and exits.
+   --rerun: This will cause failed tests to be rerun.
 
+   --help:  Prints this message and exits.
 
 HLP
    
@@ -451,6 +470,8 @@ def Main
    savehtml = false
    resultsdir = nil
    profile = nil
+   rerun_failed_test = false
+   failed_tests = []
    test_files = []
    hijacks = {}
    params = {
@@ -504,7 +525,8 @@ def Main
                [ '--profile', '-p', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--gvar', '-g', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--suite', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
-               [ '--summery', '-k', GetoptLong::OPTIONAL_ARGUMENT ]
+               [ '--summery', '-k', GetoptLong::OPTIONAL_ARGUMENT ],
+               [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ]
             )
 
       opts.quiet = true
@@ -536,6 +558,8 @@ def Main
                params['summaryfile'] = arg.to_s()
             when "--gvar"
                params['gvars'] = AddCmdArg2Hash(arg, params['gvars'])
+            when "--rerun"
+               rerun_failed_test = true
          end
       end
    rescue Exception => e
@@ -587,13 +611,22 @@ def Main
       sweet = SodaSuite.new(params)
       params['test_files'].each do |testfile|
          result = sweet.Execute(testfile)
-         if (result != 0)
+         failed_tests = failed_tests.concat(result['failed_tests']) 
+
+         if (result['error'] != 0)
             master_result = -1
             SodaUtils.PrintSoda("Failed executing soda test:"+
                "\"#{testfile}\"!\n")
             sweet = SodaSuite.new(params)
          end
       end
+   end
+
+   # see if we should rerun failed tests #
+   if (rerun_failed_test && failed_tests.length > 0)
+      SodaUtils.PrintSoda("Rerunning failed tests.\n")
+      sweet.ExecuteTestSuite(failed_tests)
+      SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
    end
 
    if (params['resultsdir'] != nil)
