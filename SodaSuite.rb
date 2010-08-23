@@ -112,19 +112,20 @@ class SodaSuite
 #
 # Prams:
 #     suite: This is an array of tests to run.
+#     rerun: true/false, tells soda that these tests are reruns.
 #
 # Results:
 #     None.
 #
 ###############################################################################
-   def ExecuteTestSuite(suite)
+   def ExecuteTestSuite(suite, rerun = false)
       soda = nil
       master_result = 0
       result = nil
       
       soda = Soda::Soda.new(@SodaParams)
       suite.each do |test|
-         result = soda.run(test)
+         result = soda.run(test, rerun)
          if (result == -1)
             SodaUtils.PrintSoda("Failed executing test file: #{test}!\n",
                SodaUtils::ERROR)
@@ -625,7 +626,7 @@ def Main
    # see if we should rerun failed tests #
    if (rerun_failed_test && failed_tests.length > 0)
       SodaUtils.PrintSoda("Rerunning failed tests.\n")
-      sweet.ExecuteTestSuite(failed_tests)
+      sweet.ExecuteTestSuite(failed_tests, true)
       SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
    end
 

@@ -386,7 +386,12 @@ HTML
       report_file = "Report-#{report_file}.html"
 
       if (create_links)
-         log_file_td = "<a href=\"#{report_file}\">#{rpt['test_file']}</a>"
+         rerun = ""
+         if (report_file =~ /-SodaRerun/i)
+            rerun = "<b> :Rerun</b>"
+         end
+         log_file_td = "<a href=\"#{report_file}\">#{rpt['test_file']}</a>"+
+            "#{rerun}"
       else
          log_file_td = "#{rpt['test_file']}"
       end

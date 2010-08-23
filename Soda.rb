@@ -2310,12 +2310,14 @@ JSCode
 #
 # Params:
 #     file: The Soda test file.
+#     rerun: true/false, this tells soda that this tests is a rerun of a
+#        failed test.
 #
 # Results:
 #     returns a SodaReport object.
 #
 ############################################################################### 
-   def run(file)
+   def run(file, rerun = false)
       result = 0
       master_result = 0
       thread_soda = nil
@@ -2324,7 +2326,7 @@ JSCode
 
       @exceptionExit = false      
       @fileStack.push(file)
-      @rep = SodaReporter.new(file, @saveHtml, @resultsDir);
+      @rep = SodaReporter.new(file, @saveHtml, @resultsDir, 0, nil, rerun);
       SetGlobalVars()
        
       script = getScript(file)

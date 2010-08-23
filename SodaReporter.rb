@@ -47,7 +47,7 @@ require 'SodaLogReporter'
 class SodaReporter
 
 	def initialize(testfile, savehtml = false, resultsdir = nil, debug = 0,
-         callback = nil)
+         callback = nil, rerun = false)
 		@sodatest_file = testfile
       @saveHtmlFiles = savehtml
       @debug = debug
@@ -79,7 +79,12 @@ class SodaReporter
 
       SodaUtils.PrintSoda("Debugging: => #{debug}\n")
       SodaUtils.PrintSoda("Soda Test File: => #{@sodatest_file}\n")
-		base_testfile_name = File.basename(@sodatest_file, '.xml') 
+		base_testfile_name = File.basename(@sodatest_file, '.xml')
+
+      if (rerun)
+         base_testfile_name << "-SodaRerun"
+      end
+
       now = Time.now().strftime("%d-%m-%Y-%H-%M")
      
       if (resultsdir == nil)
