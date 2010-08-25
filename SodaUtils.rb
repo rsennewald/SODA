@@ -710,23 +710,45 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    done = false
    result = 0
    undef_count = 0
+   url = browser.url()
+
    js = <<JAVA
 var windows = getWindows();
-var win_count = windows.length;
-var target = getWindows()[0];
-var browser = target.getBrowser();
-var content = target.content;
-var doc = browser.contentDocument;
-var d = doc.createElement("script");
-var src = "if (typeof SUGAR == 'undefined') {\n";
-src += "   document.soda_sugar_done = 'undefined';\n";
-src += "} else {\n";
-src += "   document.soda_sugar_done = SUGAR.util.ajaxCallInProgress();\n";
-src += "}";
+var win_count = windows.length -1;
+var current_browser_id = -1;
+var result = "undefined";
 
-d.innerHTML = src;
-doc.body.appendChild(d);
-print(doc.soda_sugar_done);
+for (var i = 0; i <= win_count; i++) {
+   var tmp_win = windows[i];
+   var tmp_url = tmp_win.getBrowser().contentDocument.URL;
+
+   if (tmp_url == "#{url}") {
+      current_browser_id = i;
+      break;
+   }
+}
+
+if (current_browser_id > -1) {
+   var target = getWindows()[current_browser_id];
+   var browser = target.getBrowser();
+   var content = target.content;
+   var doc = browser.contentDocument;
+   var d = doc.createElement("script");
+   var src = "if (typeof SUGAR == 'undefined') {\n";
+   src += "   document.soda_sugar_done = 'undefined';\n";
+   src += "} else {\n";
+   src += "   document.soda_sugar_done = SUGAR.util.ajaxCallInProgress();\n";
+   src += "}";
+
+   d.innerHTML = src;
+   doc.body.appendChild(d);
+   print(doc.soda_sugar_done);
+   result = doc.soda_sugar_done;
+} else {
+   result = "undefined";
+}
+
+print(result);
 JAVA
 
    reportobj.log("Calling: SugarWait.\n")
