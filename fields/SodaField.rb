@@ -196,8 +196,9 @@ require 'FieldUtils'
                   "{return #{alert};};"
                alertConfirm += "browser.contentWindow.confirm = function()"+
                   "{return #{alert};};"
-               alertConfirm += "browser.contentWindow.onbeforeunload = null;"
-
+               if (alert)
+                  alertConfirm += "browser.contentWindow.onbeforeunload = null;"
+               end
                $jssh_socket.send(alertConfirm + "\n", 0)
                $curSoda.browser.read_socket();
             end
@@ -213,7 +214,9 @@ require 'FieldUtils'
             if (Watir::Browser.default == 'firefox')
                alertConfirm = "browser.contentWindow.alert = old_alert;"
                alertConfirm += "browser.contentWindow.confirm = old_confirm;"
-               alertConfirm += "browser.contentWindow.onbeforeunload = null;"
+               if (alert)
+                  alertConfirm += "browser.contentWindow.onbeforeunload = null;"
+               end
                $jssh_socket.send(alertConfirm + "\n", 0)
                $curSoda.browser.read_socket();
             end

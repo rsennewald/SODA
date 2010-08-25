@@ -1808,13 +1808,12 @@ JSCode
       end
 
       if (event.key?("alert") )
-		 if event['alert'] == 'true'
+		 if (event['alert'] =~ /true/i)
 			 @rep.log("Enabling Alert Hack\n")
-			 fieldType.alertHack(event['alert'], true)                 
+			 fieldType.alertHack(true, true) 
 		 else
-			 fieldType.alertHack(event['alert'], false)
+			 fieldType.alertHack(false, false)
 			 @rep.log("Disabeling alert!\n")
-			 
 			 PrintDebug("eventFieldAction: Finished.\n")
 			 return
 		 end
