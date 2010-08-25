@@ -711,8 +711,11 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    result = 0
    undef_count = 0
    url = browser.url()
+   os = ""
 
-   js = <<JAVA
+   os = GetOsType()
+
+   linux_js = <<JAVA
 var windows = getWindows();
 var win_count = windows.length -1;
 var current_browser_id = -1;
@@ -727,7 +730,19 @@ for (var i = 0; i <= win_count; i++) {
       break;
    }
 }
+JAVA
 
+   other_js = <<JAVA
+var current_browser_id = 0;
+JAVA
+
+   if (os =~ /linux/i)
+      js = "#{linux_js}\n"
+   else
+      js = "#{other_js}\n"
+   end
+
+   js += <<JAVA
 if (current_browser_id > -1) {
    var target = getWindows()[current_browser_id];
    var browser = target.getBrowser();
