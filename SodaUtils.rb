@@ -692,6 +692,87 @@ def SodaUtils.ReadSodaConfig(configfile)
    return data
 end
 
+
+###############################################################################
+# WaitSugarAjaxDone -- function
+#     This function waits to make sure that sugar has finished all ajax
+#     actions.
+#
+# Input:
+#     browser: This is a watir browser object.
+#     reportobj: This is an active SodaReporter object.
+#
+# Returns:
+#     -1 on error else 0.
+#
+###############################################################################
+def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
+   done = false
+   result = 0
+   undef_count = 0
+   js = <<JAVA
+var windows = getWindows();
+var win_count = windows.length;
+var target = getWindows()[0];
+var browser = target.getBrowser();
+var content = target.content;
+var doc = browser.contentDocument;
+var d = doc.createElement("script");
+var src = "if (typeof SUGAR == 'undefined') {\n";
+src += "   document.soda_sugar_done = 'undefined';\n";
+src += "} else {\n";
+src += "   document.soda_sugar_done = SUGAR.util.ajaxCallInProgress();\n";
+src += "}";
+
+d.innerHTML = src;
+doc.body.appendChild(d);
+print(doc.soda_sugar_done);
+JAVA
+
+   reportobj.log("Calling: SugarWait.\n")
+
+   for i in 0..300
+      tmp = browser.js_eval(js)
+      tmp = tmp.chomp()
+
+      case (tmp)
+         when /false/i
+            tmp = false
+         when /true/i
+            tmp = true
+         when /undefined/i
+            tmp = nil
+            undef_count += 1
+         else
+            reportobj.log("WaitSugarAjaxDone: Unknown result: '#{tmp}'!\n",
+               SodaUtils::WARN)
+      end
+
+      if (tmp == false)
+         done = true
+         break
+      end
+
+      if (undef_count > 30)
+         msg = "WaitSugarAjaxDone: Can't find SUGAR object after 30 tries!\n"
+         reportobj.ReportFailure(msg)
+         done = false
+         break
+      end
+
+      sleep(0.5)
+   end
+
+   if (done)
+      result = 0
+   else
+      result = -1
+   end
+
+   return result
+end
+
+
 ###############################################################################
 ###############################################################################
 def SodaUtils.getSodaJS()

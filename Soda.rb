@@ -98,6 +98,7 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
+      @TEST_COUNT = 0
       @FAILEDTESTS = []
       @vars = Hash.new
       blocked_file_list = "scripts/sugarcrm/modules/blockScriptList.xml"
@@ -762,6 +763,7 @@ class Soda
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
+               @TEST_COUNT += 1
                results = handleEvents(script)
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
@@ -2117,6 +2119,9 @@ JSCode
                when "breakexit"
                   @breakExit = true
                   next
+               when "sugarwait"
+                  SodaUtils.WaitSugarAjaxDone(@browser, @rep)
+                  next
                when "condition"
                   eventCondition(event)
                   next
@@ -2367,6 +2372,7 @@ JSCode
          @rep.ReportFailure(msg)
       end
 
+      PrintDebug("Test Count: #{@TEST_COUNT}\n")
       @rep.SodaPrintCurrentReport()
       @rep.EndTestReport()
       @rep.ReportHTML()
