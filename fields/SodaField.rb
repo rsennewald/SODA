@@ -208,6 +208,9 @@ require 'FieldUtils'
                alertConfirm += "var old_confirm = window.confirm;"
                alertConfirm += "window.alert = function(){return #{alert};};"
                alertConfirm += "window.confirm = function(){return #{alert};};"
+               if (alert)
+                  alertConfirm += "window.onbeforeunload = null;"
+               end
                $curSoda.browser.document.parentWindow.eval(alertConfirm + "\n")
             end
          else
@@ -226,6 +229,9 @@ require 'FieldUtils'
                alertConfirm += "var old_confirm = window.confirm;"
                alertConfirm += "window.alert = old_alert;"
                alertConfirm += "window.confirm = old_confirm;"
+               if (alert)
+                  alertConfirm += "window.onbeforeunload = null;"
+               end
                $curSoda.browser.document.parentWindow.eval(alertConfirm + "\n")
             end
          end
