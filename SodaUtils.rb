@@ -705,6 +705,12 @@ end
 # Returns:
 #     -1 on error else 0.
 #
+# Notes:
+#     I had to split up how Windows OS finds the windows, because Watir's 
+#     browser.url() method returns '' every time if there are more then
+#     one window open.  This is not the cause it Linux, as linux seems to 
+#     know what the current active browser is and returns the expected url.
+#
 ###############################################################################
 def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    done = false
