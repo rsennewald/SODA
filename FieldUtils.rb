@@ -56,13 +56,8 @@ module FieldUtils
          info =~ /#\<\w+::(\w+):/
          elm_type = "#{$1}"
          msg << "#{elm_type}:"
-
-         info = info.split(/\s/)
-         info.each do |i|
-            if (i =~ /how/i)
-               msg << " #{i}"
-            end
-         end
+         info =~ /how=(\{.*\})/i
+         msg << " #{$1}"
       rescue Exception => e
          reporter.ReportException(e, true)
          msg = nil
