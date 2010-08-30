@@ -649,6 +649,33 @@ HTML
       return row_data
    end
 
+
+###############################################################################
+# FormatClickingElement -- Method
+#     This method finds the replace string message and reformats it a little.
+#
+# Input:
+#     line: a soda log file line.
+#
+# Output:
+#     a row_data hash.
+#
+###############################################################################
+   def FormatClickingElement(line)
+      row_data = {}
+      tmp = ""
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      row_data['date'] = "#{$1}"
+      row_data['msg_type'] = "#{$2}"
+      tmp = "#{$3}"
+      tmp = SafeHTMLStr("#{tmp}")
+      tmp = tmp.gsub(/\{/, "<b>{")
+      tmp = tmp.gsub(/\}/, "}</b>")
+      row_data['msg'] = "#{tmp}"
+
+      return row_data
+   end
+
 ###############################################################################
 # GenerateTableRow -- Method
 #     This function generates a new html table row from a row log line.
@@ -692,6 +719,10 @@ HTML
             row_data = FormatModuleLine("lib", line)
          when /replacing string/i
             row_data = FormatReplacingString(line)
+         when /clicking\selement:/i
+            row_data = FormatClickingElement(line)
+         when /setting\selement:/i
+            row_data = FormatClickingElement(line)
          else
             line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
             row_data['date'] = "#{$1}"
