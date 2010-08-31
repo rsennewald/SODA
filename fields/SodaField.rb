@@ -65,8 +65,6 @@ require 'FieldUtils'
       elm_type = nil
       msg = "Firing JavaScript Event: '#{jsevent}' for Element: "
 
-      print "Wait: #{wait}\n"
-
       begin
          tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
          tmp = "Unknown" if (tmp == nil)
@@ -247,12 +245,13 @@ require 'FieldUtils'
 #
 # Params:
 #     field: This is the watir object to click.
+#     sugarwait: true/false, will calling SodaUtils.WaitSugarAjaxDone if true.
 #
 # Results:
 #     Always returns 0
 #
 ###############################################################################
-   def self.click(field, type = "")
+   def self.click(field, sugarwait = false)
       result = 0
       msg = "Clicking element: "
             
@@ -272,6 +271,10 @@ require 'FieldUtils'
          $curSoda.rep.log("#{msg}#{tmp}.\n")
          field.click()
          $curSoda.browser.wait()
+
+         if (sugarwait)
+            SodaUtils.WaitSugarAjaxDone($curSoda.browser, $curSoda.rep)
+         end
       rescue Exception => e
          result = -1
          $curSoda.rep.ReportException(e, true)

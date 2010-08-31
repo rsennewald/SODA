@@ -252,6 +252,8 @@ Optional Flags:
 
    --rerun: This will cause failed tests to be rerun.
 
+   --sugarwait: This enables the auto sugarwait functionality for every click.
+
    --help:  Prints this message and exits.
 
 HLP
@@ -476,6 +478,7 @@ def Main
    test_files = []
    hijacks = {}
    params = {
+      'sugarwait' => false,
       'verbose' => false,
       'browser' => nil,
       'debug' => false,
@@ -527,12 +530,15 @@ def Main
                [ '--gvar', '-g', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--suite', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--summery', '-k', GetoptLong::OPTIONAL_ARGUMENT ],
-               [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ]
+               [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ],
+               [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ]
             )
 
       opts.quiet = true
       opts.each do |opt, arg|
          case opt
+            when "--sugarwait"
+               params['sugarwait'] = true
             when "--help"
                PrintHelp()
             when "--browser"

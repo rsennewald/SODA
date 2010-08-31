@@ -99,6 +99,7 @@ class Soda
       @whiteList = []
       @white_list_file = ""
       @TEST_COUNT = 0
+      @SugarWait = false
       @FAILEDTESTS = []
       @vars = Hash.new
       blocked_file_list = "scripts/sugarcrm/modules/blockScriptList.xml"
@@ -128,6 +129,10 @@ class Soda
 
       if (params['hijacks'] != nil)
          @hiJacks = params['hijacks']
+      end
+
+      if (params.key?('sugarwait'))
+         @SugarWait = params['sugarwait']
       end
 
       # stack of elements allowing for parent child hierchy
@@ -1832,7 +1837,7 @@ JSCode
                @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)     
             end
          when "button"
-            fieldType.click(@curEl, "button")
+            fieldType.click(@curEl, @SugarWait)
             @browser.wait()
             if (event['assertPage'] == nil || event['assertPage'] != "false")
                assertPage()
@@ -1845,7 +1850,7 @@ JSCode
                end
                fieldType.jsevent(@curEl, js, jswait)
             end
-            fieldType.click(@curEl, "link")
+            fieldType.click(@curEl, @SugarWait)
             @browser.wait()
             if (event['assertPage'] == nil || event['assertPage'] != "false")
                assertPage()
@@ -1875,7 +1880,7 @@ JSCode
          when "radio"
             if (!fieldType.getStringTrue(event['set']) && 
                   @autoClick[event['do']])
-               fieldType.click(@curEl, "radio")   
+               fieldType.click(@curEl, @SugarWait)
                @browser.wait()
             end
          when "click"
@@ -1883,7 +1888,7 @@ JSCode
                   (!event.key?('click') && @autoClick[event['do']]) )
 
                PrintDebug("Performing click\n")
-               fieldType.click(@curEl, "#{event['do']}")
+               fieldType.click(@curEl, @SugarWait)
                @browser.wait()
                if (event['assertPage'] == nil || event['assertPage'] != "false")
                   assertPage()
