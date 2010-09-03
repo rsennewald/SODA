@@ -273,11 +273,7 @@ require 'FieldUtils'
          $curSoda.browser.wait()
 
          if (sugarwait)
-            t1 = Time.now()
             SodaUtils.WaitSugarAjaxDone($curSoda.browser, $curSoda.rep)
-            t2 = Time.now()
-            t1 = t2 - t1
-            $curSoda.rep.log("SugarWait Execution Time: #{t1}\n")
          end
       rescue Exception => e
          result = -1
