@@ -718,6 +718,9 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    undef_count = 0
    url = browser.url()
    os = ""
+   str_res = ""
+   t1 = nil
+   t2 = nil
 
    os = GetOsType()
 
@@ -773,6 +776,7 @@ print(result);
 JAVA
 
    reportobj.log("Calling: SugarWait.\n")
+   t1 = Time.now()
 
    for i in 0..300
       tmp = browser.js_eval(js)
@@ -781,9 +785,12 @@ JAVA
       case (tmp)
          when /false/i
             tmp = false
+            str_res = "false"
          when /true/i
             tmp = true
+            str_res = "true"
          when /undefined/i
+            str_res = "Undefined"
             tmp = nil
             undef_count += 1
          else
@@ -805,6 +812,12 @@ JAVA
 
       sleep(0.5)
    end
+
+   t2 = Time.now()
+   t1 = t2 - t1
+
+   msg = "WaitSugarAjaxDone: Result: #{str_res}, Total Time: #{t1}\n"
+   reportobj.log(msg)
 
    if (done)
       result = 0
