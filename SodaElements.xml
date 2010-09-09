@@ -32,41 +32,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
    <var>
       <accessor_attributes>
-         <accessor>set</accessor>
-         <accessor>var</accessor>
+         <accessor type="string">set</accessor>
+         <accessor type="string">var</accessor>
       </accessor_attributes> 
    </var>
 
    <script>
       <accessor_attributes>
-         <accessor>file</accessor>
-         <accessor>fileset</accessor>
+         <accessor type="string">file</accessor>
+         <accessor type="string">fileset</accessor>
       </accessor_attributes> 
    </script>
 
    <csv>
       <accessor_attributes>
-         <accessor>file</accessor>
-         <accessor>var</accessor>
+         <accessor type="string">file</accessor>
+         <accessor type="string">var</accessor>
       </accessor_attributes> 
    </csv>
 
    <wait>
        <accessor_attributes>
-         <accessor>timeout</accessor>
-         <accessor>condition</accessor>
+         <accessor type="integer">timeout</accessor>
+         <accessor type="string">condition</accessor>
       </accessor_attributes>
    </wait>
 
    <puts>
       <accessor_attributes>
-         <accessor>text</accessor>
+         <accessor type="string">text</accessor>
       </accessor_attributes>
    </puts>
 
    <filefield>
       <accessor_attributes>
-         <accessor>set</accessor>
+         <accessor type="string">set</accessor>
       </accessor_attributes>
    </filefield>
 
@@ -75,74 +75,74 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </accessor_attributes>
 
       <soda_attributes>
-         <action>
+         <action type="selection">
             <name>close</name>
             <name>back</name>
             <name>refresh</name>
             <name>forward</name>
          </action>
 
-         <accessor>assertnot</accessor>
-         <accessor>assert</accessor>
-         <accessor>url</accessor>
-         <accessor>send_keys</accessor>
-         <accessor>assertPage</accessor>
+         <accessor type="string">assertnot</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">url</accessor>
+         <accessor type="string">send_keys</accessor>
+         <accessor type="boolean">assertPage</accessor>
       </soda_attributes>
    </browser>
 
    <textfield>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
       <soda_attributes>
-         <accessor>set</accessor>
-         <accessor>click</accessor>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
-         <accessor>default</accessor>
-         <accessor>clear</accessor>
-         <accessor>exist</accessor>
-         <accessor>timeout</accessor>
-         <accessor>required</accessor>
-         <accessor>jscriptevent</accessor>
-         <accessor>jswait</accessor>
+         <accessor type="string">set</accessor>
+         <accessor type="boolean">click</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
+         <accessor type="boolean">default</accessor>
+         <accessor type="boolean">clear</accessor>
+         <accessor type="boolean">exist</accessor>
+         <accessor type="integer">timeout</accessor>
+         <accessor type="boolean">required</accessor>
+         <accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">jswait</accessor>
       </soda_attributes>
    </textfield>
 
    <textarea>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
       <soda_attributes>
-         <accessor>set</accessor>
-         <accessor>assert</accessor>
-         <accessor>timeout</accessor>
-         <accessor>required</accessor>
+         <accessor type="string">set</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">timeout</accessor>
+         <accessor type="boolean">required</accessor>
       </soda_attributes>
    </textarea>
 
 	<h3>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -151,13 +151,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<label>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>for</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">for</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -166,37 +166,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<button>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>src</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">src</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>click</accessor>
-         <accessor>exists</accessor>
-         <accessor>exist</accessor>
-         <accessor>alert</accessor>
-         <accessor>required</accessor>
-         <accessor>timeout</accessor>
-         <accessor>jscriptevent</accessor>
-         <accessor>jswait</accessor>
-         <accessor>assertPage</accessor>
+         <accessor type="boolean">click</accessor>
+         <accessor type="boolean">exists</accessor>
+         <accessor type="boolean">exist</accessor>
+         <accessor type="boolean">alert</accessor>
+         <accessor type="boolean">required</accessor>
+         <accessor type="integer">timeout</accessor>
+         <accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">jswait</accessor>
+         <accessor type="string">assertPage</accessor>
 		</soda_attributes>
 	</button>
 
 	<h4>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -205,12 +205,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<ul>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -219,29 +219,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<filefield>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>title</accessor>
-			<accessor>class</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">title</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>set</accessor>
+			<accessor type="string">set</accessor>
 		</soda_attributes>
 	</filefield>
 
 	<file_field>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>title</accessor>
-			<accessor>class</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">title</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -250,44 +250,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<h5>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
 		</soda_attributes>
 	</h5>
 
 	<cell>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
 		</soda_attributes>
 	</cell>
 
 	<h6>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -296,50 +296,50 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
    <select>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
       <soda_attributes>
-         <accessor>set</accessor>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
-         <accessor>required</accessor>
-         <accessor>include</accessor>
-         <accessor>noninclude</accessor>
+         <accessor type="string">set</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
+         <accessor type="boolean">required</accessor>
+         <accessor type="string">include</accessor>
+         <accessor type="string">noninclude</accessor>
       </soda_attributes>
 	</select>
 
 
 	<select_list>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>set</accessor>
+         <accessor type="string">set</accessor>
 		</soda_attributes>
 	</select_list>
 
 	<pre>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -348,12 +348,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<row>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -362,45 +362,45 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<table>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>required</accessor>
-         <accessor>exist</accessor>
+         <accessor type="boolean">required</accessor>
+         <accessor type="boolean">exist</accessor>
 		</soda_attributes>
 	</table>
 
 	<radio>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>set</accessor>
-         <accessor>click</accessor>
+         <accessor type="string">set</accessor>
+         <accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</radio>
 
 	<p>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -409,34 +409,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<checkbox>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>set</accessor>
-			<accessor>click</accessor>
-			<accessor>assert</accessor>
-			<accessor>assertnot</accessor>
-			<accessor>timeout</accessor>
-			<accessor>required</accessor>
+			<accessor type="string">set</accessor>
+			<accessor type="boolean">click</accessor>
+			<accessor type="string">assert</accessor>
+			<accessor type="string">assertnot</accessor>
+			<accessor type="integer">timeout</accessor>
+			<accessor type="boolean">required</accessor>
 		</soda_attributes>
 	</checkbox>
 
 	<map>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -445,12 +445,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<frame>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>src</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">src</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -459,46 +459,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<form>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>method</accessor>
-			<accessor>action</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">method</accessor>
+			<accessor type="string">action</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>exist</accessor>
+			<accessor type="boolean">exist</accessor>
 		</soda_attributes>
 	</form>
 
 	<div>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>exist</accessor>
-         <accessor>click</accessor>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
+         <accessor type="boolean">exist</accessor>
+         <accessor type="boolean">click</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
 		</soda_attributes>
 	</div>
 
 	<area>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -507,51 +507,51 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<li>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>click</accessor>
+			<accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</li>
 
 	<link>
 		<accessor_attributes>
-			<accessor>href</accessor>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">href</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>click</accessor>
-			<accessor>alert</accessor>
-			<accessor>exist</accessor>
-			<accessor>exists</accessor>
-			<accessor>timeout</accessor>
-			<accessor>required</accessor>
-			<accessor>jscriptevent</accessor>
-         <accessor>jswait</accessor>
-			<accessor>assertPage</accessor>
+			<accessor type="boolean">click</accessor>
+			<accessor type="boolean">alert</accessor>
+			<accessor type="boolean">exist</accessor>
+			<accessor type="boolean">exists</accessor>
+			<accessor type="integer">timeout</accessor>
+			<accessor type="boolean">required</accessor>
+			<accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">jswait</accessor>
+			<accessor type="boolean">assertPage</accessor>
 		</soda_attributes>
 	</link>
 
 	<h1>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -560,46 +560,46 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<image>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>src</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>alt</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">src</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">alt</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>click</accessor>
+         <accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</image>
 
 	<h2>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>click</accessor>
+         <accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</h2>
 
 	<text_field>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
@@ -608,38 +608,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<span>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-         <accessor>assert</accessor>
-         <accessor>assertnot</accessor>
-         <accessor>vartext</accessor>
-         <accessor>click</accessor>
-         <accessor>jscriptevent</accessor>
-         <accessor>jswait</accessor>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
+         <accessor type="string">vartext</accessor>
+         <accessor type="boolean">click</accessor>
+         <accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">jswait</accessor>
 		</soda_attributes>
 	</span>
 
 	<hidden>
 		<accessor_attributes>
-			<accessor>name</accessor>
-			<accessor>class</accessor>
-			<accessor>method</accessor>
-			<accessor>text</accessor>
-			<accessor>id</accessor>
-			<accessor>value</accessor>
-			<accessor>index</accessor>
-			<accessor>xpath</accessor>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">method</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">value</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
 		</accessor_attributes>
 
 		<soda_attributes>
-			<accessor>var</accessor>
+			<accessor type="string">var</accessor>
 		</soda_attributes>
 	</hidden>
 
