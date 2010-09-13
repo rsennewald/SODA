@@ -149,6 +149,7 @@ def GenerateReportData(files)
       hash['test_file'] = ""
       hash['log_file'] = "#{f}"
       hash['report_hash'] = nil
+      hash['total_tests'] = 0
 
       print "(*)Opening file: #{f}\n"
       logfd = File.open(f, "r")
@@ -229,6 +230,7 @@ def GenHtmlReport(data, reportfile, create_links = false)
    totals['Test Assert Count'] = 0
    totals['Test Exceptions'] = 0
    totals['Test Major Exceptions'] = 0
+   totals['Test Count'] = 0
    totals['running_time'] = nil
 
    begin
@@ -328,6 +330,7 @@ table
 <tr class="tr_header">
 \t<td>Test File:<br>
 \tClick link for full report</td>
+\t<td>Test Count:</td>
 \t<td>Failure Count:</td>
 \t<td>CSS Error Count:</td>
 \t<td>JavaScript Error Count:</td>
@@ -359,6 +362,7 @@ HTML
          rpt['report_hash']['Test Exceptions'].to_i()
       totals['Test Major Exceptions'] +=
          rpt['report_hash']['Test Major Exceptions'].to_i()
+      totals['Test Count'] += rpt['report_hash']['Test Count'].to_i()
 
       start_time = DateTime.strptime("#{rpt['test_start_time']}",
          "%m/%d/%Y-%H:%M:%S")
@@ -375,7 +379,8 @@ HTML
       rpt['report_hash'].each do |k,v|
          if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
                (k !~ /test\s+event\s+count/i) && 
-               (k !~ /css\s+error\s+count/i) )
+               (k !~ /css\s+error\s+count/i) &&
+               (k !~ /test\s+count/i))
             tmp = '<font color="#FF0000"><b>'
             tmp += "#{v}</b></font>"
             rpt['report_hash'][k] = tmp
@@ -400,6 +405,7 @@ HTML
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='tr_normal'\">\n" +
          "\t<td class=\"td_file\">#{log_file_td}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test Failure Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test CSS Error Count']}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n" +
@@ -418,7 +424,9 @@ HTML
    totals.each do |k,v|
       if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
             (k !~ /test\s+event\s+count/i) && 
-            (k !~ /css\s+error\s+count/i) )
+            (k !~ /css\s+error\s+count/i) &&
+            (k !~ /test\s+count/i) )
+
          tmp = '<font color="#FF0000"><b>'
          tmp += "#{v}</b></font>"
          totals[k] = tmp
@@ -427,6 +435,7 @@ HTML
 
    sub_totals = "<tr class=\"tr_header\">\n"+
       "\t<td>Totals:</td>\n"+
+      "\t<td>#{totals['Test Count']}</td>\n"+
       "\t<td>#{totals['Test Failure Count']}</td>\n"+
       "\t<td>#{totals['Test CSS Error Count']}</td>\n"+
       "\t<td>#{totals['Test JavaScript Error Count']}</td>\n"+

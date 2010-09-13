@@ -397,7 +397,7 @@ class SodaReporter
 #     None.
 #
 ###############################################################################
-   def SodaPrintCurrentReport
+   def SodaPrintCurrentReport(test_count = nil)
       msg = "Soda Test Report:" + 
          "--Test File:#{@sodatest_file}" +
          "--Test Failure Count:#{@failureCount}" +
@@ -407,7 +407,13 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}" +
-         "--Test Major Exceptions: #{@exception_major_count}\n"
+         "--Test Major Exceptions: #{@exception_major_count}"
+
+         if (test_count != nil && test_count > 0)
+            msg << "--Test Count:#{test_count}"
+         end
+
+         msg << "\n"
          log(msg)
 	end
 

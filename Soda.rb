@@ -2376,8 +2376,7 @@ JSCode
          @rep.ReportFailure(msg)
       end
 
-      PrintDebug("Test Count: #{@TEST_COUNT}\n")
-      @rep.SodaPrintCurrentReport()
+      @rep.SodaPrintCurrentReport(@TEST_COUNT)
       @rep.EndTestReport()
       @rep.ReportHTML()
 
