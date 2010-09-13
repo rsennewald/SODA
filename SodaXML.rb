@@ -112,7 +112,7 @@ class SodaXML
          doc = parser.parse()
          data = processChildren(doc.root) 
       rescue Exception => e
-         $curSoda.rep.log("Failed to prase XML file: \"#{file}\"!\n",
+         $curSoda.rep.log("Failed to parse XML file: \"#{file}\"!\n",
             SodaUtils::ERROR)
          $curSoda.rep.ReportException(e, true, file)
 
