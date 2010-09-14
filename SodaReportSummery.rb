@@ -437,6 +437,7 @@ HTML
       end
    end
 
+   test_totals = totals['Test Count'] + totals['Test Skip Count']
    sub_totals = "<tr class=\"tr_header\">\n"+
       "\t<td>Totals:</td>\n"+
       "\t<td>#{totals['Test Count']}</td>\n"+
@@ -450,7 +451,10 @@ HTML
       "\t<td>#{totals['Test Exceptions']}</td>\n"+
       "\t<td>#{totals['Test Major Exceptions']}</td>\n"+
       "\t<td>#{hours}:#{minutes}:#{seconds}</td>\n"+
-      "</tr>\n"
+      "</tr>\n" +
+      "<tr class=\"tr_header\">\n"+
+      "\t<td>Total Test Count:</td>\n"+
+      "\t<td colspan=\"2\">#{test_totals}</td>\n</tr>\n"
 
    fd.write(sub_totals)
    fd.write("</table>\n</body>\n</html>\n")
@@ -459,7 +463,6 @@ HTML
    return result
 
 end
-
    private :GenHtmlReport
 
 end
