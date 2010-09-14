@@ -231,6 +231,7 @@ def GenHtmlReport(data, reportfile, create_links = false)
    totals['Test Exceptions'] = 0
    totals['Test Major Exceptions'] = 0
    totals['Test Count'] = 0
+   totals['Test Skip Count'] = 0
    totals['running_time'] = nil
 
    begin
@@ -331,6 +332,7 @@ table
 \t<td>Test File:<br>
 \tClick link for full report</td>
 \t<td>Test Count:</td>
+\t<td>Test Skip Count:</td>
 \t<td>Failure Count:</td>
 \t<td>CSS Error Count:</td>
 \t<td>JavaScript Error Count:</td>
@@ -363,6 +365,7 @@ HTML
       totals['Test Major Exceptions'] +=
          rpt['report_hash']['Test Major Exceptions'].to_i()
       totals['Test Count'] += rpt['report_hash']['Test Count'].to_i()
+      totals['Test Skip Count'] += rpt['report_hash']['Test Skip Count'].to_i()
 
       start_time = DateTime.strptime("#{rpt['test_start_time']}",
          "%m/%d/%Y-%H:%M:%S")
@@ -406,6 +409,7 @@ HTML
          "onMouseOut=\"this.className='tr_normal'\">\n" +
          "\t<td class=\"td_file\">#{log_file_td}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test Count']}</td>\n"+
+         "\t<td>#{rpt['report_hash']['Test Skip Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test Failure Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test CSS Error Count']}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n" +
@@ -436,6 +440,7 @@ HTML
    sub_totals = "<tr class=\"tr_header\">\n"+
       "\t<td>Totals:</td>\n"+
       "\t<td>#{totals['Test Count']}</td>\n"+
+      "\t<td>#{totals['Test Skip Count']}</td>\n"+
       "\t<td>#{totals['Test Failure Count']}</td>\n"+
       "\t<td>#{totals['Test CSS Error Count']}</td>\n"+
       "\t<td>#{totals['Test JavaScript Error Count']}</td>\n"+

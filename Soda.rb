@@ -45,6 +45,7 @@ require "SodaReporter"
 require "SodaCSV"
 require "SodaXML"
 require 'SodaFireFox'
+require 'SodaTestCheck'
 require "utils/sodalookups"
 require "fields/SodaField"
 require "fields/TextField"
@@ -98,7 +99,6 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
-      @TEST_COUNT = 0
       @SugarWait = false
       @FAILEDTESTS = []
       @vars = Hash.new
@@ -696,6 +696,7 @@ class Soda
    def getScript(file)
       script = nil
       valid_xml = true
+      script_check = false
 
       if (!File.extname(file) == '.xml')
           msg = "Failed trying to parse file: \"#{file}\": Not a valid " +
@@ -708,12 +709,18 @@ class Soda
       if (valid_xml)
          $run_script = file
          PrintDebug("Parsing Soda test file: \"#{file}\".\n")
-
          begin
-            script = SodaXML.new.parse(file)
+            checker = SodaTestCheck.new(file, @rep)
+            script_check = checker.Check()
+
+            if (!script_check)
+               script = nil
+               @rep.IncSkippedTest()
+            else
+               script = SodaXML.new.parse(file)
+            end
          rescue Exception => e
-            @rep.ReportException(e, true, file, 
-               "Failed trying to parse XML file!\n")
+            @rep.ReportException(e, true, file)
          ensure
          end
       end
@@ -768,7 +775,7 @@ class Soda
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
-               @TEST_COUNT += 1
+               @rep.IncTestCount()
                results = handleEvents(script)
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
@@ -2376,7 +2383,7 @@ JSCode
          @rep.ReportFailure(msg)
       end
 
-      @rep.SodaPrintCurrentReport(@TEST_COUNT)
+      @rep.SodaPrintCurrentReport()
       @rep.EndTestReport()
       @rep.ReportHTML()
 

@@ -57,6 +57,8 @@ class SodaReporter
 		@exception_major_count = 0
 		@assertFails_count = 0
 		@exception_count = 0	
+      @test_count = 0
+      @test_skip_count = 0
 		@fatals = 0
 		@total = 0
       @failureCount = 0
@@ -110,6 +112,39 @@ class SodaReporter
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
 	end
+
+
+###############################################################################
+# IncSkippedTest -- Method
+#     This method incerments the count by 1 for tests that were skipped.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncSkippedTest()
+      @test_skip_count += 1
+   end
+   public :IncSkippedTest
+
+###############################################################################
+# IncTestCount -- Method
+#     This method incerments the count by 1 for tests that were ran
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestCount()
+      @test_count += 1
+   end
+   public :IncTestCount
 
 ###############################################################################
 # ReportHTML -- Method
@@ -397,7 +432,7 @@ class SodaReporter
 #     None.
 #
 ###############################################################################
-   def SodaPrintCurrentReport(test_count = nil)
+   def SodaPrintCurrentReport()
       msg = "Soda Test Report:" + 
          "--Test File:#{@sodatest_file}" +
          "--Test Failure Count:#{@failureCount}" +
@@ -407,13 +442,9 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}" +
-         "--Test Major Exceptions: #{@exception_major_count}"
-
-         if (test_count != nil && test_count > 0)
-            msg << "--Test Count:#{test_count}"
-         end
-
-         msg << "\n"
+         "--Test Major Exceptions: #{@exception_major_count}" +
+         "--Test Count:#{@test_count}" +
+         "--Test Skip Count:#{@test_skip_count}\n"
          log(msg)
 	end
 
