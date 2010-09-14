@@ -643,5 +643,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</soda_attributes>
 	</hidden>
 
+   <whitelist>
+      <soda_attributes>
+         <accessor type="string">add</accessor>
+         <accessor type="string">delete</accessor>
+         <accessor type="string">name</accessor>
+      </soda_attributes>
+   </whitelist>
+
 </soda>
 

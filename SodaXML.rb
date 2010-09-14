@@ -74,6 +74,8 @@ class SodaXML
                cur['content'] = child.content
             when /comment/i
                cur['content'] = child.content
+            when /whitelist/i
+               cur['content'] = child.content
          end
 
 			child.attributes.each do | attribute |

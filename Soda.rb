@@ -1448,6 +1448,85 @@ class Soda
       
    end
 
+############################################################################### 
+# eventWhiteList -- Method
+#     This method handles the whitelist soda event, by adding or deleting a
+#     item to the whitelist at runtime.
+#
+# Input:
+#     event: A soda whitelist event.
+#
+# Output:
+#     None.
+#
+############################################################################### 
+   def eventWhiteList(event)
+      err = 0
+
+      if (!event.key?('name'))
+         @rep.ReportFailure("Missing 'name' attribute for whitelist tag!"+
+            "  Line number: #{event['line_number']}!\n")
+         err = -1
+      elsif (!event.key?('action'))
+         @rep.ReportFailure("Missing 'action' attribute for whitelist tag!"+
+            "  Line number: #{event['line_number']}!\n")
+         err = -1
+      elsif (!event.key?('content') && event['action'] =~ /add/i)
+          @rep.ReportFailure("Missing 'content' for whitelist tag!"+
+            "  Line number: #{event['line_number']}!\n")
+          err = -1
+      end
+
+      return if (err != 0)
+
+      case (event['action'])
+         when /add/i
+            found_key = false
+
+            @whiteList.each do |hash|
+               next if (!hash.key?(event['name']))
+               if (hash.key?(event['name']))
+                  found_key = true
+                  break
+               end
+            end      
+            
+            if (found_key)
+               @rep.ReportFailure("Trying to add whitelist that already"+
+                  " exists: '#{event['name']}'!\n")
+            else
+               new_white = {
+                  'name' => event['name'],
+                  'data' => event['content']
+               }
+
+               @whiteList.push(new_white)
+               @rep.log("Adding data to whitelist: '#{new_white['name']}'.\n")
+            end
+         when /delete/i
+            index = -1
+            found_key = false
+
+            @whiteList.each do |hash|
+               index += 1
+               next if (!hash.key?('name'))
+               if (hash['name'] == event['name'])
+                  found_key = true
+                  break
+               end
+            end
+
+            if (found_key)
+               @whiteList.delete_at(index)
+            else
+               @rep.ReportFailure("Failed to find whitelist name: "+
+                  "'#{event['name']}'!\n")
+            end
+      end
+   end
+
+############################################################################### 
+############################################################################### 
    def eventRuby(event)
       result = 0
 
@@ -2129,6 +2208,9 @@ JSCode
             case event['do']
                when "breakexit"
                   @breakExit = true
+                  next
+               when "whitelist"
+                  eventWhiteList(event)
                   next
                when "sugarwait"
                   SodaUtils.WaitSugarAjaxDone(@browser, @rep)
