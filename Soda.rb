@@ -2422,6 +2422,7 @@ JSCode
       thread_timeout = (60 * 5) # 5 minutes #
       time_check = nil
 
+      @currentTestFile = file
       @exceptionExit = false      
       @fileStack.push(file)
       @rep = SodaReporter.new(file, @saveHtml, @resultsDir, 0, nil, rerun);
