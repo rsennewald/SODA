@@ -230,8 +230,9 @@ class SodaTestCheck
     
       sodadata.each do |test_hash|
          if (!test_hash.key?('do'))
-            print "(!)Error: Failed to find expected test do element for test:"+
-               " #{file}, line: #{test_hash['line_number']}!\n"
+            @report.ReportFailure("Failed to find expected test do "+
+               "element for test: #{file}, line: #{test_hash['line_number']}"+
+               "!\n")
             next
          end
 
@@ -240,8 +241,9 @@ class SodaTestCheck
          test_hash.delete('do')
 
          if (!supported.key?("#{test_element}"))
-            print "(!)Error: Failed to find a supported Soda element for:"+
-               " '#{test_element}', line: #{test_hash['line_number']}!\n"
+            @report.ReportFailure("Failed to find a supported Soda"+
+               " element for: '#{test_element}', line: "+
+               "#{test_hash['line_number']}!\n")
                $ERROR_COUNT += 1
             next
          end
@@ -280,10 +282,10 @@ class SodaTestCheck
                      end
 
                      if (!found_soda_accrssor)
-                        print "(!)Error: Faild to find supported action for "+
-                           "Soda element: '#{test_element}', attribte: "+
+                        @report.ReportFailure("Faild to find supported action"+
+                        " for Soda element: '#{test_element}', attribte: "+
                            "'#{test_key}', action: '#{test_value}', line:"+
-                           " #{test_hash['line_number']}!\n"
+                           " #{test_hash['line_number']}!\n")
 
                            $ERROR_COUNT += 1
                         break
@@ -293,9 +295,10 @@ class SodaTestCheck
             end
 
             if ( (found_accessor != true) && (found_soda_accrssor != true) )
-               print "(!)Error: Failed to find supported accessor: '#{test_key}'"+
+               @report.ReportFailure("(!)Error: Failed to find supported "+
+                  "accessor: '#{test_key}'"+
                   " for Soda element: '#{test_element}', line: "+
-                  "#{test_hash['line_number']}!\n"
+                  "#{test_hash['line_number']}!\n")
 
                $ERROR_COUNT += 1
             end
@@ -325,7 +328,7 @@ class SodaTestCheck
          fd.close()
 
          if (line =~ /\r\n$/)
-            @report.log("(!)Error: File is in DOS format!\n", SodaUtils::WARN)
+            @report.ReportFailure("File is in DOS format!\n")
             err += 1
          end
       rescue Exception => e
