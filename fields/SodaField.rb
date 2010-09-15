@@ -254,7 +254,9 @@ require 'FieldUtils'
    def self.click(field, sugarwait = false)
       result = 0
       msg = "Clicking element: "
-            
+      retry_count = 10
+      i = 0
+
       begin
          self.focus(field)
       rescue Exception => e
@@ -263,22 +265,35 @@ require 'FieldUtils'
          end
       ensure
       end
-      
-      begin
-         tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
-         tmp = "Unknown" if (tmp == nil) 
 
-         $curSoda.rep.log("#{msg}#{tmp}.\n")
-         field.click()
-         $curSoda.browser.wait()
+      for i in 0..retry_count
+         result = 0
 
-         if (sugarwait)
-            SodaUtils.WaitSugarAjaxDone($curSoda.browser, $curSoda.rep)
+         begin
+            tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
+            tmp = "Unknown" if (tmp == nil) 
+
+            $curSoda.rep.log("#{msg}#{tmp}.\n")
+            field.click()
+            $curSoda.browser.wait()
+
+            if (sugarwait)
+               SodaUtils.WaitSugarAjaxDone($curSoda.browser, $curSoda.rep)
+            end
+         rescue Exception => e
+            result = -1
+
+            if (e.message !~ /missing ; before statement/i)
+               $curSoda.rep.ReportException(e, true)
+               break
+            else
+               sleep(1)
+            end
+         ensure
          end
-      rescue Exception => e
-         result = -1
-         $curSoda.rep.ReportException(e, true)
-      ensure
+
+         break if (result == 0)
+         $curSoda.rep.log("Retying: #{i}\n", SodaUtils::WARN)
       end
 
       $curSoda.rep.log("Click finished.\n")
