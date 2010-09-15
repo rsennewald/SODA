@@ -356,7 +356,19 @@ class Soda
 ###############################################################################
    def setScriptVar(name, value)
       @vars[name] = value
-      PrintDebug("Setting key: \"#{name}\" => \"#{value}\"\n")
+      msg = "Setting key: \"#{name}\" =>"
+
+      if (value.instance_of?(Hash))
+         msg << " Hash:{"
+         value.each do |k ,v|
+            msg << "'#{k}'=>'#{v}',"
+         end
+         msg = msg.chop()
+         msg << "}\n"
+         PrintDebug(msg)
+      else
+         PrintDebug("#{msg} \"#{value}\"\n")
+      end
    end
 
 ###############################################################################
