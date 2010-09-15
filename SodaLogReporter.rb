@@ -187,10 +187,10 @@ table
 <body>
 <table>
 <tr class="tr_header">
-   <td>
+   <td nowrap>
    Date Time:
    </td>
-   <td>
+   <td nowrap>
    Message Type:
    </td>
    <td>
