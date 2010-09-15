@@ -364,11 +364,12 @@ class Soda
             msg << "'#{k}'=>'#{v}',"
          end
          msg = msg.chop()
-         msg << "}\n"
-         PrintDebug(msg)
+         msg << "}\n" 
       else
-         PrintDebug("#{msg} \"#{value}\"\n")
+         msg << " \"#{value}\"\n"
       end
+
+      PrintDebug(msg)
    end
 
 ###############################################################################
