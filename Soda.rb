@@ -2457,6 +2457,7 @@ JSCode
                if (time_diff >= thread_timeout)
                   msg = "Soda watchdog timed out after #{time_diff} seconds!\n"
                   @rep.ReportFailure(msg)
+                  @rep.SavePage("") if (@saveHtml)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
                   result = -1
