@@ -752,12 +752,21 @@ JAVA
    end
 
    js += <<JAVA
+   current_browser_id = 0;
 if (current_browser_id > -1) {
    var target = getWindows()[current_browser_id];
    var browser = target.getBrowser();
    var content = target.content;
    var doc = browser.contentDocument;
    var d = doc.createElement("script");
+   var tmp = null;
+
+   tmp = doc.getElementById("Sodahack");
+   if (tmp != null) {
+      doc.body.removeChild(tmp);
+   }
+   
+   d.setAttribute("id", "Sodahack");
    var src = "if (typeof SUGAR == 'undefined') {\n";
    src += "   document.soda_sugar_done = 'undefined';\n";
    src += "} else {\n";
