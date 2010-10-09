@@ -74,10 +74,10 @@ def initialize(dir ="", outfile = "", create_links = false)
       sleep(1)
    end
 
-   if (timeout != false)
-      raise "Timed out waiting for lock to be released on file:"+
-         " \"#{html_tmp_file}\"!\n"
-   end
+#   if (timeout != false)
+#      raise "Timed out waiting for lock to be released on file:"+
+#         " \"#{html_tmp_file}\"!\n"
+#   end
 
    log_files = GetLogFiles(dir)
    if ( (log_files == nil) || (log_files.length < 1) )
