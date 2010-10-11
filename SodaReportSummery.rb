@@ -64,7 +64,7 @@ def initialize(dir ="", outfile = "", create_links = false)
    html_tmp_file = File.dirname(outfile)
    html_tmp_file += "/summery.tmp"
 
-   for i in 0..200
+   for i in 0..120
       if (!File.exist?(html_tmp_file))
          timeout = false
          break
@@ -142,7 +142,6 @@ def GenerateReportData(files)
    files.each do |f|
       line = ""
       hash = Hash.new()
-
       hash['test_start_time'] = ""
       hash['test_end_time'] = ""
       hash['test_report_line'] = ""
@@ -437,6 +436,7 @@ HTML
       end
    end
 
+   totals['Test Skip Count'] = totals['Test Skip Count'].to_i()
    test_totals = totals['Test Count'] + totals['Test Skip Count']
    sub_totals = "<tr class=\"tr_header\">\n"+
       "\t<td>Totals:</td>\n"+
