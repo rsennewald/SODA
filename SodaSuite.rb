@@ -246,7 +246,7 @@ Optional Flags:
 
    --suite: This is a Soda suite xml test file.
 
-   --summery: This the the name of the summery file to output.
+   --summary: This the the name of the summary file to output.
 
    --debug: This turns on debug messages.
 
@@ -529,7 +529,7 @@ def Main
                [ '--profile', '-p', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--gvar', '-g', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--suite', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
-               [ '--summery', '-k', GetoptLong::OPTIONAL_ARGUMENT ],
+               [ '--summary', '-k', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ]
             )
@@ -561,7 +561,7 @@ def Main
                params['profile'] = arg
             when "--suite"
                params['suites'].push(arg)
-            when "--summery"
+            when "--summary"
                params['summaryfile'] = arg.to_s()
             when "--gvar"
                params['gvars'] = AddCmdArg2Hash(arg, params['gvars'])
@@ -599,7 +599,7 @@ def Main
       end
    
       if (params['summaryfile'] == nil)
-         params['summaryfile'] = "#{params['resultsdir']}/summery.html"
+         params['summaryfile'] = "#{params['resultsdir']}/summary.html"
       end
 
    end
