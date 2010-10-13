@@ -354,18 +354,22 @@ def Main()
    elements_root = nil
    elements_data = nil
    break_line = "#" * 80
+   skip = false
 
    $stderr.reopen($stdout) # because I'm evil.... #
 
    begin
       opts = GetoptLong.new(
             [ '--test', '-t', GetoptLong::REQUIRED_ARGUMENT ],
-            [ '--help', '-h', GetoptLong::OPTIONAL_ARGUMENT ]
+            [ '--help', '-h', GetoptLong::OPTIONAL_ARGUMENT ],
+            [ '--skipgood', '-s', GetoptLong::OPTIONAL_ARGUMENT]
          )
 
       opts.quiet = true
       opts.each do |opt, arg|
          case (opt)
+            when "--skipgood"
+               skip = true
             when "--test"
                tests.push(arg)
             when "--help"
@@ -396,8 +400,8 @@ def Main()
       $ERROR_COUNT = 0
       good_parse = false
 
-      print "#{break_line}\n"
-      print "(*)Checking File: #{test_file}\n"
+      print "#{break_line}\n" if(!skip)
+      print "(*)Checking File: #{test_file}\n" if (skip != true)
       CheckFileformat(test_file)
       sodadata = ProcessSodaTestFile(test_file)
       if (sodadata == nil)
@@ -412,18 +416,22 @@ def Main()
          CheckTest(sodadata, elements_data)
       end
 
-      print "(*)Error Count: #{$ERROR_COUNT}\n"
+      print "(*)Error Count: #{$ERROR_COUNT}\n" if (skip != true)
       if ($ERROR_COUNT == 0)
-         print "(*)Test Status: GOOD.\n"
-         md5 = CreateMD5Sum(test_file)
-         print "(*)MD5: #{md5}\n"
+         if (skip != true)
+            print "(*)Test Status: GOOD.\n"
+            md5 = CreateMD5Sum(test_file)
+            print "(*)MD5: #{md5}\n"
+         end
       else
          print "(*)Test Status: BAD!\n"
       end
       t = Time.now()
-      print "(*)Check Time: #{t}\n"
-      print "(*)Finished check.\n"
-      print "#{break_line}\n\n"
+      if (skip != true)
+         print "(*)Check Time: #{t}\n"
+         print "(*)Finished check.\n"
+         print "#{break_line}\n\n"
+      end
    end
    
 end
