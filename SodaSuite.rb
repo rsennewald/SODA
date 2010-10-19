@@ -491,7 +491,9 @@ def Main
       'test_files' => [],
       'hijacks' => {},
       'gvars' => [],
-      'errorskip' => []
+      'errorskip' => [],
+      'restart_count' => 0,
+      'restart_test' => ""
    }
 
    # turn off ruby i/o buffering #
@@ -531,12 +533,18 @@ def Main
                [ '--suite', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--summary', '-k', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ],
-               [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ]
+               [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ],
+               [ '--restartcount', '-1', GetoptLong::OPTIONAL_ARGUMENT ],
+               [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
       opts.quiet = true
       opts.each do |opt, arg|
          case opt
+            when "--restartcount"
+               params['restart_count'] = arg.to_i()
+            when "--restarttest"
+               params['restart_test'] = arg
             when "--sugarwait"
                params['sugarwait'] = true
             when "--help"
@@ -583,6 +591,13 @@ def Main
       SodaUtils.PrintSoda("Missing soda tests to run, try using --test=" +
          "<sodatestfile>!\n\n")
       PrintHelp()
+   end
+
+   if (params['debug'])
+      SodaUtils.PrintSoda("SodaSuite Params:\n")
+      params.each do |k, v|
+         SodaUtils.PrintSoda("'#{k}' => '#{v}'\n")
+      end
    end
 
    SodaUtils.PrintSoda("SodaSuite Settings:\n--)Browser:" +

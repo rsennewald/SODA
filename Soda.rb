@@ -99,6 +99,9 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
+      @restart_test = ""
+      @restart_count = 0
+      @non_lib_test_count = 0
       @SugarWait = false
       @FAILEDTESTS = []
       @vars = Hash.new
@@ -110,6 +113,7 @@ class Soda
          "ABRT",
          "KILL"
       ]
+      err = 0
      
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
@@ -126,6 +130,13 @@ class Soda
       end
 
       @sugarFlavor = @sugarFlavor.downcase()
+
+      if (params.key?('restart_count'))
+         @restart_count = params['restart_count'].to_i()
+         if (params.key?('restart_test'))
+            @restart_test = params['restart_test']
+         end
+      end
 
       if (params['hijacks'] != nil)
          @hiJacks = params['hijacks']
@@ -147,26 +158,53 @@ class Soda
          $win_only = true
       end
 
+      @autoClick = { 
+         "button" => true, 
+         "link" => true, 
+         "radio" => true
+      }
+     
+      @params = params
+      err = NewBrowser()
+      if (err != 0)
+         exit(-1)
+      end
+
+      # this is setup to allow other skips, but there should never really
+      # be any other type of error to skip.  The only reason why I added
+      # this skip is because a manager requested it.  In genernal skipping
+      # reporting errors is not a good thing and should never ever be done!
+      @params['errorskip'].each do |error|
+         case error
+            when /css/i
+               $skip_css_errors = true
+         end
+      end
+
+      @vars['stamp'] = getStamp()
+      @vars['currentdate'] = getDate()
+   end
+
+###############################################################################
+###############################################################################
+   def NewBrowser()
+      err = 0
+
       if ( @current_os =~ /WINDOWS/i && 
           params['browser'] =~ /ie|firefox/i ) 
          require 'win32ole'
          @autoit = WIN32OLE.new("AutoItX3.Control")
       end
 
-      if (params['browser']) 
-         Watir::Browser.default = params['browser']
+      if (@params['browser']) 
+         Watir::Browser.default = @params['browser']
       end
 
-      if (params['browser'] =~ /chrome/i)
-         print "(*)Using Chrome!!!\n"
-         require 'watir-webdriver'
-      end
-
-      if (params['browser'] =~ /firefox/i)
+      if (@params['browser'] =~ /firefox/i)
          for i in 0..2 do
-            if (params['profile'] != nil)
+            if (@params['profile'] != nil)
                result = SodaFireFox.CreateFireFoxBrowser(
-                  {:profile => "#{params['profile']}"})
+                  {:profile => "#{@params['profile']}"})
             else
                result = SodaFireFox.CreateFireFoxBrowser()
             end
@@ -186,7 +224,7 @@ class Soda
                "#{result['exception'].message}\n", SodaUtils::ERROR)
             SodaUtils.PrintSoda("BackTrace: #{result['exception'].backtrace}"+
                "\n", SodaUtils::ERROR)
-            exit(-1)
+            err = -1
          end
 
          @browser.execute_script(SodaUtils::FIREFOX_JS_ERROR_CLEAR)
@@ -194,27 +232,7 @@ class Soda
          @browser = Watir::Browser.new()
       end
 
-      @autoClick = { 
-         "button" => true, 
-         "link" => true, 
-         "radio" => true
-      }
-     
-      @params = params
-
-      # this is setup to allow other skips, but there should never really
-      # be any other type of error to skip.  The only reason why I added
-      # this skip is because a manager requested it.  In genernal skipping
-      # reporting errors is not a good thing and should never ever be done!
-      @params['errorskip'].each do |error|
-         case error
-            when /css/i
-               $skip_css_errors = true
-         end
-      end
-
-      @vars['stamp'] = getStamp()
-      @vars['currentdate'] = getDate()
+      return err
    end
 
 ###############################################################################
@@ -701,15 +719,17 @@ class Soda
 #
 # Params:
 #     file: A soda xml test file.
+#     is_restart: true/false, tells us that this is a restart test.
 #
 # Results:
 #     on success returns a LibXML::Parser Document, or nil on error.
 #
 ###############################################################################
-   def getScript(file)
+   def getScript(file, is_restart = false)
       script = nil
       valid_xml = true
       script_check = false
+      err = 0
 
       if (!File.extname(file) == '.xml')
           msg = "Failed trying to parse file: \"#{file}\": Not a valid " +
@@ -738,9 +758,52 @@ class Soda
          end
       end
 
+      if (@restart_count > 0)
+         RestartBrowserTest()
+
+         dir = File.dirname(file)
+         if (dir !~ /lib/)
+            @non_lib_test_count += 1 if(!is_restart)
+         end
+      end
+
       return script
    end
-               
+              
+###############################################################################
+# RestartBrowserTest -- Method
+#     This method checks to see if the browser needs to be restarted.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def RestartBrowserTest()
+      if (@non_lib_test_count >= @restart_count)
+         @rep.log("Restarting browser.\n")
+         @browser.close()
+         sleep(1)
+
+         err = NewBrowser()
+         if (err != 0)
+            @rep.ReportFailure("Failed to restart browser!\n")
+         end
+         @rep.log("Finished: Browser restart.\n")
+         @non_lib_test_count = 0
+
+         if (!@restart_test.empty?)
+            restart_data = getScript(@restart_test, true)
+            if (restart_data != nil)
+               @rep.log("Calling restart test: '#{@restart_test}'\n")
+               handleEvents(restart_data)
+            end 
+         end
+      end
+   end
+
 ###############################################################################
 # getDirScript -- Method
 #     This method goes into directory and load xml scripts.
