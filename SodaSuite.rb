@@ -254,6 +254,12 @@ Optional Flags:
 
    --sugarwait: This enables the auto sugarwait functionality for every click.
 
+   --restartcount: This tells soda to restart the web browser after so many
+      tests have been ran.
+
+   --restarttest: This is a soda test that will be ran right after the browser
+      is restarted.
+
    --help:  Prints this message and exits.
 
 HLP
