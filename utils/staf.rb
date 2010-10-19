@@ -14,6 +14,74 @@ module Staf
       "char* value"
    ]
 
+###############################################################################
+# Staf return codes:
+###############################################################################
+   STAFOk = 0
+   STAFInvalidAPI = 1
+   STAFUnknownService = 2
+   STAFInvalidHandle = 3
+   STAFHandleAlreadyExists = 4
+   STAFHandleDoesNotExist = 5
+   STAFUnknownError = 6
+   STAFInvalidRequestString = 7
+   STAFInvalidServiceResult = 8
+   STAFREXXError = 9
+   STAFBaseOSError = 10
+   STAFProcessAlreadyComplete = 11
+   STAFProcessNotComplete = 12, 
+   STAFVariableDoesNotExist = 13
+   STAFUnResolvableString = 14
+   STAFInvalidResolveString = 15
+   STAFNoPathToMachine = 16
+   STAFFileOpenError = 17
+   STAFFileReadError = 18
+   STAFFileWriteError = 19
+   STAFFileDeleteError = 20
+   STAFNotRunning = 21
+   STAFCommunicationError = 22
+   STAFTrusteeDoesNotExist = 23
+   STAFInvalidTrustLevel = 24
+   STAFAccessDenied = 25
+   STAFRegistrationError = 26
+   STAFServiceConfigurationError = 27
+   STAFQueueFull = 28
+   STAFNoQueueElement = 29
+   STAFNotifieeDoesNotExist = 30
+   STAFInvalidAPILevel = 31
+   STAFServiceNotUnregisterable = 32
+   STAFServiceNotAvailable = 33
+   STAFSemaphoreDoesNotExist = 34
+   STAFNotSemaphoreOwner = 35, 
+   STAFSemaphoreHasPendingRequests = 36
+   STAFTimeout = 37
+   STAFJavaError = 38
+   STAFConverterError = 39
+   STAFNotUsed = 40
+   STAFInvalidObject = 41
+   STAFInvalidParm = 42
+   STAFRequestNumberNotFound = 43
+   STAFInvalidAsynchOption = 44
+   STAFRequestNotComplete = 45
+   STAFProcessAuthenticationDenied = 46
+   STAFInvalidValue = 47
+   STAFDoesNotExist = 48
+   STAFAlreadyExists = 49
+   STAFDirectoryNotEmpty = 50
+   STAFDirectoryCopyError = 51
+   STAFDiagnosticsNotEnabled = 52
+   STAFHandleAuthenticationDenied = 53
+   STAFHandleAlreadyAuthenticated = 54
+   STAFInvalidSTAFVersion = 55
+   STAFRequestCancelled = 56
+   STAFCreateThreadError = 57
+   STAFMaximumSizeExceeded = 58
+   STAFMaximumHandlesExceeded = 59
+   STAFUserDefined = 4000
+
+###############################################################################
+# Import needed staf functions:
+###############################################################################
    import("STAFRegister", "unsigned int", ["char*", "unsigned int*"])
    import("STAFUnRegister", "unsigned int", ["unsigned int"])
    import("STAFSubmit", "unsigned int", ["unsigned int", "char*", "char*", 
