@@ -191,7 +191,7 @@ class Soda
       err = 0
 
       if ( @current_os =~ /WINDOWS/i && 
-          @params['browser'] =~ /ie|firefox/i ) 
+         @params['browser'] =~ /ie|firefox/i ) 
          require 'win32ole'
          @autoit = WIN32OLE.new("AutoItX3.Control")
       end
