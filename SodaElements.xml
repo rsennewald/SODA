@@ -113,6 +113,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">required</accessor>
          <accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">jswait</accessor>
+         <accessor type="boolean">disabled</accessor>
       </soda_attributes>
    </textfield>
 
@@ -132,6 +133,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">assert</accessor>
          <accessor type="string">timeout</accessor>
          <accessor type="boolean">required</accessor>
+         <accessor type="boolean">disabled</accessor>
       </soda_attributes>
    </textarea>
 
@@ -186,6 +188,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">jswait</accessor>
          <accessor type="string">assertPage</accessor>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</button>
 
@@ -312,6 +315,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">required</accessor>
          <accessor type="string">include</accessor>
          <accessor type="string">noninclude</accessor>
+         <accessor type="boolean">disabled</accessor>
       </soda_attributes>
 	</select>
 
@@ -329,6 +333,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
          <accessor type="string">set</accessor>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</select_list>
 
@@ -390,6 +395,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
          <accessor type="string">set</accessor>
          <accessor type="boolean">click</accessor>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</radio>
 
@@ -425,6 +431,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor type="string">assertnot</accessor>
 			<accessor type="integer">timeout</accessor>
 			<accessor type="boolean">required</accessor>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</checkbox>
 
@@ -541,6 +548,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">jswait</accessor>
 			<accessor type="boolean">assertPage</accessor>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</link>
 
@@ -603,6 +611,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="boolean">disabled</accessor>
 		</soda_attributes>
 	</text_field>
 

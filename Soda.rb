@@ -1957,7 +1957,8 @@ JSCode
          'button',
          'exists',
          'link',
-         'append']
+         'append',
+         'disabled']
    
       if (@SIGNAL_STOP != false)
          exit(-1)
@@ -2091,6 +2092,19 @@ JSCode
             @parentEl.push(@curEl)
             handleEvents(event['children'])
             @parentEl.pop()
+         when "disabled"
+            element_status = @curEl.disabled()
+            event['disabled'] = getStringBool(event['disabled'])
+            if (element_status != event['disabled'])
+               msg = "Expected element state to be disabled = "+
+               "'#{event['disabled']}'"+
+               ", but found element to be disabled = '#{element_status}'!\n"
+               @rep.ReportFailure(msg)
+            else
+               msg = "Element state is disabled = '#{element_status}' as "+
+                  "expected.\n"
+               @rep.log(msg)
+            end 
          when "exists"
             # do nothing #
          else
