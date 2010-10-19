@@ -67,4 +67,36 @@ module FieldUtils
       return msg
    end
 
+###############################################################################
+# CheckDisabled -- function
+#     This function checks that a given elements disabled status matches the
+#     expected status, and reports on the findings.
+#
+# Input:
+#     field: this is the watir element object to check the status of.
+#     expected: bool, this is the status that is expected.
+#     reporter: A SodaReporter object.
+#
+# Output:
+#     Always returns 0.
+#
+###############################################################################
+   def FieldUtils.CheckDisabled(field, expected, reporter)
+      element_status = field.disabled()
+      tmp = FieldUtils.WatirFieldToStr(field, reporter)
+
+      if (element_status != expected)
+         msg = "Expected element: #{tmp} state to be disabled = "+
+         "'#{expected}'"+
+         ", but found element to be disabled = '#{element_status}'!\n"
+         reporter.ReportFailure(msg)
+      else
+         msg = "Element: #{tmp} state is disabled = '#{element_status}' as "+
+            "expected.\n"
+         reporter.log(msg)
+      end 
+
+      return 0
+   end
+
 end

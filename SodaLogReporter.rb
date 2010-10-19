@@ -462,8 +462,6 @@ HTML
          assert_data[4] = "No line number found!"
       end
 
-      
-
       url_html = "<a href=\"#{assert_data[1]}\">#{assert_data[1]}</a>"
       row_data['msg'] = "<b>#{assert_data[0]}</b><br>\n" +
          "<b>URL:</b> #{url_html}<br>\n" +
@@ -722,6 +720,10 @@ HTML
          when /clicking\selement:/i
             row_data = FormatClickingElement(line)
          when /setting\selement:/i
+            row_data = FormatClickingElement(line)
+         when /expected element:/i
+            row_data = FormatClickingElement(line)
+         when /element:/i
             row_data = FormatClickingElement(line)
          else
             line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
