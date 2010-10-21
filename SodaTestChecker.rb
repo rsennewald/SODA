@@ -277,6 +277,9 @@ Flags:
    --test: This sets a soda test file to be checked, this flag can be used
       more then once.
 
+   --skipgood: This skips reporting if the test is good and only reports if
+      this test is bad.
+
    --help: Prints this message.\n\n
 HELP
 
