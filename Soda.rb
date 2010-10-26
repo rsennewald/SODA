@@ -739,6 +739,11 @@ class Soda
          valid_xml = false
       end
 
+      if (@restart_count > 0 && valid_xml)
+         RestartBrowserTest()
+      end
+
+
       if (valid_xml)
          $run_script = file
          PrintDebug("Parsing Soda test file: \"#{file}\".\n")
@@ -758,12 +763,11 @@ class Soda
          end
       end
 
-      if (@restart_count > 0)
-         RestartBrowserTest()
-
-         dir = File.dirname(file)
-         if (dir !~ /lib/)
-            @non_lib_test_count += 1 if(!is_restart)
+      dir = File.dirname(file)
+      if (dir !~ /lib/)
+         if(!is_restart)
+            @non_lib_test_count += 1
+            @rep.log("Tests since last restart: '#{@non_lib_test_count}'.\n")
          end
       end
 

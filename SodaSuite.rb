@@ -64,6 +64,7 @@ class SodaSuite
 
    def initialize(params)
       @SodaParams = params
+      @soda = nil
 
 	   if (NEEDED_SODA_VERSION != Soda::SODA_VERSION)
          print "(!)Failed matching Soda Class Versions!\n" +
@@ -93,14 +94,13 @@ class SodaSuite
 #
 ###############################################################################
 	def ExecuteSodaTest(sodatest)
-      soda = nil
       result = {}
       failed_tests = nil
-      
+      soda = nil
+     
       soda = Soda::Soda.new(@SodaParams)
       result['error'] = soda.run(sodatest)
       result['failed_tests'] = soda.GetFailedTests()
-      soda = nil
 
       return result
 	end
