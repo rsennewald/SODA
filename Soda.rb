@@ -743,7 +743,6 @@ class Soda
          RestartBrowserTest()
       end
 
-
       if (valid_xml)
          $run_script = file
          PrintDebug("Parsing Soda test file: \"#{file}\".\n")
