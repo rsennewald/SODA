@@ -836,6 +836,7 @@ class Soda
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
+            Dir.chdir($SodaHome)
             return nil
          end   
 
