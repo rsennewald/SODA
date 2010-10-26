@@ -834,7 +834,8 @@ class Soda
          files = Dir.glob("*.xml")
          
          if (files.empty?)
-            @rep.ReportFailure("No tests found in directory: '#{file}'!\n")
+            @rep.log("No tests found in directory: '#{file}'!\n",
+               SodaUtils::WARN)
             return nil
          end   
 
