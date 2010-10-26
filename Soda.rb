@@ -2377,6 +2377,10 @@ JSCode
                   fieldType = SodaField
                   event['do'] = 'cell'
                   @curEl = getField(event)
+               when "tr"
+                  fieldType = SodaField
+                  event['do'] = 'row'
+                  @curEl = getField(event)
                when "div"
                   fieldType = SodaField
                   @curEl = getField(event)

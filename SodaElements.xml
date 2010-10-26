@@ -283,6 +283,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</soda_attributes>
 	</cell>
 
+	<td>
+		<accessor_attributes>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
+		</accessor_attributes>
+
+		<soda_attributes>
+         <accessor type="string">assert</accessor>
+         <accessor type="string">assertnot</accessor>
+		</soda_attributes>
+	</td>
+
 	<h6>
 		<accessor_attributes>
 			<accessor type="string">name</accessor>
@@ -364,6 +380,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
 		</soda_attributes>
 	</row>
+
+   <tr>
+		<accessor_attributes>
+			<accessor type="string">name</accessor>
+			<accessor type="string">class</accessor>
+			<accessor type="string">text</accessor>
+			<accessor type="string">id</accessor>
+			<accessor type="string">index</accessor>
+			<accessor type="string">xpath</accessor>
+		</accessor_attributes>
+
+		<soda_attributes>
+		</soda_attributes>
+	</tr>
 
 	<table>
 		<accessor_attributes>
