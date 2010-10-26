@@ -113,17 +113,25 @@ class SodaSuite
 # Prams:
 #     suite: This is an array of tests to run.
 #     rerun: true/false, tells soda that these tests are reruns.
+#     reruntest: this is the test to run before starting the rerun tests.
 #
 # Results:
 #     None.
 #
 ###############################################################################
-   def ExecuteTestSuite(suite, rerun = false)
+   def ExecuteTestSuite(suite, rerun = false, reruntest = nil)
       soda = nil
       master_result = 0
       result = nil
       
       soda = Soda::Soda.new(@SodaParams)
+
+      if (reruntest != nil)
+         SodaUtils.PrintSoda("Running rerun test setup script: "+
+            "'#{reruntest}'.\n")
+         soda.run(reruntest)
+      end
+
       suite.each do |test|
          result = soda.run(test, rerun)
          if (result == -1)
@@ -251,6 +259,9 @@ Optional Flags:
    --debug: This turns on debug messages.
 
    --rerun: This will cause failed tests to be rerun.
+
+   --reruntest: This is the test to run before all failed tests are reran, this
+      is an optional argument to be used with --rerun for test setup.
 
    --sugarwait: This enables the auto sugarwait functionality for every click.
 
@@ -480,6 +491,7 @@ def Main
    resultsdir = nil
    profile = nil
    rerun_failed_test = false
+   rerun_test_script = nil
    failed_tests = []
    test_files = []
    hijacks = {}
@@ -541,7 +553,8 @@ def Main
                [ '--rerun', '-e', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restartcount', '-1', GetoptLong::OPTIONAL_ARGUMENT ],
-               [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT]
+               [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT],
+               [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ]
             )
 
       opts.quiet = true
@@ -581,6 +594,8 @@ def Main
                params['gvars'] = AddCmdArg2Hash(arg, params['gvars'])
             when "--rerun"
                rerun_failed_test = true
+            when "--reruntest"
+               rerun_test_script = arg
          end
       end
    rescue Exception => e
@@ -653,7 +668,7 @@ def Main
    # see if we should rerun failed tests #
    if (rerun_failed_test && failed_tests.length > 0)
       SodaUtils.PrintSoda("Rerunning failed tests.\n")
-      sweet.ExecuteTestSuite(failed_tests, true)
+      sweet.ExecuteTestSuite(failed_tests, true, rerun_test_script)
       SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
    end
 
