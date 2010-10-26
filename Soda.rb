@@ -813,7 +813,6 @@ class Soda
 #
 # Params:
 #     file: This is the file to open.
-#     dir: This is the directory to up use for expand_path.
 #
 # Results:
 #     None.
@@ -822,21 +821,22 @@ class Soda
 #     Using recursion...  This should be revisited for a better way.
 #
 ###############################################################################
-   def getDirScript(file, dir = nil)
+   def getDirScript(file)
       test_count = 0
       results = 0
 
-      file = File.expand_path(file, dir)
-      
+      file = File.expand_path(file)
+
       if (File.directory?(file))
-         Dir.chdir(file)
-         basedir = Dir.getwd()
-         files = Dir.glob("*.xml")
+         files = []
+         fd = Dir.open(file)
+         fd.each do |f|
+            files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
+         end
          
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
-            Dir.chdir($SodaHome)
             return nil
          end   
 
@@ -844,10 +844,9 @@ class Soda
          @rep.log("Fileset: '#{file}' contains #{test_count} files.\n")
 
          files.each do |f|
-            getDirScript(f, basedir)
+            getDirScript(f)
          end
       elsif (File.file?(file))
-         Dir.chdir($SodaHome)
          if (!(remBlockScript(file)) && 
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
             @rep.log("Starting new soda test file: \"#{file}\".\n")
