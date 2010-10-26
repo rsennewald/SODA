@@ -60,8 +60,6 @@ class SodaTestCheck
       if (!File.exist?(@SODA_ELEMENTS_FILE))
          msg = "Error: can't find needed file: '#{@SODA_ELEMENTS_FILE}'!\n"
          @report.ReportFailure(msg)
-         tmp = `pwd`
-         print "PWD: #{tmp}\n"
          return false
       end
    
