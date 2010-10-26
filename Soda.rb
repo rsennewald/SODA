@@ -833,7 +833,8 @@ class Soda
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
          end
-         
+         fd.close()
+
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
