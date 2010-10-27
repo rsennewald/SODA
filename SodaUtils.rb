@@ -32,6 +32,7 @@ require 'rbconfig'
 require 'time'
 require 'rubygems'
 require 'libxml'
+require 'uri'
 
 ###############################################################################
 # SodaUtils -- Module
@@ -692,6 +693,35 @@ def SodaUtils.ReadSodaConfig(configfile)
    return data
 end
 
+###############################################################################
+# IEConvertHref -- function
+#     This function converts a firefox friendly url to an IE one.
+#
+# Input:
+#     event: This is the soda event hash.
+#     url: This is the current browser url.
+#
+# Output:
+#     returns a updated href key value in the event half.
+#
+###############################################################################
+def SodaUtils.IEConvertHref(event, url)
+   href = event['href']
+   new_url = ""
+   uri = nil
+   path = nil
+
+   uri = URI::split(url)
+   path = uri[5]
+   path =~ /(.*\/).*$/
+   path = $1
+
+   new_url = "#{uri[0]}"
+   new_url << "://#{uri[2]}#{path}#{href}"
+   event['href'] = new_url
+
+   return event
+end
 
 ###############################################################################
 # WaitSugarAjaxDone -- function
