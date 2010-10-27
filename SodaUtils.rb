@@ -716,8 +716,7 @@ def SodaUtils.IEConvertHref(event, url)
    path =~ /(.*\/).*$/
    path = $1
 
-   new_url = "#{uri[0]}"
-   new_url << "://#{uri[2]}#{path}#{href}"
+   new_url = "#{uri[0]}://#{uri[2]}#{path}#{href}"
    event['href'] = new_url
 
    return event
