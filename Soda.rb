@@ -103,6 +103,7 @@ class Soda
       @restart_count = 0
       @non_lib_test_count = 0
       @SugarWait = false
+      @restart_test_running = false
       @FAILEDTESTS = []
       @vars = Hash.new
       blocked_file_list = "scripts/sugarcrm/modules/blockScriptList.xml"
@@ -739,7 +740,7 @@ class Soda
          valid_xml = false
       end
 
-      if (@restart_count > 0 && valid_xml)
+      if ( @restart_count > 0 && valid_xml && (!@restart_test_running))
          RestartBrowserTest()
       end
 
@@ -764,7 +765,7 @@ class Soda
 
       dir = File.dirname(file)
       if (dir !~ /lib/)
-         if(!is_restart)
+         if(!is_restart && !@restart_test_running)
             @non_lib_test_count += 1
             @rep.log("Tests since last restart: '#{@non_lib_test_count}'.\n")
          end
@@ -798,10 +799,16 @@ class Soda
          @non_lib_test_count = 0
 
          if (!@restart_test.empty?)
+            parent_test = @currentTestFile
             restart_data = getScript(@restart_test, true)
             if (restart_data != nil)
-               @rep.log("Calling restart test: '#{@restart_test}'\n")
+               @currentTestFile = @restart_test
+               @restart_test_running = true
+               @rep.log("Executing restart test: '#{@restart_test}'\n")
                handleEvents(restart_data)
+               @restart_test_running = false
+               @currentTestFile = parent_test_file
+               @rep.log("Finished restart test: '#{@restart_test}'\n")
             end 
          end
       end
