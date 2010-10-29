@@ -858,6 +858,7 @@ class Soda
          if (!(remBlockScript(file)) && 
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
 
+            @non_lib_test_count += 1 if (file !~ /lib/i)
             RestartBrowserTest()
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
