@@ -857,6 +857,8 @@ class Soda
       elsif (File.file?(file))
          if (!(remBlockScript(file)) && 
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
+
+            RestartBrowserTest()
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
             script = getScript(file)
