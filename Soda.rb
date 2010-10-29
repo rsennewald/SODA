@@ -807,7 +807,7 @@ class Soda
                @rep.log("Executing restart test: '#{@restart_test}'\n")
                handleEvents(restart_data)
                @restart_test_running = false
-               @currentTestFile = parent_test_file
+               @currentTestFile = parent_test
                @rep.log("Finished restart test: '#{@restart_test}'\n")
             end 
          end

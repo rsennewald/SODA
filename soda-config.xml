@@ -26,8 +26,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <sodaconfig>
-   <gvar name="url">http://localhost/sugar/index.php</gvar>
-   <gvar name="scriptsdir">scripts/sugarcrm_60</gvar>
+   <gvar name="url">http://192.168.50.130/sugar/index.php</gvar>
+   <gvar name="scriptsdir">scripts/sugarcrm_61</gvar>
    <cmdopt name="browser">firefox</cmdopt>
    <errorskip type="css" />
 </sodaconfig>
