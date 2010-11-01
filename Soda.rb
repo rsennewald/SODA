@@ -102,6 +102,7 @@ class Soda
       @restart_test = ""
       @restart_count = 0
       @non_lib_test_count = 0
+      @last_test = ""
       @SugarWait = false
       @restart_test_running = false
       @FAILEDTESTS = []
@@ -740,7 +741,8 @@ class Soda
          valid_xml = false
       end
 
-      if ( @restart_count > 0 && valid_xml && (!@restart_test_running))
+      if ( @restart_count > 0 && valid_xml && (!@restart_test_running) &&
+         file != @last_file)
          RestartBrowserTest()
       end
 
@@ -765,7 +767,7 @@ class Soda
 
       dir = File.dirname(file)
       if (dir !~ /lib/)
-         if(!is_restart && !@restart_test_running)
+         if(!is_restart && !@restart_test_running && file != @last_test)
             @non_lib_test_count += 1
             @rep.log("Tests since last restart: '#{@non_lib_test_count}'.\n")
          end
@@ -807,7 +809,7 @@ class Soda
                @rep.log("Executing restart test: '#{@restart_test}'\n")
                handleEvents(restart_data)
                @restart_test_running = false
-               @currentTestFile = parent_test_file
+               @currentTestFile = parent_test
                @rep.log("Finished restart test: '#{@restart_test}'\n")
             end 
          end
@@ -858,6 +860,12 @@ class Soda
          if (!(remBlockScript(file)) && 
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
             @rep.log("Starting new soda test file: \"#{file}\".\n")
+
+            if (file !~ /lib/i)
+               @non_lib_test_count += 1
+               @last_test = file
+            end
+            RestartBrowserTest()
 
             script = getScript(file)
             if (script != nil)
