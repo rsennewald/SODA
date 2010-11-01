@@ -102,7 +102,6 @@ class Soda
       @restart_test = ""
       @restart_count = 0
       @non_lib_test_count = 0
-      @last_test = ""
       @SugarWait = false
       @restart_test_running = false
       @FAILEDTESTS = []
@@ -741,8 +740,7 @@ class Soda
          valid_xml = false
       end
 
-      if ( @restart_count > 0 && valid_xml && (!@restart_test_running) &&
-         file != @last_test)
+      if ( @restart_count > 0 && valid_xml && (!@restart_test_running))
          RestartBrowserTest()
       end
 
@@ -767,7 +765,7 @@ class Soda
 
       dir = File.dirname(file)
       if (dir !~ /lib/)
-         if(!is_restart && !@restart_test_running && file != @last_test)
+         if(!is_restart && !@restart_test_running)
             @non_lib_test_count += 1
             @rep.log("Tests since last restart: '#{@non_lib_test_count}'.\n")
          end
@@ -809,7 +807,7 @@ class Soda
                @rep.log("Executing restart test: '#{@restart_test}'\n")
                handleEvents(restart_data)
                @restart_test_running = false
-               @currentTestFile = parent_test
+               @currentTestFile = parent_test_file
                @rep.log("Finished restart test: '#{@restart_test}'\n")
             end 
          end
@@ -859,12 +857,6 @@ class Soda
       elsif (File.file?(file))
          if (!(remBlockScript(file)) && 
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
-
-            if (file !~ /lib/i)
-               @non_lib_test_count += 1
-               @last_test = file
-            end
-            RestartBrowserTest()
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
             script = getScript(file)
@@ -2255,10 +2247,7 @@ JSCode
       result = 0
       jswait = true
       result = 0
-
-      if (@SIGNAL_STOP != false)
-         exit(-1)
-      end
+      exception_event = nil 
 
       for next_event in events
          if (@exceptionExit != false)
@@ -2306,6 +2295,10 @@ JSCode
             end 
            
             case event['do']
+               when "exception"
+                  PrintDebug("Found Exception Handler.\n")
+                  exception_event = event
+                  next
                when "breakexit"
                   @breakExit = true
                   next
@@ -2477,6 +2470,15 @@ JSCode
                e_dump = SodaUtils.DumpEvent(event)
                @rep.log("Event Dump From Exception: #{e_dump}!\n", 
                   SodaUtils::EVENT)
+
+               if (exception_event != nil)
+                  @rep.log("Running Exception Handler.\n", SodaUtils::WARN)
+                  @exceptionExit = false
+                  handleEvents(exception_event['children'])
+                  @rep.log("Finished Exception Handler.\n", SodaUtils::WARN)
+                  @exceptionExit = true
+               end
+
                result = -1
             ensure
                if (@exceptionExit)
@@ -2486,6 +2488,19 @@ JSCode
             end # end rescue & ensure #
          end # end event's for loop #
       end # end top most for loop #
+
+
+      if (exception_event != nil)
+         if (exception_event.key?('alwaysrun'))
+            run = getStringBool(exception_event['alwaysrun'])
+            if (run)
+               PrintDebug("Exception Handler: alwaysrun = '#{run}'.\n")
+               PrintDebug("Running Exception Handler.\n")
+               result  = handleEvents(exception_event['children'])
+               PrintDebug("Exception Handler: Finished.\n")
+            end
+         end
+      end
 
       return result
    end
