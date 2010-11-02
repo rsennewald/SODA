@@ -741,8 +741,7 @@ class Soda
          valid_xml = false
       end
 
-      if ( @restart_count > 0 && valid_xml && (!@restart_test_running) &&
-         file != @last_file)
+      if (valid_xml && (!@restart_test_running) && file != @last_file)
          RestartBrowserTest()
       end
 
@@ -788,6 +787,8 @@ class Soda
 #
 ###############################################################################
    def RestartBrowserTest()
+      return 0 if (@restart_count < 1)
+
       if (@non_lib_test_count >= @restart_count)
          @rep.log("Restarting browser.\n")
          @browser.close()
