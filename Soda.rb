@@ -741,7 +741,8 @@ class Soda
          valid_xml = false
       end
 
-      if (valid_xml && (!@restart_test_running) && file != @last_file)
+      if (valid_xml && (!@restart_test_running) && file != @last_file &&
+            @non_lib_test_count >= @restart_count)
          RestartBrowserTest()
       end
 
@@ -768,7 +769,6 @@ class Soda
       if (dir !~ /lib/)
          if(!is_restart && !@restart_test_running && file != @last_test)
             @non_lib_test_count += 1
-            @rep.log("Tests since last restart: '#{@non_lib_test_count}'.\n")
          end
       end
 
@@ -863,10 +863,13 @@ class Soda
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
             if (file !~ /lib/i)
+               if (@non_lib_test_count >= @restart_count && file != @last_test)
+                  RestartBrowserTest()
+               end
+
                @non_lib_test_count += 1
                @last_test = file
             end
-            RestartBrowserTest()
 
             script = getScript(file)
             if (script != nil)
