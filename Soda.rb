@@ -741,7 +741,7 @@ class Soda
          valid_xml = false
       end
 
-      if (valid_xml && (!@restart_test_running) && file != @last_file &&
+      if (valid_xml && !@restart_test_running && file != @last_file &&
             @non_lib_test_count >= @restart_count)
          RestartBrowserTest()
       end
@@ -769,6 +769,7 @@ class Soda
       if (dir !~ /lib/)
          if(!is_restart && !@restart_test_running && file != @last_test)
             @non_lib_test_count += 1
+            PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
          end
       end
 
@@ -877,6 +878,8 @@ class Soda
                @currentTestFile = file
                @rep.IncTestCount()
                results = handleEvents(script)
+               PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
+
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
                end
