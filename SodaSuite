@@ -527,11 +527,13 @@ def Main
    else
       config_data = nil
    end
-  
-   config_data['cmdopts'].each do |o|
-      if (o.key?('browser'))
-         params['browser'] = o['browser']
-         break
+ 
+   if ((config_data != nil) && (config_data.key?('cmdopts'))) 
+      config_data['cmdopts'].each do |o|
+         if (o.key?('browser'))
+            params['browser'] = o['browser']
+            break
+         end
       end
    end
 
