@@ -690,5 +690,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </soda_attributes>
    </whitelist>
 
+   <exception>
+      <soda_attributes>
+         <accessor type="boolen">alwaysrun</accessor>
+      </soda_attributes>
+
+   </exception>
 </soda>
 
