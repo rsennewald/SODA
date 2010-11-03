@@ -33,7 +33,7 @@
 require 'Soda'
 require 'getoptlong'
 require 'libxml'
-require 'commonwatir'
+require 'watir'
 require 'SodaReportSummery'
 require 'pp'
 
@@ -60,7 +60,7 @@ require 'pp'
 class SodaSuite
 	attr_accessor :scripts, :soda
 
-   NEEDED_SODA_VERSION = 1.0
+   NEEDED_SODA_VERSION = 1.1
 
    def initialize(params)
       @SodaParams = params
@@ -73,11 +73,11 @@ class SodaSuite
          exit(-1)
       end
 
-      if ("#{CommonWatir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
+      if ("#{Watir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
          print "(!)Failed matching installed Watir version to Soda's" +
             " required version!\n" +
             "--)Required Version: #{Soda::SODA_WATIR_VERSION}\n" +
-            "--)Found Version   : #{CommonWatir::VERSION}\n\n"
+            "--)Found Version   : #{Watir::VERSION}\n\n"
          exit(-1)
       end
 	end
@@ -624,7 +624,7 @@ def Main
    SodaUtils.PrintSoda("SodaSuite Settings:\n--)Browser:" +
       " #{params['browser']}\n--)Debug: #{params['debug']}\n--)Verbose:"+
       " #{params['verbose']}\n" +
-      "--)Watir Version: #{CommonWatir::VERSION}\n")
+      "--)Watir Version: #{Watir::VERSION}\n")
    SodaUtils.PrintSoda("Starting testing...\n")
 
    if (params['resultsdir'] != nil)
