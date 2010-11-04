@@ -4,7 +4,12 @@ require 'fileutils'
 
 TMP_DIR = "/tmp/Soda"
 
+SODA_EXES = [
+   "bin/SodaSuite"
+]
+
 SODA_FILES = [
+      "SodaElements.xml",
       "FieldUtils.rb",
       "SodaCSV.rb",
       "SodaFireFox.rb",
@@ -27,7 +32,8 @@ SODA_FILES = [
 
 SODA_DIRS = [
    "utils",
-   "fields"
+   "fields",
+   "bin"
 ]
 
    if (!File.exist?(TMP_DIR))
@@ -37,6 +43,7 @@ SODA_DIRS = [
    end
 
    print "(*)Make needed SODA directories...\n"
+   FileUtils.mkdir_p("#{TMP_DIR}/bin")
    SODA_DIRS.each do |d|
       print "(*)Creating directory: #{TMP_DIR}.\n"
       FileUtils.mkdir_p("#{TMP_DIR}/lib/#{d}")
@@ -45,6 +52,12 @@ SODA_DIRS = [
    print "Copying Soda Files...\n"
    SODA_FILES.each do |f|
       cmd = "cp #{f} #{TMP_DIR}/lib/#{f}"
+      print "(*)Copying file: #{f}\n"
+      Kernel.system(cmd)
+   end
+
+   SODA_EXES.each do |f|
+      cmd = "cp #{f} #{TMP_DIR}/#{f}"
       print "(*)Copying file: #{f}\n"
       Kernel.system(cmd)
    end
@@ -60,13 +73,16 @@ RUBY
 SPEC = <<RUBY
 spec = Gem::Specification.new do |s|
    s.name = 'soda'
-   s.version = '0.0.1'
+   s.version = '0.0.3'
    s.summary = "SODA is an XML based testing framework leveraging Watir."
    s.description = %{This is a wrapper around the watir api for web testing.}
-   s.files = Dir['lib/*.rb', 
+   s.files = Dir['lib/*.rb',
+      'lib/*.xml', 
+      'bin/*',
       'lib/utils/*.rb', 
       'lib/fields/*.rb',
       '*.rb']
+   s.executables = ['SodaSuite']
    s.require_path = 'lib'
    s.has_rdoc = false
    s.extra_rdoc_files = nil
@@ -84,5 +100,10 @@ RUBY
    fd = File.new("#{TMP_DIR}/soda.gemspec", "w+")
    fd.write(SPEC)
    fd.close()
-   print "(*)Finished...\n\n"
+   print "(*)Finished making Soda gem...\n"
+
+   print "(*)Building SodaSuite gem...\n"
+
+
+
 

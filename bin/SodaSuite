@@ -508,7 +508,7 @@ def Main
       'suites' => [],
       'test_files' => [],
       'hijacks' => {},
-      'gvars' => [],
+      'gvars' => {},
       'errorskip' => [],
       'restart_count' => 0,
       'restart_test' => ""

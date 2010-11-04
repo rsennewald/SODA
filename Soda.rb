@@ -86,9 +86,9 @@ class Soda
       @newCSV = [] 
       $SodaHome = Dir.getwd()
       @current_os = SodaUtils.GetOsType()
-      @sugarFlavor = params['flavor'] if (params.key?('flavor'))
-      @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
-      @globalVars = params['gvars'] if (params.key?('gvars'))
+      @sugarFlavor = {}
+      @resultsDir = {} 
+      @globalVars = {}
       @SIGNAL_STOP = false
       @hiJacks = nil
       @breakExit = false
@@ -116,7 +116,11 @@ class Soda
          "KILL"
       ]
       err = 0
-     
+    
+      @sugarFlavor = params['flavor'] if (params.key?('flavor'))
+      @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
+      @globalVars = params['gvars'] if (params.key?('gvars'))
+
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
             "blockScriptList.xml"
