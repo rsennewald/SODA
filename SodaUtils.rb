@@ -711,6 +711,12 @@ def SodaUtils.IEConvertHref(event, url)
    uri = nil
    path = nil
 
+   if (href =~ /^#/)
+      href = "#{url}#{href}"
+      event['href'] = href
+      return event
+   end
+
    uri = URI::split(url)
    path = uri[5]
    path =~ /(.*\/).*$/
