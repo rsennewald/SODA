@@ -1634,6 +1634,28 @@ class Soda
 
 ############################################################################### 
 ############################################################################### 
+   def eventDialog(event)
+      if (@current_os !~ /windows/i)
+         @rep.ReportFailure("Using SODA dialog command on unsupported os:"+
+            " '#{@current_os}'!\n")
+         return -1
+      end
+
+      require 'pp'
+
+      if (event.key?('children'))
+         event['children'].each do |child|
+            print "Child: #{child.class}\n"
+            pp(child)
+            print "\n\n"
+         end
+      end   
+
+   end
+
+
+############################################################################### 
+############################################################################### 
    def eventRuby(event)
       result = 0
 
@@ -2320,6 +2342,9 @@ JSCode
                   next
                when "breakexit"
                   @breakExit = true
+                  next
+               when "dialog"
+                  eventDialog(event)
                   next
                when "whitelist"
                   eventWhiteList(event)

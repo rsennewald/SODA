@@ -694,7 +694,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <soda_attributes>
          <accessor type="boolen">alwaysrun</accessor>
       </soda_attributes>
-
    </exception>
+
+   <dialog>
+      <soda_attributes>
+         <accessor type="string">title</accessor>
+      </soda_attributes>
+   </dialog>
+
+   <assert>
+      <soda_attributes>
+         <accessor type="string">assert</accessor>
+      </soda_attributes>
+   </assert>
 </soda>
 
