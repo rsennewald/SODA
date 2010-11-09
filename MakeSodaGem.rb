@@ -100,7 +100,7 @@ RUBY
 SPEC = <<RUBY
 spec = Gem::Specification.new do |s|
    s.name = 'soda'
-   s.version = '0.0.3'
+   s.version = '0.0.4'
    s.summary = "SODA is an XML based testing framework leveraging Watir."
    s.description = %{This is a wrapper around the watir api for web testing.}
    s.files = Dir['lib/*.rb',
