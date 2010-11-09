@@ -28,7 +28,6 @@
 
 require 'fileutils'
 
-
 TMP_DIR = "/tmp/Soda"
 
 SODA_EXES = [
