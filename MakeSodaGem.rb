@@ -27,6 +27,7 @@
 ###############################################################################
 
 require 'fileutils'
+require 'getoptlong'
 
 TMP_DIR = "/tmp/Soda"
 
@@ -61,6 +62,25 @@ SODA_DIRS = [
    "fields",
    "bin"
 ]
+
+
+   user_version = nil
+   opts = GetoptLong.new(
+            ['--vesrion', '-v', GetoptLong::REQUIRED_ARGUMENT ])
+
+   opts.quiet = true
+   opts.each do | opt, arg|
+      case (opt)
+         when "--version"
+            user_version = arg
+      end
+   end
+
+   if (user_version == nil)
+      print "(!)Missing needed command line flag: --version=\"x.x.x\"!\n\n"
+      exit(1)
+   end
+
 
    if (!File.exist?(TMP_DIR))
       print "(*)Failed to find tmp directory: #{TMP_DIR}.\n"
@@ -99,7 +119,7 @@ RUBY
 SPEC = <<RUBY
 spec = Gem::Specification.new do |s|
    s.name = 'soda'
-   s.version = '0.0.4'
+   s.version = '#{user_version}'
    s.summary = "SODA is an XML based testing framework leveraging Watir."
    s.description = %{This is a wrapper around the watir api for web testing.}
    s.files = Dir['lib/*.rb',
