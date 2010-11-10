@@ -1635,22 +1635,80 @@ class Soda
 ############################################################################### 
 ############################################################################### 
    def eventDialog(event)
+      win_handle = nil
+
       if (@current_os !~ /windows/i)
          @rep.ReportFailure("Using SODA dialog command on unsupported os:"+
             " '#{@current_os}'!\n")
          return -1
       end
 
-      require 'pp'
+      if (!event.key?('title'))
+         @rep.ReportFailure("SODA: dialog command is missing the 'title' "+
+            "attribute!\n")
+         return -1
+      end
 
-      if (event.key?('children'))
-         event['children'].each do |child|
-            print "Child: #{child.class}\n"
-            pp(child)
-            print "\n\n"
+      PrintDebug("Trying to connect to dialog: title => '#{event['title']}'.\n")
+      for i in 0..10 do
+         win_handle = @autoit.WinGetHandle(event['title'])
+         if (win_handle.empty? || win_handle.length < 1)
+            win_handle = nil
+            sleep(1)
+         else
+            PrintDebug("Found dialog window handle: '#{win_handle}'.\n")
+            break   
          end
-      end   
+      end
 
+      if (win_handle == nil)
+         @rep.ReportFailure("Failed to find dialog by title => "+
+            "'#{event['title']}'!\n")
+         return -1
+      end
+
+      if (!event.key?('children'))
+         return 0
+      end
+
+      event['children'].each do |child|
+         case (child['do'])
+            when "sendkey"
+               @autoit.WinActivate(event['title'], nil)
+               sleep(1)
+               @autoit.Send(child['key'])
+            when "assert"
+               sleep(1)
+               @autoit.WinActivate(event['title'], nil)
+               sleep(1)
+               @autoit.Send("^a")
+               sleep(1)
+               @autoit.Send("^c")
+               sleep(1)
+               tmp = @autoit.ClipGet()
+               if (tmp.empty? || tmp.length < 1)
+                  @rep.ReportFailure("Failed to get text from dialog!\n")
+                  next
+               end
+
+               if (SodaUtils.isRegex(child['value']))
+                  child['value'] = stringToRegex(child['value'])
+                  match = child['value'].match(tmp)
+                  if (match == nil)
+                     @rep.ReportFailure("Falied to match regex: "+
+                        "'#{child['value']}' to dialog text '#{tmp}'"+
+                        "!\n")
+                     next
+                  else
+                     @rep.Assert(true, "Matched Regex: '#{child['value']}'"+
+                        " to dialog text.\n") 
+                  end
+               else
+                  @rep.Assert(child['value'] == tmp, "Checking that dialog"+
+                     " matches value: '#{child['value']}'.\n")
+               end
+         end
+      end
    end
 
 
