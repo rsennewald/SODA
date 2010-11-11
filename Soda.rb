@@ -46,6 +46,7 @@ require "SodaCSV"
 require "SodaXML"
 require 'SodaFireFox'
 require 'SodaTestCheck'
+require 'SodaScreenShot'
 require "utils/sodalookups"
 require "fields/SodaField"
 require "fields/TextField"
@@ -2667,6 +2668,17 @@ JSCode
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
+
+						begin
+							result_dir = @rep.GetResultDir()
+							shooter = SodaScreenShot.new(result_dir)
+							image_file = shooter.GetOutputFile()
+							@rep.log("ScreenShot taken: #{image_file}\n")
+						rescue Excaption => e
+            			@rep.ReportException(e, false, false)
+						ensure
+						end
+
                   result = -1
                   thread_soda.exit()
                   break

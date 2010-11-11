@@ -614,6 +614,21 @@ HTML
       return row_data
    end
 
+   def FormatScreenShot(line)
+      row_data = Hash.new()
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      row_data['date'] = "#{$1}"
+      row_data['msg_type'] = "#{$2}"
+      msg = "#{$3}"
+      row_html = ""
+
+		data = msg.split(/:/)
+		msg = "<b>#{data[0]}:</b> <a href=\"file://#{data[1]}\">#{data[1]}</a>"
+      row_data['msg'] = msg 
+
+      return row_data
+   end
+
 ###############################################################################
 # FormatReplacingString -- Method
 #     This method finds the replace string message and reformats it a little.
@@ -725,6 +740,8 @@ HTML
             row_data = FormatClickingElement(line)
          when /element:/i
             row_data = FormatClickingElement(line)
+			when /screenshot\staken/i
+				row_data = FormatScreenShot(line)
          else
             line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
             row_data['date'] = "#{$1}"
