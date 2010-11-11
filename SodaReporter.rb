@@ -113,6 +113,20 @@ class SodaReporter
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
 	end
 
+###############################################################################
+# GetResultDir -- Method
+#		This method returns the current result dir.
+#
+# Input:
+#		None.
+#
+# Output:
+#		returns the current result directory.
+#
+###############################################################################
+	def GetResultDir()
+		return @ResultsDir
+	end
 
 ###############################################################################
 # IncSkippedTest -- Method
