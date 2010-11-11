@@ -36,6 +36,7 @@ SODA_EXES = [
 ]
 
 SODA_FILES = [
+		"SodaScreenShot.rb",
       "SodaElements.xml",
       "FieldUtils.rb",
       "SodaCSV.rb",
@@ -66,7 +67,7 @@ SODA_DIRS = [
 
    user_version = nil
    opts = GetoptLong.new(
-            ['--vesrion', '-v', GetoptLong::REQUIRED_ARGUMENT ])
+            ['--version', '-v', GetoptLong::REQUIRED_ARGUMENT ])
 
    opts.quiet = true
    opts.each do | opt, arg|
