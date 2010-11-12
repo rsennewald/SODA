@@ -193,9 +193,28 @@ class Soda
    end
 
 ###############################################################################
+# RestartGlobalTime -- Method
+#		This method reset the global time, for the watchdog timer.
+#
+# Input:
+#		None.
+#
+# Output:
+#		None.
+#
+###############################################################################
+	def RestartGlobalTime()
+		$mutex.synchronize {
+			$global_time = Time.now()
+		}
+	end
+
+###############################################################################
 ###############################################################################
    def NewBrowser()
       err = 0
+
+		RestartGlobalTime()
 
       if ( @current_os =~ /WINDOWS/i && 
          @params['browser'] =~ /ie|firefox/i ) 
@@ -799,6 +818,8 @@ class Soda
          @rep.log("Restarting browser.\n")
          @browser.close()
          sleep(1)
+
+			RestartGlobalTime()
 
          err = NewBrowser()
          if (err != 0)
@@ -1894,6 +1915,8 @@ JSCode
    def eventWait(event)
       result = false
 
+		RestartGlobalTime()
+
       if ( event.key?('condition') && 
            getStringBool(event['condition']) && 
            event.key?('children') )
@@ -1915,6 +1938,8 @@ JSCode
          PrintDebug("Page Load Finished.\n")
          result = true
       end
+
+		RestartGlobalTime()
 
       return result
    end
@@ -2365,11 +2390,7 @@ JSCode
             fieldType = nil
     
             event = SodaUtils.ConvertOldAssert(event, @rep, @currentTestFile)
-
-            $mutex.synchronize {
-               $global_time = Time.new()
-            }
-
+				RestartGlobalTime()
             crazyEvilIETabHack() 
 
             if (event.key?('set') && event['set'].is_a?(String) && 
@@ -2675,7 +2696,7 @@ JSCode
 							image_file = shooter.GetOutputFile()
 							@rep.log("ScreenShot taken: #{image_file}\n")
 						rescue Excaption => e
-            			@rep.ReportException(e, false, false)
+							@rep.ReportException(e, false, false)
 						ensure
 						end
 
