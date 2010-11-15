@@ -2662,7 +2662,7 @@ JSCode
       result = 0
       master_result = 0
       thread_soda = nil
-      thread_timeout = (60 * 5) # 5 minutes #
+      thread_timeout = (60 * 10) # 10 minutes #
       time_check = nil
 
       @currentTestFile = file
