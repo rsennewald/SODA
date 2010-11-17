@@ -60,7 +60,7 @@ def SodaFireFox.CreateFireFoxBrowser(options = nil)
 
    begin
       if (options != nil)
-         result['browser'] = Watir::Browser.new(options)
+         result['browser'] = FireWatir::Firefox.new(options)
       else 
          result['browser'] = Watir::Browser.new()
       end
