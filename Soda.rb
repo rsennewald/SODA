@@ -469,7 +469,7 @@ class Soda
             @rep.ReportFailure(msg)
             raise(msg)
          rescue Exception => e
-            @rep.ReportException(e, false, false)
+            @rep.ReportException(e)
          ensure
 
          end
@@ -784,7 +784,7 @@ class Soda
                script = SodaXML.new.parse(file)
             end
          rescue Exception => e
-            @rep.ReportException(e, true, file)
+            @rep.ReportException(e, file)
          ensure
          end
       end
@@ -793,6 +793,7 @@ class Soda
       if (dir !~ /lib/)
          if(!is_restart && !@restart_test_running && file != @last_test)
             @non_lib_test_count += 1
+            @rep.IncTestCount()
             PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
          end
       end
@@ -875,6 +876,7 @@ class Soda
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
+				@rep.IncTestWarningCount()
             return nil
          end   
 
@@ -894,6 +896,7 @@ class Soda
                   RestartBrowserTest()
                end
 
+               @rep.IncTestCount()
                @non_lib_test_count += 1
                @last_test = file
             end
@@ -902,12 +905,13 @@ class Soda
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
-               @rep.IncTestCount()
                results = handleEvents(script)
                PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
-
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
+						@rep.IncFailedTest()
+					else
+						@rep.IncTestPassedCount()
                end
                @currentTestFile = parent_test_file
             else
@@ -938,6 +942,7 @@ class Soda
          tmp_file = File.basename(test_file)
          if (tmp_file =~ /#{bhash['testfile']}/)
             @rep.log("Blocklist: blocking file: \"#{test_file}\".\n")
+				@rep.IncBlockedTest()
             result = true
             break
          end
@@ -1116,7 +1121,7 @@ class Soda
       begin
          text = @browser.text
       rescue Exception => e
-         @rep.ReportException(e, true)
+         @rep.ReportException(e)
          text = ""
       ensure
 
@@ -1410,6 +1415,7 @@ class Soda
                else
                   PrintDebug("For some reason I got a nill @browser object!",
                      SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   result['browser_closed'] = true
                end
             when "refresh"
@@ -1524,8 +1530,7 @@ class Soda
             new_browser = @browser.attach(:url, url)
          end
       rescue Exception=>e
-         @rep.ReportException(e, true, false, 
-            "Failed trying to attach to browser window!");
+         @rep.ReportException(e, @currentTestFile);
 
          e_dump = SodaUtils.DumpEvent(event)
          @rep.log("Event Dump From Exception: #{e_dump}!\n", 
@@ -1569,6 +1574,7 @@ class Soda
          else
             @rep.log("Found requires event without any children!\n", 
                SodaUtils::WARN)
+				@rep.IncTestWarningCount()
          end 
       end
    end
@@ -1770,6 +1776,7 @@ class Soda
 #
 ############################################################################### 
    def eventScript(event)
+		results = 0
 
       if (event.key?('file'))
          # specified a new csv to file
@@ -1784,7 +1791,12 @@ class Soda
          if (script != nil)
             parent_script = @currentTestFile
             @currentTestFile = event['file']
-            handleEvents(script)
+            results = handleEvents(script)
+				if (@currentTestFile !~ /lib/i && results != 0)
+					@rep.IncFailedTest()
+				else
+					@rep.IncTestPassedCount()
+				end
             @currentTestFile = parent_script
          else
             msg = "Failed opening script file: \"#{event['file']}\"!\n"
@@ -2168,8 +2180,10 @@ JSCode
                   else
                      @rep.log("Found unsupported value for <textfield clear" +
                         "=\"true/false\" />!\n", SodaUtils::WARN)
+							@rep.IncTestWarningCount()
                      @rep.log("Unsupported clear value =>" +
                         " \"#{event['clear']}\".\n", SodaUtils::WARN)
+							@rep.IncTestWarningCount()
                end
             end
          when "focus"
@@ -2237,6 +2251,7 @@ JSCode
          else
             msg = "Failed to find supported field action.\n"
             @rep.log(msg, SodaUtils::WARN)
+				@rep.IncTestWarningCount()
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)
       end
@@ -2590,16 +2605,18 @@ JSCode
                @exceptionExit = true
                @rep.log("Exception in test: \"#{@currentTestFile}\", Line: " +
                   "#{event['line_number']}!\n", SodaUtils::ERROR)
-               @rep.ReportException(e, true, @fileStack[@fileStack.length - 1]);
+               @rep.ReportException(e, @fileStack[@fileStack.length - 1]);
                e_dump = SodaUtils.DumpEvent(event)
                @rep.log("Event Dump From Exception: #{e_dump}!\n", 
                   SodaUtils::EVENT)
 
                if (exception_event != nil)
                   @rep.log("Running Exception Handler.\n", SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   @exceptionExit = false
                   handleEvents(exception_event['children'])
                   @rep.log("Finished Exception Handler.\n", SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   @exceptionExit = true
                end
 
@@ -2689,14 +2706,14 @@ JSCode
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
-
+						@rep.IncTestWatchDogCount()
 						begin
 							result_dir = @rep.GetResultDir()
 							shooter = SodaScreenShot.new(result_dir)
 							image_file = shooter.GetOutputFile()
 							@rep.log("ScreenShot taken: #{image_file}\n")
 						rescue Excaption => e
-							@rep.ReportException(e, false, false)
+							@rep.ReportException(e)
 						ensure
 						end
 
@@ -2714,9 +2731,12 @@ JSCode
 
          if (result != 0)
             master_result = -1
+			else
+				@rep.IncTestPassedCount()
          end
       else
          msg = "Failed trying to run soda test: \"#{@currentTestFile}\"!\n"
+			@rep.IncFailedTest()
          @rep.ReportFailure(msg)
       end
 

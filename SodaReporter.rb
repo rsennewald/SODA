@@ -54,11 +54,15 @@ class SodaReporter
       @js_error_count = 0
       @css_error_count = 0
 		@asserts_count = 0
-		@exception_major_count = 0
 		@assertFails_count = 0
 		@exception_count = 0	
       @test_count = 0
       @test_skip_count = 0
+		@test_blocked_count = 0
+		@test_failed_count = 0
+		@test_passed_count = 0
+		@test_watchdog_count = 0
+		@test_warning_count = 0
 		@fatals = 0
 		@total = 0
       @failureCount = 0
@@ -145,6 +149,38 @@ class SodaReporter
    public :IncSkippedTest
 
 ###############################################################################
+# IncBlockedTest -- Method
+#     This method incerments the count by 1 for tests that were blocked.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncBlockedTest()
+      @test_blocked_count += 1
+   end
+   public :IncBlockedTest
+
+###############################################################################
+# IncFailedTest -- Method
+#     This method incerments the count by 1 for tests that failed.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncFailedTest()
+      @test_failed_count += 1
+   end
+   public :IncFailedTest
+
+###############################################################################
 # IncTestCount -- Method
 #     This method incerments the count by 1 for tests that were ran
 #
@@ -159,6 +195,54 @@ class SodaReporter
       @test_count += 1
    end
    public :IncTestCount
+
+###############################################################################
+# IncTestWarningCount -- Method
+#     This method incerments the count by 1 for tests that were ran
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestWarningCount()
+      @test_warning_count += 1
+   end
+   public :IncTestWarningCount
+
+###############################################################################
+# IncTestPassedCount -- Method
+#     This method incerments the count by 1 for tests that passed.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestPassedCount()
+      @test_passed_count += 1
+   end
+   public :IncTestPassedCount
+
+###############################################################################
+# IncTestWatchDogCount -- Method
+#     This method incerments the count by 1 for tests that watchdog'd.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestWatchDogCount()
+      @test_watchdog_count += 1
+   end
+   public :IncTestWatchDogCount
 
 ###############################################################################
 # ReportHTML -- Method
@@ -323,9 +407,6 @@ class SodaReporter
 #
 # Params:
 #     sodaException: This is the exception that is passed from Soda.
-#     
-#     mojor: Tells use if this was a mojor exception or now.
-#
 #     file: The soda test file that the exception was raised by durring the
 #        test.
 #
@@ -338,7 +419,7 @@ class SodaReporter
 #     So I will be killer this param soon...
 #
 ###############################################################################
-   def ReportException(sodaException, major = false, file = false)
+   def ReportException(sodaException, file = false)
       msg = nil
       @exception_count += 1
 	
@@ -354,14 +435,11 @@ class SodaReporter
          log("Exception raised: #{msg}\n", SodaUtils::ERROR)
       end
 
-		if (major)
-			@exception_major_count += 1
-         bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
-            "\n"
-         btm = "--Exception Message: #{msg}\n"
-         log("Major exception raised for file: #{file}" + btm + bt, 
-            SodaUtils::ERROR)
-		end
+		bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
+			"\n"
+		btm = "--Exception Message: #{msg}\n"
+		log("Exception raised for file: #{file}" + btm + bt, 
+			SodaUtils::ERROR)
 	end
 
 ###############################################################################
@@ -456,9 +534,13 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}" +
-         "--Test Major Exceptions: #{@exception_major_count}" +
          "--Test Count:#{@test_count}" +
-         "--Test Skip Count:#{@test_skip_count}\n"
+         "--Test Skip Count:#{@test_skip_count}" +
+			"--Test Blocked Count:#{@test_blocked_count}" +
+			"--Test Failed Count:#{@test_failed_count}" +
+			"--Test Passed Count:#{@test_passed_count}" +
+			"--Test WatchDog Count:#{@test_watchdog_count}"+
+			"--Test Warning Count:#{@test_warning_count}\n"
          log(msg)
 	end
 

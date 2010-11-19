@@ -2,9 +2,9 @@
 	<browser url="http://www.google.com" />
 	<textfield name="q" set="6" />
    <wait timeout="2" />
-   <link id="po-tg" />
+   <link id="po-tg" required="false" />
    <wait timeout="1" />
-   <link id="po-off" />
+   <link id="po-off" required="false" />
 	<textfield name="q" set="sugarcrm" />
 	<button name="btnG" />
 	<browser assert="/sugarcrm/i" />
