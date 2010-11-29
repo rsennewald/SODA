@@ -259,7 +259,7 @@ def GenHtmlReport(data, reportfile, create_links = false)
 <style type="text/css">
 
 .highlight {
-	background-color: #FFCC99; 
+	background-color: #8888FF;
 }
 
 .unhighlight {
@@ -666,34 +666,6 @@ table {
 	font-family: Arial;
 	font-weight: bold;
 	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_exceptions_error {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_javascript_error {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
 	color: #FF0000;
 	border-top: 2px solid black;
 	border-left: 0px solid black;
@@ -708,34 +680,6 @@ table {
 	font-family: Arial;
 	font-weight: bold;
 	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_assert {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_assert_error {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
 	color: #FF0000;
 	border-top: 2px solid black;
 	border-left: 0px solid black;
@@ -743,7 +687,7 @@ table {
 	border-bottom: 2px solid black;
 }
 
-.td_footer_other_error {
+.td_footer_assert {
 	whitw-space: nowrap;
 	background: #99CCFF;
 	text-align: center;
@@ -764,7 +708,7 @@ table {
 	font-family: Arial;
 	font-weight: bold;
 	font-size: 12px;
-	color: #000000;
+	color: #FF0000;
 	border-top: 2px solid black;
 	border-left: 0px solid black;
 	border-right: 0px solid black;
@@ -772,20 +716,6 @@ table {
 }
 
 .td_footer_total {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 2px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_total_error {
 	whitw-space: nowrap;
 	background: #99CCFF;
 	text-align: center;
@@ -910,17 +840,6 @@ HTML
       end
       hours,minutes,seconds,frac = Date.day_fraction_to_time(time_diff)
 
-#      rpt['report_hash'].each do |k,v|
-#         if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
-#               (k !~ /test\s+event\s+count/i) && 
-#               (k !~ /css\s+error\s+count/i) &&
-#               (k !~ /test\s+count/i))
-#   	         tmp = '<font color="#FF0000"><b>'
-#	            tmp += "#{v}</b></font>"
-#	            rpt['report_hash'][k] = tmp
-#         end
-#      end
-
       report_file = File.basename(rpt['log_file'], ".log")
       report_file = "Report-#{report_file}.html"
 
@@ -953,12 +872,40 @@ HTML
 		total_failures += rpt['report_hash']['Test JavaScript Error Count']
 		totals['Total Failure Count'] += total_failures
 
+		tcount = 0
+		tcount += rpt['report_hash']['Test Count']
+		tcount += rpt['report_hash']['Test Blocked Count']
+		tcount += rpt['report_hash']['Test Skip Count']
+
+		exceptions_td = "td_exceptions_data"
+		if (rpt['report_hash']['Test Exceptions'] > 0)
+			exceptions_td = "td_exceptions_error_data"
+		end
+
+		asserts_td = "td_assert_data"
+		if (rpt['report_hash']['Test Assert Failures'] > 0)
+			asserts_td = "td_assert_error_data"
+		end
+
+		watchdog_td = "td_watchdog_data"
+		if (rpt['report_hash']['Test WatchDog Count'] > 0)
+			watchdog_td = "td_watchdog_error_data"
+		end
+
+		jscript_td = "td_javascript_data"
+		if (rpt['report_hash']['Test JavaScript Error Count'] > 0)
+			jscript_td = "td_javascript_error_data"
+		end
+
+		t_passedcount = rpt['report_hash']['Test Count']
+		t_passedcount -= rpt['report_hash']['Test Failure Count']
+
       str = "<tr class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='unhighlight'\">\n"+
          "\t<td class=\"td_file_data\">#{log_file_td}</td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
-				"#{rpt['report_hash']['Test Count']}</td>\n"+
+				"#{t_passedcount}/#{tcount}</td>\n"+
 			"\t<td class=\"td_passed_data\">"+
 				"#{rpt['report_hash']['Test Passed Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
@@ -966,14 +913,14 @@ HTML
          "\t<td class=\"td_blocked_data\">"+
 				"#{rpt['report_hash']['Test Blocked Count']}</td>\n"+
          "\t<td class=\"td_skipped_data\">"+
-				"#{rpt['report_hash']['Test Skipped Count']}</td>\n"+
-			"\t<td class=\"td_watchdog_data\">"+
+				"#{rpt['report_hash']['Test Skip Count']}</td>\n"+
+			"\t<td class=\"#{watchdog_td}\">"+
 				"#{rpt['report_hash']['Test WatchDog Count']}</td>\n"+
-			"\t<td class=\"td_exceptions_data\">"+
+			"\t<td class=\"#{exceptions_td}\">"+
 				"#{rpt['report_hash']['Test Exceptions']}</td>\n"+
-         "\t<td class=\"td_javascript_data\">"+
+         "\t<td class=\"#{jscript_td}\">"+
 				"#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n"+
-         "\t<td class=\"td_assert_data\">"+
+         "\t<td class=\"#{asserts_td}\">"+
 				"#{rpt['report_hash']['Test Assert Failures']}</td>\n"+
 			"\t<td class=\"td_other_data\">"+
 				"#{rpt['report_hash']['Test Other Failures']}</td>\n"+
@@ -990,23 +937,16 @@ HTML
    hours,minutes,seconds,frac = 
       Date.day_fraction_to_time(totals['running_time'])
 
-   totals.each do |k,v|
-      if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
-            (k !~ /test\s+event\s+count/i) && 
-            (k !~ /css\s+error\s+count/i) &&
-            (k !~ /test\s+count/i) )
-
-         tmp = '<font color="#FF0000"><b>'
-         tmp += "#{v}</b></font>"
-         totals[k] = tmp
-      end
-   end
-
    totals['Test Skip Count'] = totals['Test Skip Count'].to_i()
-   test_totals = totals['Test Count'] + totals['Test Skip Count']
+   test_totals = totals['Test Count'] 
+	test_totals += totals['Test Skip Count']
+	test_totals += totals['Test Blocked Count']
+
+
    sub_totals = "<tr>\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
-      "\t<td class=\"td_footer_run\">#{totals['Test Count']}</td>\n"+
+      "\t<td class=\"td_footer_run\">#{totals['Test Count']}"+
+			"/#{test_totals}</td>\n"+
 		"\t<td class=\"td_footer_passed\">#{totals['Test Passed Count']}"+
 			"</td>\n"+
 	   "\t<td class=\"td_footer_failed\">"+
@@ -1019,13 +959,13 @@ HTML
 			"#{totals['Test WatchDog Count']}</td>\n"+	
 		"\t<td class=\"td_footer_exceptions\">"+
 			"#{totals['Test Exceptions']}</td>\n"+
-      "\t<td class=\"td_footer_javascript_error\">"+
+      "\t<td class=\"td_footer_javascript\">"+
 			"#{totals['Test JavaScript Error Count']}</td>\n"+
       "\t<td class=\"td_footer_assert\">"+
 			"#{totals['Test Assert Failures']}</td>\n"+
       "\t<td class=\"td_footer_other\">"+
 			"#{totals['Test Other Failures']}\n"+
-      "\t<td class=\"td_footer_total_error\">"+
+      "\t<td class=\"td_footer_total\">"+
 			"#{totals['Total Failure Count']}</td>\n"+
       "\t<td class=\"td_footer_css\">"+
 			"#{totals['Test CSS Error Count']}</td>\n"+

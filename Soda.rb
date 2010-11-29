@@ -870,6 +870,7 @@ class Soda
          fd = Dir.open(file)
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
+#				@rep.IncTestTotalCount() if (f !~ /lib/i)
          end
          fd.close()
 
@@ -911,7 +912,7 @@ class Soda
                   @FAILEDTESTS.push(@currentTestFile)
 						@rep.IncFailedTest()
 					else
-						@rep.IncTestPassedCount()
+						@rep.IncTestPassedCount() if (file !~ /lib/i)
                end
                @currentTestFile = parent_test_file
             else
@@ -1795,7 +1796,7 @@ class Soda
 				if (@currentTestFile !~ /lib/i && results != 0)
 					@rep.IncFailedTest()
 				else
-					@rep.IncTestPassedCount()
+					@rep.IncTestPassedCount() if (@currentTestFile !~ /lib/i)
 				end
             @currentTestFile = parent_script
          else

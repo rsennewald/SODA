@@ -63,6 +63,7 @@ class SodaReporter
 		@test_passed_count = 0
 		@test_watchdog_count = 0
 		@test_warning_count = 0
+		@test_total_count = 0
 		@fatals = 0
 		@total = 0
       @failureCount = 0
@@ -147,6 +148,22 @@ class SodaReporter
       @test_skip_count += 1
    end
    public :IncSkippedTest
+
+###############################################################################
+# IncTestTotalCount -- Method
+#     This method incerments the count by 1 for tests that were skipped.
+#
+# Input:
+#     n: the number to inc by, 1 is the default.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestTotalCount(n = 1)
+      @test_total_count += 1
+   end
+   public :IncTestTotalCount
 
 ###############################################################################
 # IncBlockedTest -- Method
