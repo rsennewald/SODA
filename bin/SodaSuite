@@ -271,6 +271,8 @@ Optional Flags:
    --restarttest: This is a soda test that will be ran right after the browser
       is restarted.
 
+   --skipcsserrors: This tells soda to not report on css errors.
+
    --help:  Prints this message and exits.
 
 HLP
@@ -556,7 +558,8 @@ def Main
                [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restartcount', '-1', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT],
-               [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ]
+               [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ],
+					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
       opts.quiet = true
@@ -598,6 +601,8 @@ def Main
                rerun_failed_test = true
             when "--reruntest"
                rerun_test_script = arg
+				when "--skipcsserrors"
+					params['errorskip'].push("css")
          end
       end
    rescue Exception => e
