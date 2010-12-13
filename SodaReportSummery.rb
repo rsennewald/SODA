@@ -221,11 +221,7 @@ def GenHtmlReport(data, reportfile, create_links = false)
    report_file = ""
    now = nil
 
-	totals['Test Warning Count'] = 0
-	totals['Test Other Failures'] = 0
-	totals['Test WatchDog Count'] = 0
    totals['Test Failure Count'] = 0 
-	totals['Test Passed Count'] = 0
    totals['Test CSS Error Count'] = 0 
    totals['Test JavaScript Error Count'] = 0 
    totals['Test Assert Failures'] = 0 
@@ -235,8 +231,6 @@ def GenHtmlReport(data, reportfile, create_links = false)
    totals['Test Major Exceptions'] = 0
    totals['Test Count'] = 0
    totals['Test Skip Count'] = 0
-	totals['Test Blocked Count'] = 0
-	totals['Total Failure Count'] = 0
    totals['running_time'] = nil
 
    begin
@@ -257,560 +251,102 @@ def GenHtmlReport(data, reportfile, create_links = false)
    html_header = <<HTML
 <html>
 <style type="text/css">
+body 
+{ 
+   margin: 0px;
+   font-family: Arial, Verdana, Helvetica, sans-serif;
+}
+
+a:hover
+{
+   color: #24f938;
+}
+
+fieldset, table, pre 
+{
+    margin-bottom:0;
+}
+
+p 
+{
+   margin-top: 0px;
+   margin-bottom: 0px;
+   font-family: Arial, Verdana, Helvetica, sans-serif;
+   font-size: 11px;
+}
+
+li 
+{
+   margin-top: 0px;
+   margin-bottom: 0px;
+   font-family: Arial, Verdana, Helvetica, sans-serif;
+   font-size: 11px;
+}
+
+td
+{
+   text-align: center;
+   vertical-align: middle;
+}
+
+.td_file
+{
+   text-align: left;
+   vertical-align: middle;
+   white-space: nowrap;
+}
+
+.tr_normal
+{
+   background: #e5eef3; 
+}
 
 .highlight {
-	background-color: #8888FF;
+   background-color: #8888FF;
 }
 
-.unhighlight {
-	background: #FFFFFF;
+.tr_header
+{
+   white-space: nowrap;
+   background: #a4a4a4;
+   font-weight: bold;
 }
 
-.td_header_master {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_header_sub {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 1px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_header_skipped {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 1px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_header_watchdog {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-table {
-	width: 100%;
-	border: 2px solid black;
-	border-collapse: collapse;
-	padding: 0px;
-	background: #FFFFFF;
-}
-
-.td_file_data {
-	whitw-space: nowrap;
-	text-align: left;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_run_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_run_data_error {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_passed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #00FF00;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_failed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_blocked_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FFCF10;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_skipped_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #D9D9D9;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_watchdog_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_watchdog_error_data {
-	whitw-space: nowrap;
-	color: #FF0000;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_exceptions_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_exceptions_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_javascript_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_javascript_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_assert_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_assert_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_other_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_other_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_total_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_total_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_css_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_sodawarnings_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_time_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 1px solid black;
-	border-bottom: 0px solid black;
-}
-
-.td_footer_run {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_passed {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #00FF00;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_failed {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_blocked {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FFCF10;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_skipped {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #D9D9D9;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_watchdog {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_exceptions {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_javascript {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_assert {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_other {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_total {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 2px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_css {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_sodawarnings {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
-}
-
-.td_footer_times {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 2px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+table 
+{
+   background: #ffff;
+   border: 1px solid black;
+   border-bottom: 1px solid #0000;
+   border-right: 1px solid #0000;
+   color: #0000;
+   padding: 4px;
+   font-size: 11px;
 }
 </style>
+<title>Soda Global Report Summery: #{now}</title>
 <body>
+<li>#{now}</li>
 <table>
-<tr>
-	<td class="td_header_master" rowspan="2">Suite</br>
-	(click link for full report)</td>
-	<td class="td_header_master" colspan="5">Tests</td>
-	<td class="td_header_master" colspan="6">Failures</td>
-	<td class="td_header_master" colspan="2">Warnings</td>
-	<td class="td_header_master" rowspan="2">Run Time</br>(hh:mm:ss)</td>
-</tr>
-<tr>
-	<td class="td_header_sub">Run</td>
-	<td class="td_header_sub">Passed</td>
-	<td class="td_header_sub">Failed</td>
-	<td class="td_header_sub">Blocked</td>
-	<td class="td_header_skipped">Skipped</td>
-	<td class="td_header_watchdog">Watchdogs</td>
-	<td class="td_header_sub">Exceptions</td>
-	<td class="td_header_sub">JavaScript</br>Errors</td>
-	<td class="td_header_sub">Assert</br>Failures</td>
-	<td class="td_header_sub">Other</br>Failures</td>
-	<td class="td_header_skipped">Total</br>Failures</td>
-	<td class="td_header_watchdog">CSS Errors</td>
-	<td class="td_header_skipped">Soda</br>Warnings</td>	
+<tr class="tr_header">
+\t<td>Test File:<br>
+\tClick link for full report</td>
+\t<td>Test Count:</td>
+\t<td>Test Skip Count:</td>
+\t<td>Failure Count:</td>
+\t<td>CSS Error Count:</td>
+\t<td>JavaScript Error Count:</td>
+\t<td>Assert Failures:</td>
+\t<td>Event Count:</td>
+\t<td>Assert Count:</td>
+\t<td>Exceptions:</td>
+\t<td>Major Exceptions:</td>
+\t<td>Running Time:<br>(hh:mm:ss):</td>
 </tr>
 HTML
 
    fd.write(html_header)
 
    data.each do |rpt|
-		totals['Test Warning Count'] +=
-			rpt['report_hash']['Test Warning Count'].to_i()
-		totals['Test Other Failures'] +=
-			rpt['report_hash']['Test Other Failures'].to_i()
-		totals['Test WatchDog Count'] +=
-			rpt['report_hash']['Test WatchDog Count'].to_i()
-		totals['Test Blocked Count'] +=
-			rpt['report_hash']['Test Blocked Count'].to_i()
-		totals['Test Passed Count'] += 
-			rpt['report_hash']['Test Passed Count'].to_i()
       totals['Test Failure Count'] += 
          rpt['report_hash']['Test Failure Count'].to_i()
       totals['Test CSS Error Count'] += 
@@ -825,6 +361,8 @@ HTML
          rpt['report_hash']['Test Assert Count'].to_i()
       totals['Test Exceptions'] += 
          rpt['report_hash']['Test Exceptions'].to_i()
+      totals['Test Major Exceptions'] +=
+         rpt['report_hash']['Test Major Exceptions'].to_i()
       totals['Test Count'] += rpt['report_hash']['Test Count'].to_i()
       totals['Test Skip Count'] += rpt['report_hash']['Test Skip Count'].to_i()
 
@@ -840,6 +378,17 @@ HTML
       end
       hours,minutes,seconds,frac = Date.day_fraction_to_time(time_diff)
 
+      rpt['report_hash'].each do |k,v|
+         if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
+               (k !~ /test\s+event\s+count/i) && 
+               (k !~ /css\s+error\s+count/i) &&
+               (k !~ /test\s+count/i))
+            tmp = '<font color="#FF0000"><b>'
+            tmp += "#{v}</b></font>"
+            rpt['report_hash'][k] = tmp
+         end
+      end
+
       report_file = File.basename(rpt['log_file'], ".log")
       report_file = "Report-#{report_file}.html"
 
@@ -854,126 +403,59 @@ HTML
          log_file_td = "#{rpt['test_file']}"
       end
 
-		rpt['report_hash'].each do |k,v|
-			rpt['report_hash'][k] = v.to_i()	
-		end
-
-		test_run_class = "td_run_data"
-		if (rpt['report_hash']['Test Failure Count'] > 0)
-			test_run_class = "td_run_data_error"
-		end
-
-		rpt['report_hash']['Test Other Failures'] = 0
-		total_failures = 0
-		total_failures += rpt['report_hash']['Test Failure Count']
-		total_failures += rpt['report_hash']['Test WatchDog Count']
-		total_failures += rpt['report_hash']['Test Assert Failures']
-		total_failures += rpt['report_hash']['Test Other Failures']
-		total_failures += rpt['report_hash']['Test JavaScript Error Count']
-		totals['Total Failure Count'] += total_failures
-
-		tcount = 0
-		tcount += rpt['report_hash']['Test Count']
-		tcount += rpt['report_hash']['Test Blocked Count']
-		tcount += rpt['report_hash']['Test Skip Count']
-
-		exceptions_td = "td_exceptions_data"
-		if (rpt['report_hash']['Test Exceptions'] > 0)
-			exceptions_td = "td_exceptions_error_data"
-		end
-
-		asserts_td = "td_assert_data"
-		if (rpt['report_hash']['Test Assert Failures'] > 0)
-			asserts_td = "td_assert_error_data"
-		end
-
-		watchdog_td = "td_watchdog_data"
-		if (rpt['report_hash']['Test WatchDog Count'] > 0)
-			watchdog_td = "td_watchdog_error_data"
-		end
-
-		jscript_td = "td_javascript_data"
-		if (rpt['report_hash']['Test JavaScript Error Count'] > 0)
-			jscript_td = "td_javascript_error_data"
-		end
-
-		t_passedcount = rpt['report_hash']['Test Count']
-		t_passedcount -= rpt['report_hash']['Test Failure Count']
-
-      str = "<tr class=\"unhighlight\" "+
+      str = "<tr class=\"tr_normal\" "+
          "onMouseOver=\"this.className='highlight'\" "+
-         "onMouseOut=\"this.className='unhighlight'\">\n"+
-         "\t<td class=\"td_file_data\">#{log_file_td}</td>\n"+
-         "\t<td class=\"#{test_run_class}\">"+
-				"#{t_passedcount}/#{tcount}</td>\n"+
-			"\t<td class=\"td_passed_data\">"+
-				"#{rpt['report_hash']['Test Passed Count']}</td>\n"+
-         "\t<td class=\"td_failed_data\">"+
-				"#{rpt['report_hash']['Test Failure Count']}</td>\n"+
-         "\t<td class=\"td_blocked_data\">"+
-				"#{rpt['report_hash']['Test Blocked Count']}</td>\n"+
-         "\t<td class=\"td_skipped_data\">"+
-				"#{rpt['report_hash']['Test Skip Count']}</td>\n"+
-			"\t<td class=\"#{watchdog_td}\">"+
-				"#{rpt['report_hash']['Test WatchDog Count']}</td>\n"+
-			"\t<td class=\"#{exceptions_td}\">"+
-				"#{rpt['report_hash']['Test Exceptions']}</td>\n"+
-         "\t<td class=\"#{jscript_td}\">"+
-				"#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n"+
-         "\t<td class=\"#{asserts_td}\">"+
-				"#{rpt['report_hash']['Test Assert Failures']}</td>\n"+
-			"\t<td class=\"td_other_data\">"+
-				"#{rpt['report_hash']['Test Other Failures']}</td>\n"+
-			"\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
-         "\t<td class=\"td_css_data\">"+
-				"#{rpt['report_hash']['Test CSS Error Count']}</td>\n"+
-			"\t<td class=\"td_sodawarnings_data\">"+
-				"#{rpt['report_hash']['Test Warning Count']}</td>\n"+
-         "\t<td class=\"td_time_data\">"+
-				"#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
+         "onMouseOut=\"this.className='tr_normal'\">\n" +
+         "\t<td class=\"td_file\">#{log_file_td}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Count']}</td>\n"+
+         "\t<td>#{rpt['report_hash']['Test Skip Count']}</td>\n"+
+         "\t<td>#{rpt['report_hash']['Test Failure Count']}</td>\n"+
+         "\t<td>#{rpt['report_hash']['Test CSS Error Count']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Assert Failures']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Event Count']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Assert Count']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Exceptions']}</td>\n" +
+         "\t<td>#{rpt['report_hash']['Test Major Exceptions']}</td>\n" +
+         "\t<td>#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
          fd.write(str)
    end
  
    hours,minutes,seconds,frac = 
       Date.day_fraction_to_time(totals['running_time'])
 
+   totals.each do |k,v|
+      if ( (v.to_i > 0) && (k !~ /test\s+assert\s+count/i) &&
+            (k !~ /test\s+event\s+count/i) && 
+            (k !~ /css\s+error\s+count/i) &&
+            (k !~ /test\s+count/i) )
+
+         tmp = '<font color="#FF0000"><b>'
+         tmp += "#{v}</b></font>"
+         totals[k] = tmp
+      end
+   end
+
    totals['Test Skip Count'] = totals['Test Skip Count'].to_i()
-   test_totals = totals['Test Count'] 
-	test_totals += totals['Test Skip Count']
-	test_totals += totals['Test Blocked Count']
+   test_totals = totals['Test Count'] + totals['Test Skip Count']
+   sub_totals = "<tr class=\"tr_header\">\n"+
+      "\t<td>Totals:</td>\n"+
+      "\t<td>#{totals['Test Count']}</td>\n"+
+      "\t<td>#{totals['Test Skip Count']}</td>\n"+
+      "\t<td>#{totals['Test Failure Count']}</td>\n"+
+      "\t<td>#{totals['Test CSS Error Count']}</td>\n"+
+      "\t<td>#{totals['Test JavaScript Error Count']}</td>\n"+
+      "\t<td>#{totals['Test Assert Failures']}</td>\n"+
+      "\t<td>#{totals['Test Event Count']}</td>\n"+
+      "\t<td>#{totals['Test Assert Count']}</td>\n"+
+      "\t<td>#{totals['Test Exceptions']}</td>\n"+
+      "\t<td>#{totals['Test Major Exceptions']}</td>\n"+
+      "\t<td>#{hours}:#{minutes}:#{seconds}</td>\n"+
+      "</tr>\n" +
+      "<tr class=\"tr_header\">\n"+
+      "\t<td>Total Test Count:</td>\n"+
+      "\t<td colspan=\"2\">#{test_totals}</td>\n</tr>\n"
 
-
-   sub_totals = "<tr>\n"+
-      "\t<td class=\"td_header_master\">Totals:</td>\n"+
-      "\t<td class=\"td_footer_run\">#{totals['Test Count']}"+
-			"/#{test_totals}</td>\n"+
-		"\t<td class=\"td_footer_passed\">#{totals['Test Passed Count']}"+
-			"</td>\n"+
-	   "\t<td class=\"td_footer_failed\">"+
-			"#{totals['Test Failure Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_blocked\">"+
-			"#{totals['Test Blocked Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_skipped\">"+
-			"#{totals['Test Skip Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_watchdog\">"+
-			"#{totals['Test WatchDog Count']}</td>\n"+	
-		"\t<td class=\"td_footer_exceptions\">"+
-			"#{totals['Test Exceptions']}</td>\n"+
-      "\t<td class=\"td_footer_javascript\">"+
-			"#{totals['Test JavaScript Error Count']}</td>\n"+
-      "\t<td class=\"td_footer_assert\">"+
-			"#{totals['Test Assert Failures']}</td>\n"+
-      "\t<td class=\"td_footer_other\">"+
-			"#{totals['Test Other Failures']}\n"+
-      "\t<td class=\"td_footer_total\">"+
-			"#{totals['Total Failure Count']}</td>\n"+
-      "\t<td class=\"td_footer_css\">"+
-			"#{totals['Test CSS Error Count']}</td>\n"+
-		"\t<td class=\"td_footer_sodawarnings\">"+
-			"#{totals['Test Warning Count']}</td>\n"+
-		"\t<td class=\"td_footer_times\">"+
-			"#{hours}:#{minutes}:#{seconds}</td>\n"+
-      "</tr>\n"
    fd.write(sub_totals)
    fd.write("</table>\n</body>\n</html>\n")
    fd.close()
