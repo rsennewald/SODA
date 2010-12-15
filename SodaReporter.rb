@@ -394,10 +394,57 @@ class SodaReporter
       tmp_logfile += "/" 
       tmp_logfile += File.basename("#{@log_filename}", ".tmp")
       tmp_logfile += ".log"
-      File.rename(@log_filename, tmp_logfile)
+#      File.rename(@log_filename, tmp_logfile) # put back after hack!!!
+		NFSRenameHack(@log_filename, tmp_logfile)
+
       @log_filename = tmp_logfile
-      
    end
+
+###############################################################################
+# NFSRenameHack -- hack!!!
+#
+#	This is a total hack because of the very lame ass way hudson was setup
+#	to run soda tests using an nfs mount as a writing point for test
+#	results!!!  This hack will be taken out as soon as hudson is updated.
+#
+###############################################################################
+	def NFSRenameHack(old_file, new_file)
+		err = false
+		count = 0
+
+		while (err != true)
+			err = @logfile.closed?()
+			count += 1
+			sleep(1)
+			break if (count > 20)
+		end
+
+		tmp_log = File.open(old_file, "r")
+		new_log = File.new(new_file, "w+")
+		line = nil
+		while (line = tmp_log.gets)
+			new_log.write(line)
+		end
+		tmp_log.close()
+		new_log.close()
+
+		sleep(1)
+		
+		is_deleted = false
+		for i in 0..30
+			begin
+				File.unlink(old_file)
+				is_deleted = true
+			rescue Exception => e
+				print "(!)Failed calling delete on file: '#{old_file}'!\n"
+				is_deleted = false
+			ensure
+			end
+
+			break if (is_deleted)
+			sleep(1)
+		end
+	end
 
 ###############################################################################
 # log -- Method
