@@ -32,7 +32,8 @@ require 'getoptlong'
 TMP_DIR = "/tmp/Soda"
 
 SODA_EXES = [
-   "bin/SodaSuite"
+   "bin/SodaSuite",
+	"bin/SodaSummaryCreator"
 ]
 
 SODA_FILES = [
@@ -129,7 +130,7 @@ spec = Gem::Specification.new do |s|
       'lib/utils/*.rb', 
       'lib/fields/*.rb',
       '*.rb']
-   s.executables = ['SodaSuite']
+   s.executables = ['SodaSuite', 'SodaSummaryCreator']
    s.require_path = 'lib'
    s.has_rdoc = false
    s.extra_rdoc_files = nil
