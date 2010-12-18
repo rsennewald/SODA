@@ -334,7 +334,7 @@ class SodaTestCheck
             err += 1
          end
       rescue Exception => e
-         @report.ReportException(e, false, @sodatest)
+         @report.ReportException(e, @sodatest)
          err += 1
       ensure
       end

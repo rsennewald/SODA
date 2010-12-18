@@ -57,6 +57,7 @@ require "fields/FileField"
 require "fields/LiField"
 require 'thread'
 require 'date'
+require 'pp'
 
 ###############################################################################
 # Soda -- Class
@@ -2676,7 +2677,7 @@ JSCode
 #     returns a SodaReport object.
 #
 ############################################################################### 
-   def run(file, rerun = false)
+   def run(file, rerun = false, genhtml = true)
       result = 0
       master_result = 0
       thread_soda = nil
@@ -2743,10 +2744,127 @@ JSCode
 
       @rep.SodaPrintCurrentReport()
       @rep.EndTestReport()
-      @rep.ReportHTML()
+      @rep.ReportHTML() if (genhtml)
 
       return master_result
    end
+
+############################################################################### 
+#
+###############################################################################
+	def RunAllSuites(suites)
+		results = {}
+		err = -1
+		
+		suites.each do |s|
+			base_suite_name = File.basename(s)
+			results[base_suite_name] = RunSuite(s)
+		end
+
+		print "DATA:\n"
+		pp(results)
+		print "\n\n"
+
+		suite_report = "#{@resultsDir}/suite.log"
+		fd = File.new(suite_report, "w+")
+
+		results.each do |k,v|
+			fd.write("SuiteFile:[#{k}]\n")
+			v.each do |testname, testhash|
+				fd.write("TestFile:[#{testname}]\n")
+				testhash.each do |tname, tvalue|
+					fd.write("#{tname}::#{tvalue}\n")
+				end
+				fd.write("end-test\n")
+			end
+			fd.write("end-suite\n\n")
+		end
+		fd.close()
+
+	end
+
+############################################################################### 
+#
+############################################################################### 
+	def RunSuite(suitefile)
+		parser = nil
+		doc = nil
+		result = {}
+		tests = []
+		setup_test = nil
+		cleanup_test = nil
+		setup_results = 0
+
+		begin
+         parser = LibXML::XML::Parser.file(suitefile)
+         doc = parser.parse()
+			doc = doc.root()
+
+			doc.each do |node|
+				next if (node.name !~ /script/)
+				attrs = node.attributes()
+				attrs = attrs.to_h()
+
+				if (attrs.key?('file'))
+					base_name = File.basename(attrs['file'])
+					if (base_name =~ /^setup/)
+						setup_test = attrs['file']
+					elsif (base_name =~ /^cleanup/)
+						cleanup_test = attrs['file']
+					else
+						tests.push(attrs['file'])
+					end
+				elsif (attrs.key?('fileset'))
+					files = File.join(attrs['fileset'], "*.xml")
+					files = Dir.glob(files)
+					files.each do |f|
+						tests.push(f)
+					end
+				end
+			end
+		rescue Exception => e
+			print "ERROR: #{e.message}!\n"
+			print e.backtrace.join("\n")
+			result = nil
+		ensure
+		end	
+
+
+		if (setup_test != nil)
+			setup_result = run(setup_test, false, false)
+			if (setup_result != 0)
+				SodaUtils.PrintSoda("Failed calling setup test: "+
+					"'#{setup_test}'!\n", SodaUtils::ERROR)
+				result[setup_test] = {'result' => -1}
+				setup_result = false
+			else
+				setup_result = true
+				result[setup_test] = {'result' => 0}
+			end
+		else
+			setup_result = true
+		end
+
+		if (setup_result)
+			tests.each do |test|
+				result[test] = {}
+				result[test]['result'] = run(test, false, false)
+			end
+		end
+
+		if (cleanup_test != nil)
+			cleanup_result = run(cleanup_test, false, false)
+			if (cleanup_result != 0)
+				SodaUtils.PrintSoda("Failed calling cleanup test: "+
+					"'#{cleanup_test}'!\n", SodaUtils::ERROR)
+				result[cleanup_test] = {'result' => -1}
+			else
+				result[cleanup_test] = {'result' => 0}
+			end
+		end
+
+		return result
+	end
 
 ############################################################################### 
 # GetCurrentBrowser -- Method

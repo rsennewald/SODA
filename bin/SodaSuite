@@ -119,46 +119,15 @@ class SodaSuite
 #     None.
 #
 ###############################################################################
-   def ExecuteTestSuite(suite, rerun = false, reruntest = nil)
+   def ExecuteTestSuites(suites)
       soda = nil
-      master_result = 0
       result = nil
-      
+
       soda = Soda::Soda.new(@SodaParams)
-
-      if (reruntest != nil)
-         SodaUtils.PrintSoda("Running rerun test setup script: "+
-            "'#{reruntest}'.\n")
-         soda.run(reruntest)
-      end
-
-      suite.each do |test|
-         result = soda.run(test, rerun)
-         if (result == -1)
-            SodaUtils.PrintSoda("Failed executing test file: #{test}!\n",
-               SodaUtils::ERROR)
-            master_result = -1
-         
-            begin
-               soda.browser.close()
-            rescue Exception => e
-               print "Exception: #{e.message}\n"
-            ensure
-            end
-            soda = Soda::Soda.new(@SodaParams)
-         end
-      end
-
-      begin
-         soda.browser.close()
-      rescue Exception => e
-         print "Exception: #{e.message}\n"
-      ensure
-      end
-
-      soda = nil
-      return master_result
-   end
+		result = soda.RunAllSuites(suites)
+	
+		return result
+end
 
 ###############################################################################
 # Execute -- Medhod
@@ -621,6 +590,11 @@ def Main
       PrintHelp()
    end
 
+	if (params['suites'].length > 0 && params['resultsdir'] == nil)
+		SodaUtils.PrintSoda("Missing argument --resultsdir!\n")
+		PrintHelp()
+	end
+
    if (params['debug'])
       SodaUtils.PrintSoda("SodaSuite Params:\n")
       params.each do |k, v|
@@ -649,12 +623,7 @@ def Main
 
    if (params['suites'].length > 0)
       sweet = SodaSuite.new(params)
-      params['suites'].each do |swt|
-         result = sweet.ExecuteTestSuite(swt)
-         if (result != 0) 
-            master_result = -1
-         end
-      end
+      result = sweet.ExecuteTestSuites(params['suites'])
    end
 
    if (params['test_files'].length > 0)
@@ -673,11 +642,11 @@ def Main
    end
 
    # see if we should rerun failed tests #
-   if (rerun_failed_test && failed_tests.length > 0)
-      SodaUtils.PrintSoda("Rerunning failed tests.\n")
-      sweet.ExecuteTestSuite(failed_tests, true, rerun_test_script)
-      SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
-   end
+#   if (rerun_failed_test && failed_tests.length > 0)
+#      SodaUtils.PrintSoda("Rerunning failed tests.\n")
+#      sweet.ExecuteTestSuite(failed_tests, true, rerun_test_script)
+#      SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
+#   end
 
    if (params['resultsdir'] != nil)
       begin
