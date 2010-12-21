@@ -28,6 +28,7 @@
 
 require 'rubygems'
 require 'SodaReportSummery'
+require 'SodaSuiteSummary'
 require 'getoptlong'
 
 ###############################################################################
@@ -51,6 +52,10 @@ Required Flags:
    --reportdir: This flag tells #{$0} where to find the Soda log files.
 
 Optional Flags:
+  --usesuites: This flag say that the summary to be generated is for reports
+    that were created by SodaSuite using the --suite flag and not the --test
+    flag.
+
    --help: Prints this message and exits.
 
 HLP
@@ -77,10 +82,12 @@ def Main()
 	reportdir = nil
 	summary_file = nil
 	summary_obj = nil
+   use_suites = false
 
 	opts = GetoptLong.new(
 		['--reportdir', '-r', GetoptLong::REQUIRED_ARGUMENT],
-		['--help', '-h', GetoptLong::OPTIONAL_ARGUMENT]
+		['--help', '-h', GetoptLong::OPTIONAL_ARGUMENT],
+      ['--usesuites', '-s', GetoptLong::OPTIONAL_ARGUMENT]
 	)
 	
 	opts.quiet = true
@@ -88,6 +95,8 @@ def Main()
 		case (opt)
 			when "--reportdir"
 				reportdir = arg
+         when "--usesuites"
+            use_suites = true
 			when "--help"
 				PrintHelp()
 				exit(0)
@@ -103,11 +112,17 @@ def Main()
 	summary_file = "#{reportdir}/summary.html"
 	begin
 		print "(*)Creating summary report...\n"
-		summary_obj = SodaReportSummery.new(reportdir, summary_file, true)
+      if (use_suites)
+		   summary_obj = SodaSuiteSummary.new(reportdir, summary_file, true)
+      else
+		   summary_obj = SodaReportSummery.new(reportdir, summary_file, true)
+      end
 		print "(*)Finished creating report.\n"
 		print "(*)Summary File: #{summary_file}\n"
 	rescue Exception => e
-		print "(!)Error: #{e.message}!\n\n"
+		print "(!)Error: #{e.message}!\n"
+      print e.backtrace.join("\n")
+      print "\n\n"
 		exit(2)
 	ensure
 	end

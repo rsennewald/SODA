@@ -37,6 +37,7 @@ SODA_EXES = [
 ]
 
 SODA_FILES = [
+      "SodaSuiteSummary.rb",
 		"SodaScreenShot.rb",
       "SodaElements.xml",
       "FieldUtils.rb",
