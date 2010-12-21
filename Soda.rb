@@ -2754,33 +2754,46 @@ JSCode
 ###############################################################################
 	def RunAllSuites(suites)
 		results = {}
-		err = -1
-		
+		err = 0
+		indent = " " * 2
+		indent2 = "#{indent}" * 2
+		indent3 = "#{indent}" * 4
+		hostname = `hostname`
+		hostname = hostname.chomp()
+
 		suites.each do |s|
 			base_suite_name = File.basename(s)
 			results[base_suite_name] = RunSuite(s)
 		end
 
-		print "DATA:\n"
-		pp(results)
-		print "\n\n"
-
-		suite_report = "#{@resultsDir}/suite.log"
+		time = Time.now()
+		time = "#{time.to_i}-#{time.usec}"
+		suite_report = "#{@resultsDir}/#{hostname}-#{time}-suite.xml"
 		fd = File.new(suite_report, "w+")
+		fd.write("<data>\n")
 
 		results.each do |k,v|
-			fd.write("SuiteFile:[#{k}]\n")
+			fd.write("\t<suite>\n")
+			fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
 			v.each do |testname, testhash|
-				fd.write("TestFile:[#{testname}]\n")
+				fd.write("\t#{indent2}<test>\n")
+				fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
 				testhash.each do |tname, tvalue|
-					fd.write("#{tname}::#{tvalue}\n")
+					if (tname == "result")
+						err = -1 if (tvalue.to_i != 0)
+					end
+					new_name = "#{tname}"
+					new_name = new_name.gsub(" ", "_")
+					fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
 				end
-				fd.write("end-test\n")
+				fd.write("\t#{indent2}</test>\n")
 			end
-			fd.write("end-suite\n\n")
+			fd.write("\t</suite>\n")
 		end
+		fd.write("</data>\n")
 		fd.close()
-
+		
+		return err
 	end
 
 ############################################################################### 
@@ -2849,6 +2862,8 @@ JSCode
 			tests.each do |test|
 				result[test] = {}
 				result[test]['result'] = run(test, false, false)
+				result[test].merge!(@rep.GetRawResults)
+				@rep.ZeroTestResults()
 			end
 		end
 

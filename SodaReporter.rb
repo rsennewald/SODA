@@ -45,6 +45,9 @@ require 'SodaLogReporter'
 # simple reporter class that tracks asserts, exceptions, and log messages
 ###############################################################################
 class SodaReporter
+   attr_accessor :asserts_count, :js_error_count, :css_error_count,
+      :assertFails_count, :exception_count, :test_skip_count, 
+      :test_blocked_count, :test_watchdog_count
 
 	def initialize(testfile, savehtml = false, resultsdir = nil, debug = 0,
          callback = nil, rerun = false)
@@ -117,6 +120,57 @@ class SodaReporter
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
 	end
+
+###############################################################################
+# GetRawResults -- Method
+#     This method gets test results data.
+#
+# Input:
+#     None.
+#
+# Output:
+#     returns a hash of test report data.
+#
+###############################################################################
+   def GetRawResults()
+      results = {
+         'Assert Count' => @asserts_count,
+         'JS Error Count' => @js_error_count,
+         'CSS Error Count' => @css_error_count,
+         'Assert Failed Count' => @assertFails_count,
+         'Exception Count' => @exception_count,
+         'Test Skipped Count' => @test_skip_count,
+         'Test Blocked Count' => @test_blocked_count,
+         'Test Watchdog Count' => @test_watchdog_count
+      }
+
+      return results
+   end
+
+###############################################################################
+# ZeroTestResults -- Method
+#     This method zero's out needed reported values for a test when running
+#     a suite.  Really this is only needed until SugarCRM internally starts
+#     using real suites and I can go back to undo the hack's put in place to
+#     do suite reporting when using the --test option to run suites.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def ZeroTestResults()
+         @asserts_count = 0
+         @js_error_count = 0
+         @css_error_count = 0
+         @assertFails_count = 0
+         @exception_count = 0
+         @test_skip_count = 0
+         @test_blocked_count = 0
+         @test_watchdog_count = 0
+   end
 
 ###############################################################################
 # GetResultDir -- Method
