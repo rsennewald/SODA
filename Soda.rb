@@ -2750,6 +2750,14 @@ JSCode
    end
 
 ############################################################################### 
+# RunAllSuites -- Method
+#		This function run a list of suite files as suites, not as tests.
+#
+# Input:
+#		suites: An array of Soda suite files to be ran.
+#
+# Output:
+#		returns a hash with the results from the ran suites.
 #
 ###############################################################################
 	def RunAllSuites(suites)
