@@ -121,7 +121,7 @@ class SodaReporter
       log("[New Test]\n")
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
-      @start_time = Time.now()
+      @start_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
 	end
 
 ###############################################################################
@@ -137,8 +137,12 @@ class SodaReporter
 ###############################################################################
    def GetRawResults()
 
-      @end_time = Time.now() if (@end_time == nil) # just in case #
-      total_time = @end_time - @start_time
+      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S") if (@end_time == nil)
+      start = DateTime.strptime("#{@start_time}",
+         "%m/%d/%Y-%H:%M:%S")
+      stop = DateTime.strptime("#{@end_time}",
+         "%m/%d/%Y-%H:%M:%S")
+      total_time = (stop - start)
 
       results = {
          'Test Assert Count' => @asserts_count,
@@ -151,7 +155,8 @@ class SodaReporter
          'Test WatchDog Count' => @test_watchdog_count,
          'Test Warning Count' => @test_warning_count,
          'Test Event Count' => @total,
-         'Test Total Time' => total_time
+         'Test Start Time' => @start_time,
+         'Test Stop Time' => @end_time
       }
 
       return results
@@ -466,7 +471,7 @@ class SodaReporter
 		NFSRenameHack(@log_filename, tmp_logfile)
 
       @log_filename = tmp_logfile
-      @end_time = Time.now()
+      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
    end
 
 ###############################################################################

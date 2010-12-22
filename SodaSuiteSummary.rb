@@ -222,6 +222,8 @@ def GenHtmlReport(data, reportfile, create_links = false)
    report_file = ""
    now = nil
    suite_totals = {}
+   total_failure_count = 0
+   total_non_ran_count = 0
 
    begin
       fd = File.new(reportfile, "w+")
@@ -786,62 +788,82 @@ HTML
 
    data.each do |suite, suite_hash|
       totals[suite] = Hash.new()
+      totals[suite]['Test Failure Count'] = 0
+      totals[suite]['Test Passed Count'] = 0
+      totals[suite]['Total Time'] = nil
+
       suite_hash.each do |k, v|
          next if (k !~ /tests/)
-         test_count = 0
-         v.each do |test|
-            test.each do |test_k, test_v|
-               test_count += 1
-               if (!totals[suite].key?(test_k))
-                  totals[suite][test_k] = 0
-               end
+         totals[suite]['Test Count'] = v.length()
 
-               if (test_k !~ /Test\sTotal\sTime/i)
-                  totals[suite][test_k] += test_v.to_i()
+         v.each do |test|
+            time_set = false
+            if (test['result'].to_i != 0)
+               totals[suite]['Test Failure Count'] += 1
+               total_failure_count += 1
+            else
+               totals[suite]['Test Passed Count'] += 1
+            end
+
+            if (!time_set)
+               time_set = true
+               stop = test['Test Stop Time']
+               start = DateTime.strptime("#{test['Test Start Time']}",
+                  "%m/%d/%Y-%H:%M:%S")
+               stop = DateTime.strptime("#{test['Test Stop Time']}",
+                  "%m/%d/%Y-%H:%M:%S")
+
+               diff = (stop - start)
+               if (totals[suite]['Total Time'] == nil)
+                  totals[suite]['Total Time'] = diff
                else
-                  totals[suite][test_k] += test_v.to_f()
+                  totals[suite]['Total Time'] += diff
                end
             end
-            totals[suite]['Test Count'] = test_count
+
+            test.each do |test_k, test_v|
+               if (!totals[suite].key?(test_k))
+                  totals[suite][test_k] = 0
+               else
+                  totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
+               end
+            end   
          end
       end
    end
      
-   print "Totals:\n"
-   pp(totals)
-   print "\n\n"
-
    totals.each do |suite, suite_hash|
       suite_hash.each do |k, v|
          if (!suite_totals.key?(k))
             suite_totals[k] = 0
          end
 
-         if (k =~ /Test\sTotal\sTime/i)
-            suite_totals[k] += v.to_f()
+         if (k =~ /Total Time/)
+            suite_totals[k] += v
          else
             suite_totals[k] += v.to_i()
          end
       end
    end
-   totals['Total Failure Count'] = 0
-
-   print "Totals:\n"
-   pp(totals)
-   print "\n\n"
-   
-   print "All Totals:\n"
-   pp(suite_totals)
-   print "\n\n"
 
    totals.each do |suite_name, suite_hash|
       next if (suite_name =~ /Total\sFailure\sCount/i)
-      
       report_file = "#{suite_name}"
-
       hours,minutes,seconds,frac = 
-         Date.day_fraction_to_time(suite_hash['Test Total Time'])
-		
+         Date.day_fraction_to_time(suite_hash['Total Time'])
+      
+	   if (hours < 10)
+         hours = "0#{hours}"
+      end
+
+      if (minutes < 10)
+         minutes = "0#{minutes}"
+      end
+
+      if (seconds < 10)
+         seconds = "0#{seconds}"
+      end
+
       suite_hash['Test Other Failures'] = 0
 
       test_run_class = "td_run_data"
@@ -878,14 +900,21 @@ HTML
 		total_failures += suite_hash['Test Assert Failures']
 		total_failures += suite_hash['Test Other Failures']
 		total_failures += suite_hash['Test JavaScript Error Count']
-      totals['Total Failure Count'] += total_failures
+      total_failure_count += total_failures
+
+      ran_count = suite_hash['Test Count'].to_i()
+      ran_count -= suite_hash['Test WatchDog Count']
+      ran_count -= suite_hash['Test Blocked Count']
+
+      total_non_ran_count += suite_hash['Test WatchDog Count']
+      total_non_ran_count += suite_hash['Test Blocked Count']
 
       str = "<tr class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='unhighlight'\">\n"+
-         "\t<td class=\"td_file_data\">#{log_file_td}</td>\n"+
+         "\t<td class=\"td_file_data\">#{suite_name}</td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
-				"#{t_passedcount}/#{tcount}</td>\n"+
+				"#{ran_count}/#{suite_hash['Test Count']}</td>\n"+
 			"\t<td class=\"td_passed_data\">"+
 				"#{suite_hash['Test Passed Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
@@ -903,191 +932,62 @@ HTML
          "\t<td class=\"#{asserts_td}\">"+
 				"#{suite_hash['Test Assert Failures']}</td>\n"+
 			"\t<td class=\"td_other_data\">"+
-				"#{suite_hash['Test Other Failures']}</td>\n"+
+				"0</td>\n"+
 			"\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
-				"#{rpt['report_hash']['Test CSS Error Count']}</td>\n"+
+				"#{suite_hash['Test CSS Error Count']}</td>\n"+
 			"\t<td class=\"td_sodawarnings_data\">"+
-				"#{rpt['report_hash']['Test Warning Count']}</td>\n"+
+				"#{suite_hash['Test Warning Count']}</td>\n"+
          "\t<td class=\"td_time_data\">"+
 				"#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
       fd.write(str)
    end
 
-   fd.close()
-   exit(1)
+   test_totals = suite_totals['Test Count'] 
+	test_totals += suite_totals['Test Skip Count']
+	test_totals += suite_totals['Test Blocked Count']
 
-   data.each do |rpt|
-		totals['Test Warning Count'] +=
-			rpt['report_hash']['Test Warning Count'].to_i()
-		totals['Test Other Failures'] +=
-			rpt['report_hash']['Test Other Failures'].to_i()
-		totals['Test WatchDog Count'] +=
-			rpt['report_hash']['Test WatchDog Count'].to_i()
-		totals['Test Blocked Count'] +=
-			rpt['report_hash']['Test Blocked Count'].to_i()
-		totals['Test Passed Count'] += 
-			rpt['report_hash']['Test Passed Count'].to_i()
-      totals['Test Failure Count'] += 
-         rpt['report_hash']['Test Failure Count'].to_i()
-      totals['Test CSS Error Count'] += 
-         rpt['report_hash']['Test CSS Error Count'].to_i()
-      totals['Test JavaScript Error Count'] += 
-         rpt['report_hash']['Test JavaScript Error Count'].to_i()
-      totals['Test Assert Failures'] += 
-         rpt['report_hash']['Test Assert Failures'].to_i()
-      totals['Test Event Count'] += 
-         rpt['report_hash']['Test Event Count'].to_i()
-      totals['Test Assert Count'] +=
-         rpt['report_hash']['Test Assert Count'].to_i()
-      totals['Test Exceptions'] += 
-         rpt['report_hash']['Test Exceptions'].to_i()
-      totals['Test Count'] += rpt['report_hash']['Test Count'].to_i()
-      totals['Test Skip Count'] += rpt['report_hash']['Test Skip Count'].to_i()
-
-      start_time = DateTime.strptime("#{rpt['test_start_time']}",
-         "%m/%d/%Y-%H:%M:%S")
-      stop_time = DateTime.strptime("#{rpt['test_end_time']}",
-         "%m/%d/%Y-%H:%M:%S")
-      time_diff = stop_time - start_time
-            if (totals['running_time'] == nil)
-         totals['running_time'] = time_diff
-      else
-         totals['running_time'] += time_diff
-      end
-      hours,minutes,seconds,frac = Date.day_fraction_to_time(time_diff)
-
-      report_file = File.basename(rpt['log_file'], ".log")
-      report_file = "Report-#{report_file}.html"
-
-      if (create_links)
-         rerun = ""
-         if (report_file =~ /-SodaRerun/i)
-            rerun = "<b> :Rerun</b>"
-         end
-         log_file_td = "<a href=\"#{report_file}\">#{rpt['test_file']}</a>"+
-            "#{rerun}"
-      else
-         log_file_td = "#{rpt['test_file']}"
-      end
-
-		rpt['report_hash'].each do |k,v|
-			rpt['report_hash'][k] = v.to_i()	
-		end
-
-		test_run_class = "td_run_data"
-		if (rpt['report_hash']['Test Failure Count'] > 0)
-			test_run_class = "td_run_data_error"
-		end
-
-		rpt['report_hash']['Test Other Failures'] = 0
-		total_failures = 0
-		total_failures += rpt['report_hash']['Test Failure Count']
-		total_failures += rpt['report_hash']['Test WatchDog Count']
-		total_failures += rpt['report_hash']['Test Assert Failures']
-		total_failures += rpt['report_hash']['Test Other Failures']
-		total_failures += rpt['report_hash']['Test JavaScript Error Count']
-		totals['Total Failure Count'] += total_failures
-
-		tcount = 0
-		tcount += rpt['report_hash']['Test Count']
-		tcount += rpt['report_hash']['Test Blocked Count']
-		tcount += rpt['report_hash']['Test Skip Count']
-
-		exceptions_td = "td_exceptions_data"
-		if (rpt['report_hash']['Test Exceptions'] > 0)
-			exceptions_td = "td_exceptions_error_data"
-		end
-
-		asserts_td = "td_assert_data"
-		if (rpt['report_hash']['Test Assert Failures'] > 0)
-			asserts_td = "td_assert_error_data"
-		end
-
-		watchdog_td = "td_watchdog_data"
-		if (rpt['report_hash']['Test WatchDog Count'] > 0)
-			watchdog_td = "td_watchdog_error_data"
-		end
-
-		jscript_td = "td_javascript_data"
-		if (rpt['report_hash']['Test JavaScript Error Count'] > 0)
-			jscript_td = "td_javascript_error_data"
-		end
-
-		t_passedcount = rpt['report_hash']['Test Count']
-		t_passedcount -= rpt['report_hash']['Test Failure Count']
-
-      str = "<tr class=\"unhighlight\" "+
-         "onMouseOver=\"this.className='highlight'\" "+
-         "onMouseOut=\"this.className='unhighlight'\">\n"+
-         "\t<td class=\"td_file_data\">#{log_file_td}</td>\n"+
-         "\t<td class=\"#{test_run_class}\">"+
-				"#{t_passedcount}/#{tcount}</td>\n"+
-			"\t<td class=\"td_passed_data\">"+
-				"#{rpt['report_hash']['Test Passed Count']}</td>\n"+
-         "\t<td class=\"td_failed_data\">"+
-				"#{rpt['report_hash']['Test Failure Count']}</td>\n"+
-         "\t<td class=\"td_blocked_data\">"+
-				"#{rpt['report_hash']['Test Blocked Count']}</td>\n"+
-         "\t<td class=\"td_skipped_data\">"+
-				"#{rpt['report_hash']['Test Skip Count']}</td>\n"+
-			"\t<td class=\"#{watchdog_td}\">"+
-				"#{rpt['report_hash']['Test WatchDog Count']}</td>\n"+
-			"\t<td class=\"#{exceptions_td}\">"+
-				"#{rpt['report_hash']['Test Exceptions']}</td>\n"+
-         "\t<td class=\"#{jscript_td}\">"+
-				"#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n"+
-         "\t<td class=\"#{asserts_td}\">"+
-				"#{rpt['report_hash']['Test Assert Failures']}</td>\n"+
-			"\t<td class=\"td_other_data\">"+
-				"#{rpt['report_hash']['Test Other Failures']}</td>\n"+
-			"\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
-         "\t<td class=\"td_css_data\">"+
-				"#{rpt['report_hash']['Test CSS Error Count']}</td>\n"+
-			"\t<td class=\"td_sodawarnings_data\">"+
-				"#{rpt['report_hash']['Test Warning Count']}</td>\n"+
-         "\t<td class=\"td_time_data\">"+
-				"#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
-         fd.write(str)
-   end
- 
    hours,minutes,seconds,frac = 
-      Date.day_fraction_to_time(totals['running_time'])
+      Date.day_fraction_to_time(suite_totals['Total Time'])
+   if (hours < 10)
+      hours = "0#{hours}"
+   end
 
-   totals['Test Skip Count'] = totals['Test Skip Count'].to_i()
-   test_totals = totals['Test Count'] 
-	test_totals += totals['Test Skip Count']
-	test_totals += totals['Test Blocked Count']
+   if (minutes < 10)
+      minutes = "0#{minutes}"
+   end
 
+   if (seconds < 10)
+      seconds = "0#{seconds}"
+   end
 
    sub_totals = "<tr>\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
-      "\t<td class=\"td_footer_run\">#{totals['Test Count']}"+
+      "\t<td class=\"td_footer_run\">#{suite_totals['Test Count']}"+
 			"/#{test_totals}</td>\n"+
-		"\t<td class=\"td_footer_passed\">#{totals['Test Passed Count']}"+
+		"\t<td class=\"td_footer_passed\">#{suite_totals['Test Passed Count']}"+
 			"</td>\n"+
 	   "\t<td class=\"td_footer_failed\">"+
-			"#{totals['Test Failure Count']}</td>\n"+	
+			"#{suite_totals['Test Failure Count']}</td>\n"+	
 	   "\t<td class=\"td_footer_blocked\">"+
-			"#{totals['Test Blocked Count']}</td>\n"+	
+			"#{suite_totals['Test Blocked Count']}</td>\n"+	
 	   "\t<td class=\"td_footer_skipped\">"+
-			"#{totals['Test Skip Count']}</td>\n"+	
+			"#{suite_totals['Test Skip Count']}</td>\n"+	
 	   "\t<td class=\"td_footer_watchdog\">"+
-			"#{totals['Test WatchDog Count']}</td>\n"+	
+			"#{suite_totals['Test WatchDog Count']}</td>\n"+	
 		"\t<td class=\"td_footer_exceptions\">"+
-			"#{totals['Test Exceptions']}</td>\n"+
+			"#{suite_totals['Test Exceptions']}</td>\n"+
       "\t<td class=\"td_footer_javascript\">"+
-			"#{totals['Test JavaScript Error Count']}</td>\n"+
+			"#{suite_totals['Test JavaScript Error Count']}</td>\n"+
       "\t<td class=\"td_footer_assert\">"+
-			"#{totals['Test Assert Failures']}</td>\n"+
-      "\t<td class=\"td_footer_other\">"+
-			"#{totals['Test Other Failures']}\n"+
+			"#{suite_totals['Test Assert Failures']}</td>\n"+
+      "\t<td class=\"td_footer_other\">0</td>\n"+
       "\t<td class=\"td_footer_total\">"+
-			"#{totals['Total Failure Count']}</td>\n"+
+			"#{total_failure_count}</td>\n"+
       "\t<td class=\"td_footer_css\">"+
-			"#{totals['Test CSS Error Count']}</td>\n"+
+			"#{suite_totals['Test CSS Error Count']}</td>\n"+
 		"\t<td class=\"td_footer_sodawarnings\">"+
-			"#{totals['Test Warning Count']}</td>\n"+
+			"#{suite_totals['Test Warning Count']}</td>\n"+
 		"\t<td class=\"td_footer_times\">"+
 			"#{hours}:#{minutes}:#{seconds}</td>\n"+
       "</tr>\n"
@@ -1095,7 +995,7 @@ HTML
    fd.write("</table>\n</body>\n</html>\n")
    fd.close()
 
-   return result
+   return 0
 
 end
    private :GenHtmlReport
