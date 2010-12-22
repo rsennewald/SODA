@@ -2771,7 +2771,9 @@ JSCode
 
 		suites.each do |s|
 			base_suite_name = File.basename(s)
+			RestartGlobalTime()
 			results[base_suite_name] = RunSuite(s)
+			RestartGlobalTime()
 		end
 
 		time = Time.now()
@@ -2779,6 +2781,8 @@ JSCode
 		suite_report = "#{@resultsDir}/#{hostname}-#{time}-suite.xml"
 		fd = File.new(suite_report, "w+")
 		fd.write("<data>\n")
+
+		RestartGlobalTime()
 
 		results.each do |k,v|
 			fd.write("\t<suite>\n")
@@ -2800,7 +2804,9 @@ JSCode
 		end
 		fd.write("</data>\n")
 		fd.close()
-		
+
+		RestartGlobalTime()
+
 		return err
 	end
 

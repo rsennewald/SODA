@@ -221,26 +221,7 @@ def GenHtmlReport(data, reportfile, create_links = false)
    log_file_td = ""
    report_file = ""
    now = nil
-
-
-
-	totals['Test Warning Count'] = 0
-	totals['Test Other Failures'] = 0
-	totals['Test WatchDog Count'] = 0
-   totals['Test Failure Count'] = 0 
-	totals['Test Passed Count'] = 0
-   totals['Test CSS Error Count'] = 0 
-   totals['Test JavaScript Error Count'] = 0 
-   totals['Test Assert Failures'] = 0 
-   totals['Test Event Count'] = 0
-   totals['Test Assert Count'] = 0
-   totals['Test Exceptions'] = 0
-   totals['Test Major Exceptions'] = 0
-   totals['Test Count'] = 0
-   totals['Test Skip Count'] = 0
-	totals['Test Blocked Count'] = 0
-	totals['Total Failure Count'] = 0
-   totals['running_time'] = nil
+   suite_totals = {}
 
    begin
       fd = File.new(reportfile, "w+")
@@ -802,6 +783,139 @@ table {
 HTML
 
    fd.write(html_header)
+
+   data.each do |suite, suite_hash|
+      totals[suite] = Hash.new()
+      suite_hash.each do |k, v|
+         next if (k !~ /tests/)
+         test_count = 0
+         v.each do |test|
+            test.each do |test_k, test_v|
+               test_count += 1
+               if (!totals[suite].key?(test_k))
+                  totals[suite][test_k] = 0
+               end
+
+               if (test_k !~ /Test\sTotal\sTime/i)
+                  totals[suite][test_k] += test_v.to_i()
+               else
+                  totals[suite][test_k] += test_v.to_f()
+               end
+            end
+            totals[suite]['Test Count'] = test_count
+         end
+      end
+   end
+     
+   print "Totals:\n"
+   pp(totals)
+   print "\n\n"
+
+   totals.each do |suite, suite_hash|
+      suite_hash.each do |k, v|
+         if (!suite_totals.key?(k))
+            suite_totals[k] = 0
+         end
+
+         if (k =~ /Test\sTotal\sTime/i)
+            suite_totals[k] += v.to_f()
+         else
+            suite_totals[k] += v.to_i()
+         end
+      end
+   end
+   totals['Total Failure Count'] = 0
+
+   print "Totals:\n"
+   pp(totals)
+   print "\n\n"
+   
+   print "All Totals:\n"
+   pp(suite_totals)
+   print "\n\n"
+
+   totals.each do |suite_name, suite_hash|
+      next if (suite_name =~ /Total\sFailure\sCount/i)
+      
+      report_file = "#{suite_name}"
+
+      hours,minutes,seconds,frac = 
+         Date.day_fraction_to_time(suite_hash['Test Total Time'])
+		
+      suite_hash['Test Other Failures'] = 0
+
+      test_run_class = "td_run_data"
+		if (suite_hash['Test Assert Failures'] > 0 ||
+          suite_hash['Test Exceptions'] > 0)
+			test_run_class = "td_run_data_error"
+		end
+
+      exceptions_td = "td_exceptions_data"
+		if (suite_hash['Test Exceptions'] > 0)
+			exceptions_td = "td_exceptions_error_data"
+		end
+
+		asserts_td = "td_assert_data"
+		if (suite_hash['Test Assert Failures'] > 0)
+			asserts_td = "td_assert_error_data"
+		end
+
+		watchdog_td = "td_watchdog_data"
+		if (suite_hash['Test WatchDog Count'] > 0)
+			watchdog_td = "td_watchdog_error_data"
+		end
+
+		jscript_td = "td_javascript_data"
+		if (suite_hash['Test JavaScript Error Count'] > 0)
+			jscript_td = "td_javascript_error_data"
+		end
+
+      t_passedcount = suite_hash['Test Count']
+		t_passedcount -= suite_hash['Test Failure Count']
+		total_failures = 0
+		total_failures += suite_hash['Test Failure Count']
+		total_failures += suite_hash['Test WatchDog Count']
+		total_failures += suite_hash['Test Assert Failures']
+		total_failures += suite_hash['Test Other Failures']
+		total_failures += suite_hash['Test JavaScript Error Count']
+      totals['Total Failure Count'] += total_failures
+
+      str = "<tr class=\"unhighlight\" "+
+         "onMouseOver=\"this.className='highlight'\" "+
+         "onMouseOut=\"this.className='unhighlight'\">\n"+
+         "\t<td class=\"td_file_data\">#{log_file_td}</td>\n"+
+         "\t<td class=\"#{test_run_class}\">"+
+				"#{t_passedcount}/#{tcount}</td>\n"+
+			"\t<td class=\"td_passed_data\">"+
+				"#{suite_hash['Test Passed Count']}</td>\n"+
+         "\t<td class=\"td_failed_data\">"+
+				"#{suite_hash['Test Failure Count']}</td>\n"+
+         "\t<td class=\"td_blocked_data\">"+
+				"#{suite_hash['Test Blocked Count']}</td>\n"+
+         "\t<td class=\"td_skipped_data\">"+
+				"#{suite_hash['Test Skip Count']}</td>\n"+
+			"\t<td class=\"#{watchdog_td}\">"+
+				"#{suite_hash['Test WatchDog Count']}</td>\n"+
+			"\t<td class=\"#{exceptions_td}\">"+
+				"#{suite_hash['Test Exceptions']}</td>\n"+
+         "\t<td class=\"#{jscript_td}\">"+
+				"#{suite_hash['Test JavaScript Error Count']}</td>\n"+
+         "\t<td class=\"#{asserts_td}\">"+
+				"#{suite_hash['Test Assert Failures']}</td>\n"+
+			"\t<td class=\"td_other_data\">"+
+				"#{suite_hash['Test Other Failures']}</td>\n"+
+			"\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
+         "\t<td class=\"td_css_data\">"+
+				"#{rpt['report_hash']['Test CSS Error Count']}</td>\n"+
+			"\t<td class=\"td_sodawarnings_data\">"+
+				"#{rpt['report_hash']['Test Warning Count']}</td>\n"+
+         "\t<td class=\"td_time_data\">"+
+				"#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
+      fd.write(str)
+   end
+
+   fd.close()
+   exit(1)
 
    data.each do |rpt|
 		totals['Test Warning Count'] +=
