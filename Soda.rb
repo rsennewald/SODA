@@ -2875,7 +2875,7 @@ JSCode
 		if (setup_result)
 			tests.each do |test|
 				result[test] = {}
-				result[test]['result'] = run(test, false, false)
+				result[test]['result'] = run(test, false)
 				result[test].merge!(@rep.GetRawResults)
 				@rep.ZeroTestResults()
 			end

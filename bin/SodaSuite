@@ -650,8 +650,13 @@ def Main
 
    if (params['resultsdir'] != nil)
       begin
-         summery = SodaReportSummery.new(params['resultsdir'], 
-            params['summaryfile'], true)
+         if (params['suites'].length > 0)
+            summary = SodaSuiteSummary(params['resultsdir'], 
+               params['summaryfile'], true)
+         else
+            summery = SodaReportSummery.new(params['resultsdir'], 
+               params['summaryfile'], true)
+         end
       rescue Exception => e
          print "Error: calling: SodaReportSummery!\n"
          print "StackTrace: #{e.backtrace}\n\n"
