@@ -896,12 +896,12 @@ HTML
       t_passedcount = suite_hash['Test Count']
 		t_passedcount -= suite_hash['Test Failure Count']
 		total_failures = 0
-		total_failures += suite_hash['Test Failure Count']
+#		total_failures += suite_hash['Test Failure Count']
 		total_failures += suite_hash['Test WatchDog Count']
 		total_failures += suite_hash['Test Assert Failures']
 		total_failures += suite_hash['Test Other Failures']
 		total_failures += suite_hash['Test JavaScript Error Count']
-      total_failure_count += total_failures
+#      total_failure_count += total_failures
 
       ran_count = suite_hash['Test Count'].to_i()
       ran_count -= suite_hash['Test WatchDog Count']
@@ -1101,7 +1101,7 @@ HTML
       "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
-         str << "\t<td class=\"td_file_data\">Failed</td>\n"
+         str << "\t<td class=\"td_failed_data\">Failed</td>\n"
       else
          str << "\t<td class=\"td_passed_data\">Passed</td>\n"
       end
