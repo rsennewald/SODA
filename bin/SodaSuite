@@ -35,6 +35,7 @@ require 'getoptlong'
 require 'libxml'
 require 'watir'
 require 'SodaReportSummery'
+require 'SodaSuiteSummary'
 require 'pp'
 
 ###############################################################################
@@ -641,25 +642,19 @@ def Main
       end
    end
 
-   # see if we should rerun failed tests #
-#   if (rerun_failed_test && failed_tests.length > 0)
-#      SodaUtils.PrintSoda("Rerunning failed tests.\n")
-#      sweet.ExecuteTestSuite(failed_tests, true, rerun_test_script)
-#      SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
-#   end
-
    if (params['resultsdir'] != nil)
       begin
          if (params['suites'].length > 0)
-            summary = SodaSuiteSummary(params['resultsdir'], 
+            summary = SodaSuiteSummary.new(params['resultsdir'], 
                params['summaryfile'], true)
          else
             summery = SodaReportSummery.new(params['resultsdir'], 
                params['summaryfile'], true)
          end
       rescue Exception => e
-         print "Error: calling: SodaReportSummery!\n"
-         print "StackTrace: #{e.backtrace}\n\n"
+         print "Error: calling: SodaReportSummery: #{e.message}\n"
+         print e.backtrace.join("\n")
+         print "\n\n"
          exit(-1)
       ensure
       end

@@ -33,6 +33,7 @@ require 'getoptlong'
 require 'date'
 require 'libxml'
 require 'pp'
+require 'SodaReportSummery'
 
 class SodaSuiteSummary
 
@@ -909,10 +910,14 @@ HTML
       total_non_ran_count += suite_hash['Test WatchDog Count']
       total_non_ran_count += suite_hash['Test Blocked Count']
 
+      reportdir = File.dirname(reportfile)
+      suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
+
       str = "<tr class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='unhighlight'\">\n"+
-         "\t<td class=\"td_file_data\">#{suite_name}</td>\n"+
+         "\t<td class=\"td_file_data\"><a href=\"#{suite_mini_file}\">"+
+         "#{suite_name}</a></td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
 				"#{ran_count}/#{suite_hash['Test Count']}</td>\n"+
 			"\t<td class=\"td_passed_data\">"+
@@ -999,6 +1004,119 @@ HTML
 
 end
    private :GenHtmlReport
+
+def GenSuiteMiniSummary(suite_hash, reportdir)
+   suite_file = suite_hash['suitefile']
+   suite_file = File.basename(suite_file, ".xml")
+   suite_file << ".html"
+   suite_file = "#{reportdir}/#{suite_file}"
+
+   html = <<HTML
+<html>
+<style type="text/css">
+table {
+   width: 100%;
+   border: 2px solid black;
+   border-collapse: collapse;
+   padding: 0px;
+   background: #FFFFFF;
+}
+.td_header_master {
+	whitw-space: nowrap;
+	background: #99CCFF;
+	text-align: center;
+	font-family: Arial;
+	font-weight: bold;
+	font-size: 12px;
+	border-left: 0px solid black;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+}
+.td_file_data {
+	whitw-space: nowrap;
+	text-align: left;
+	font-family: Arial;
+	font-weight: bold;
+	font-size: 12px;
+	border-left: 0px solid black;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+}
+.td_passed_data {
+	whitw-space: nowrap;
+	text-align: center;
+	font-family: Arial;
+	font-weight: bold;
+	color: #00FF00;
+	font-size: 12px;
+	border-left: 0px solid black;
+	border-right: 0px solid black;
+	border-bottom: 2px solid black;
+}
+
+.td_failed_data {
+	whitw-space: nowrap;
+	text-align: center;
+	font-family: Arial;
+	font-weight: bold;
+	color: #FF0000;
+	font-size: 12px;
+	border-left: 0px solid black;
+	border-right: 0px solid black;
+	border-bottom: 2px solid black;
+}
+.td_report_data {
+	whitw-space: nowrap;
+	text-align: center;
+	font-family: Arial;
+	font-weight: normal;
+	font-size: 12px;
+	border-left: 2px solid black;
+	border-right: 1px solid black;
+	border-bottom: 2px solid black;
+}
+</style>
+<body>
+<table>
+<tr>
+   <td class="td_header_master" colspan="3">
+   Suite: #{suite_hash['suitefile']} Test Results
+   </td>
+</tr>
+<tr>
+   <td class="td_header_master">Test File</td>
+   <td class="td_header_master">Status</td>
+   <td class="td_header_master">Report Log</td>
+</tr>
+HTML
+
+   fd = File.new(suite_file, "w+")
+   fd.write(html)
+   suite_hash['tests'].each do |test|
+      test_report = test['testfile']
+      test_report = File.basename(test_report, ".xml")
+      test_report = "Report-#{test_report}.html"
+
+      str = "<tr>\n"+
+      "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
+
+      if (test['result'].to_i != 0)
+         str << "\t<td class=\"td_file_data\">Failed</td>\n"
+      else
+         str << "\t<td class=\"td_passed_data\">Passed</td>\n"
+      end
+
+      str << "\t<td class=\"td_report_data\">"
+      str << "<a href=\"#{test_report}\">Report Log</a></td>\n"
+      str << "</tr>\n"
+      fd.write(str)
+   end
+   fd.close()
+
+   return suite_file
+
+end
+
 
 end
 
