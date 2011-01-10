@@ -847,8 +847,10 @@ HTML
       end
    end
 
+   row_id = 0
    totals.each do |suite_name, suite_hash|
       next if (suite_name =~ /Total\sFailure\sCount/i)
+      row_id += 1
       report_file = "#{suite_name}"
       hours,minutes,seconds,frac = 
          Date.day_fraction_to_time(suite_hash['Total Time'])
@@ -913,7 +915,7 @@ HTML
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
 
-      str = "<tr class=\"unhighlight\" "+
+      str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='unhighlight'\">\n"+
          "\t<td class=\"td_file_data\"><a href=\"#{suite_mini_file}\">"+
@@ -966,7 +968,7 @@ HTML
       seconds = "0#{seconds}"
    end
 
-   sub_totals = "<tr>\n"+
+   sub_totals = "<tr id=\"totals\">\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
       "\t<td class=\"td_footer_run\">#{suite_totals['Test Count']}"+
 			"/#{test_totals}</td>\n"+
@@ -1077,13 +1079,13 @@ table {
 }
 </style>
 <body>
-<table>
-<tr>
+<table id="tests">
+<tr id="header">
    <td class="td_header_master" colspan="3">
    Suite: #{suite_hash['suitefile']} Test Results
    </td>
 </tr>
-<tr>
+<tr id="header_key">
    <td class="td_header_master">Test File</td>
    <td class="td_header_master">Status</td>
    <td class="td_header_master">Report Log</td>
@@ -1092,12 +1094,14 @@ HTML
 
    fd = File.new(suite_file, "w+")
    fd.write(html)
+   id = 0
    suite_hash['tests'].each do |test|
+      id += 1
       test_report = test['testfile']
       test_report = File.basename(test_report, ".xml")
       test_report = "Report-#{test_report}.html"
 
-      str = "<tr>\n"+
+      str = "<tr id=\"#{id}\">\n"+
       "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
@@ -1111,6 +1115,8 @@ HTML
       str << "</tr>\n"
       fd.write(str)
    end
+
+   fd.write("</table>\n</body>\n</html>\n")
    fd.close()
 
    return suite_file
