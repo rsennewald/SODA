@@ -298,7 +298,7 @@ require 'FieldUtils'
          end
 
          break if (result == 0)
-         $curSoda.rep.log("Retying: #{i}\n", SodaUtils::WARN)
+         $curSoda.rep.log("Retrying: #{i}\n", SodaUtils::WARN)
       end
 
       $curSoda.rep.log("Click finished.\n")
