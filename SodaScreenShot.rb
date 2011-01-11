@@ -90,13 +90,10 @@ class SodaScreenShot
 					end
 				end
 			when /windows/i
-				require 'Win32/screenshot'
+				require 'win32/screenshot'
 				@outputfile = "#{dir}/#{OUTPUT_FILE}#{time}-#{hostname}.bmp"
-				Win32::Screenshot.desktop do |width, height, bmp|
-					fd = File.new(@outputfile, "w+")
-					fd.write(bmp)
-					fd.close()
-				end
+            img = Win32::Screenshot::Take.of(:desktop)
+            img.write(@outputfile)
 		end
 	end
 
