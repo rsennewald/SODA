@@ -113,6 +113,7 @@ SODA_DIRS = [
 
 LIB_FILE = <<RUBY
 require 'Soda'\n
+SODA_GEM_VERSION = "#{user_version}"\n
 RUBY
 
    fd = File.new("#{TMP_DIR}/lib/soda.rb", "w+")

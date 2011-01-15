@@ -31,7 +31,7 @@
 # Needed Ruby libs:
 ###############################################################################
 require 'rubygems'
-require 'Soda'
+require 'soda'
 require 'getoptlong'
 require 'libxml'
 require 'watir'
@@ -245,6 +245,8 @@ Optional Flags:
    --skipcsserrors: This tells soda to not report on css errors.
 
    --help:  Prints this message and exits.
+
+   --version: Print the Soda Version string.
 
 HLP
    
@@ -530,7 +532,8 @@ def Main
                [ '--restartcount', '-1', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT],
                [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ],
-					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT]
+					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT],
+               [ '--version', '-5', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
       opts.quiet = true
@@ -574,6 +577,9 @@ def Main
                rerun_test_script = arg
 				when "--skipcsserrors"
 					params['errorskip'].push("css")
+            when "--version"
+               print "(*)SODA Version: #{SODA_GEM_VERSION}\n\n"
+               return 0
          end
       end
    rescue Exception => e
