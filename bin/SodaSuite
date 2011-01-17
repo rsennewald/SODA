@@ -31,7 +31,8 @@
 # Needed Ruby libs:
 ###############################################################################
 require 'rubygems'
-require 'soda'
+require 'Soda'
+require 'sodainfo'
 require 'getoptlong'
 require 'libxml'
 require 'watir'

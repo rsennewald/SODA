@@ -116,7 +116,7 @@ require 'Soda'\n
 SODA_GEM_VERSION = "#{user_version}"\n
 RUBY
 
-   fd = File.new("#{TMP_DIR}/lib/soda.rb", "w+")
+   fd = File.new("#{TMP_DIR}/lib/sodainfo.rb", "w+")
    fd.write(LIB_FILE)
    fd.close()
 
@@ -152,7 +152,4 @@ RUBY
    fd.close()
    print "(*)Finished making Soda gem...\n"
    print "(*)Building SodaSuite gem...\n"
-
-
-
 
