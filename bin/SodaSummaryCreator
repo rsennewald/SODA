@@ -109,6 +109,13 @@ def Main()
 		exit(1)
 	end
 
+   if (reportdir =~ /\\/)
+      print "(*)Fond DOS style pathing!  This is not a good idea!\n"
+      print "(*)Converting path from: '#{reportdir}' to "
+      reportdir = reportdir.gsub('\\', "/")
+      print "'#{reportdir}'\n"
+   end
+
 	summary_file = "#{reportdir}/summary.html"
 	begin
 		print "(*)Creating summary report...\n"
