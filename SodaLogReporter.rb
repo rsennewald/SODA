@@ -614,6 +614,18 @@ HTML
       return row_data
    end
 
+###############################################################################
+# FormatScreenShot -- Method
+#     This method converts the screenshot log file line into a nice html
+#     item for the html log.
+#
+# Input:
+#     line: This is the SODA log file line to format.
+#
+# Output:
+#     a row_data hash.
+#
+###############################################################################
    def FormatScreenShot(line)
       row_data = Hash.new()
       line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
@@ -622,8 +634,13 @@ HTML
       msg = "#{$3}"
       row_html = ""
 
-		data = msg.split(/:/)
-		msg = "<b>#{data[0]}:</b> <a href=\"file://#{data[1]}\">#{data[1]}</a>"
+		data = msg.split(/:\s/)
+
+      data[1] = File.basename(data[1])
+
+      print "(*)#{data[1]}\n"
+
+		msg = "<b>#{data[0]}:</b> <a href=\"#{data[1]}\">#{data[1]}</a>"
       row_data['msg'] = msg 
 
       return row_data
