@@ -30,8 +30,8 @@ module Soda
 ###############################################################################
 # Module Global Info:
 ###############################################################################
-SODA_VERSION = 1.0
-SODA_WATIR_VERSION = "1.6.5"
+SODA_VERSION = 1.1
+SODA_WATIR_VERSION = "1.7.1"
 
 ###############################################################################
 # Needed Ruby libs:
@@ -39,6 +39,8 @@ SODA_WATIR_VERSION = "1.6.5"
 require 'rubygems'
 require 'rbconfig'
 require 'pathname'
+gem 'commonwatir', '= 1.7.1'
+gem 'firewatir', '= 1.7.1'
 require "watir"
 require 'SodaUtils'
 require "SodaReporter"
@@ -46,6 +48,7 @@ require "SodaCSV"
 require "SodaXML"
 require 'SodaFireFox'
 require 'SodaTestCheck'
+require 'SodaScreenShot'
 require "utils/sodalookups"
 require "fields/SodaField"
 require "fields/TextField"
@@ -56,6 +59,7 @@ require "fields/FileField"
 require "fields/LiField"
 require 'thread'
 require 'date'
+require 'pp'
 
 ###############################################################################
 # Soda -- Class
@@ -86,9 +90,9 @@ class Soda
       @newCSV = [] 
       $SodaHome = Dir.getwd()
       @current_os = SodaUtils.GetOsType()
-      @sugarFlavor = params['flavor'] if (params.key?('flavor'))
-      @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
-      @globalVars = params['gvars'] if (params.key?('gvars'))
+      @sugarFlavor = {}
+      @resultsDir = {} 
+      @globalVars = {}
       @SIGNAL_STOP = false
       @hiJacks = nil
       @breakExit = false
@@ -116,7 +120,11 @@ class Soda
          "KILL"
       ]
       err = 0
-     
+    
+      @sugarFlavor = params['flavor'] if (params.key?('flavor'))
+      @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
+      @globalVars = params['gvars'] if (params.key?('gvars'))
+
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
             "blockScriptList.xml"
@@ -188,9 +196,28 @@ class Soda
    end
 
 ###############################################################################
+# RestartGlobalTime -- Method
+#		This method reset the global time, for the watchdog timer.
+#
+# Input:
+#		None.
+#
+# Output:
+#		None.
+#
+###############################################################################
+	def RestartGlobalTime()
+		$mutex.synchronize {
+			$global_time = Time.now()
+		}
+	end
+
+###############################################################################
 ###############################################################################
    def NewBrowser()
       err = 0
+
+		RestartGlobalTime()
 
       if ( @current_os =~ /WINDOWS/i && 
          @params['browser'] =~ /ie|firefox/i ) 
@@ -445,7 +472,7 @@ class Soda
             @rep.ReportFailure(msg)
             raise(msg)
          rescue Exception => e
-            @rep.ReportException(e, false, false)
+            @rep.ReportException(e)
          ensure
 
          end
@@ -760,7 +787,7 @@ class Soda
                script = SodaXML.new.parse(file)
             end
          rescue Exception => e
-            @rep.ReportException(e, true, file)
+            @rep.ReportException(e, file)
          ensure
          end
       end
@@ -769,6 +796,7 @@ class Soda
       if (dir !~ /lib/)
          if(!is_restart && !@restart_test_running && file != @last_test)
             @non_lib_test_count += 1
+            @rep.IncTestCount()
             PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
          end
       end
@@ -794,6 +822,8 @@ class Soda
          @rep.log("Restarting browser.\n")
          @browser.close()
          sleep(1)
+
+			RestartGlobalTime()
 
          err = NewBrowser()
          if (err != 0)
@@ -843,12 +873,14 @@ class Soda
          fd = Dir.open(file)
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
+#				@rep.IncTestTotalCount() if (f !~ /lib/i)
          end
          fd.close()
 
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
+				@rep.IncTestWarningCount()
             return nil
          end   
 
@@ -868,6 +900,7 @@ class Soda
                   RestartBrowserTest()
                end
 
+               @rep.IncTestCount()
                @non_lib_test_count += 1
                @last_test = file
             end
@@ -876,12 +909,13 @@ class Soda
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
-               @rep.IncTestCount()
                results = handleEvents(script)
                PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
-
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
+						@rep.IncFailedTest()
+					else
+						@rep.IncTestPassedCount() if (file !~ /lib/i)
                end
                @currentTestFile = parent_test_file
             else
@@ -912,6 +946,7 @@ class Soda
          tmp_file = File.basename(test_file)
          if (tmp_file =~ /#{bhash['testfile']}/)
             @rep.log("Blocklist: blocking file: \"#{test_file}\".\n")
+				@rep.IncBlockedTest()
             result = true
             break
          end
@@ -1090,7 +1125,7 @@ class Soda
       begin
          text = @browser.text
       rescue Exception => e
-         @rep.ReportException(e, true)
+         @rep.ReportException(e)
          text = ""
       ensure
 
@@ -1384,6 +1419,7 @@ class Soda
                else
                   PrintDebug("For some reason I got a nill @browser object!",
                      SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   result['browser_closed'] = true
                end
             when "refresh"
@@ -1498,8 +1534,7 @@ class Soda
             new_browser = @browser.attach(:url, url)
          end
       rescue Exception=>e
-         @rep.ReportException(e, true, false, 
-            "Failed trying to attach to browser window!");
+         @rep.ReportException(e, @currentTestFile);
 
          e_dump = SodaUtils.DumpEvent(event)
          @rep.log("Event Dump From Exception: #{e_dump}!\n", 
@@ -1543,6 +1578,7 @@ class Soda
          else
             @rep.log("Found requires event without any children!\n", 
                SodaUtils::WARN)
+				@rep.IncTestWarningCount()
          end 
       end
    end
@@ -1630,6 +1666,86 @@ class Soda
 
 ############################################################################### 
 ############################################################################### 
+   def eventDialog(event)
+      win_handle = nil
+
+      if (@current_os !~ /windows/i)
+         @rep.ReportFailure("Using SODA dialog command on unsupported os:"+
+            " '#{@current_os}'!\n")
+         return -1
+      end
+
+      if (!event.key?('title'))
+         @rep.ReportFailure("SODA: dialog command is missing the 'title' "+
+            "attribute!\n")
+         return -1
+      end
+
+      PrintDebug("Trying to connect to dialog: title => '#{event['title']}'.\n")
+      for i in 0..10 do
+         win_handle = @autoit.WinGetHandle(event['title'])
+         if (win_handle.empty? || win_handle.length < 1)
+            win_handle = nil
+            sleep(1)
+         else
+            PrintDebug("Found dialog window handle: '#{win_handle}'.\n")
+            break   
+         end
+      end
+
+      if (win_handle == nil)
+         @rep.ReportFailure("Failed to find dialog by title => "+
+            "'#{event['title']}'!\n")
+         return -1
+      end
+
+      if (!event.key?('children'))
+         return 0
+      end
+
+      event['children'].each do |child|
+         case (child['do'])
+            when "sendkey"
+               @autoit.WinActivate(event['title'], nil)
+               sleep(1)
+               @autoit.Send(child['key'])
+            when "assert"
+               sleep(1)
+               @autoit.WinActivate(event['title'], nil)
+               sleep(1)
+               @autoit.Send("^a")
+               sleep(1)
+               @autoit.Send("^c")
+               sleep(1)
+               tmp = @autoit.ClipGet()
+               if (tmp.empty? || tmp.length < 1)
+                  @rep.ReportFailure("Failed to get text from dialog!\n")
+                  next
+               end
+
+               if (SodaUtils.isRegex(child['value']))
+                  child['value'] = stringToRegex(child['value'])
+                  match = child['value'].match(tmp)
+                  if (match == nil)
+                     @rep.ReportFailure("Falied to match regex: "+
+                        "'#{child['value']}' to dialog text '#{tmp}'"+
+                        "!\n")
+                     next
+                  else
+                     @rep.Assert(true, "Matched Regex: '#{child['value']}'"+
+                        " to dialog text.\n") 
+                  end
+               else
+                  @rep.Assert(child['value'] == tmp, "Checking that dialog"+
+                     " matches value: '#{child['value']}'.\n")
+               end
+         end
+      end
+   end
+
+
+############################################################################### 
+############################################################################### 
    def eventRuby(event)
       result = 0
 
@@ -1664,6 +1780,7 @@ class Soda
 #
 ############################################################################### 
    def eventScript(event)
+		results = 0
 
       if (event.key?('file'))
          # specified a new csv to file
@@ -1678,7 +1795,12 @@ class Soda
          if (script != nil)
             parent_script = @currentTestFile
             @currentTestFile = event['file']
-            handleEvents(script)
+            results = handleEvents(script)
+				if (@currentTestFile !~ /lib/i && results != 0)
+					@rep.IncFailedTest()
+				else
+					@rep.IncTestPassedCount() if (@currentTestFile !~ /lib/i)
+				end
             @currentTestFile = parent_script
          else
             msg = "Failed opening script file: \"#{event['file']}\"!\n"
@@ -1809,6 +1931,8 @@ JSCode
    def eventWait(event)
       result = false
 
+		RestartGlobalTime()
+
       if ( event.key?('condition') && 
            getStringBool(event['condition']) && 
            event.key?('children') )
@@ -1830,6 +1954,8 @@ JSCode
          PrintDebug("Page Load Finished.\n")
          result = true
       end
+
+		RestartGlobalTime()
 
       return result
    end
@@ -2058,8 +2184,10 @@ JSCode
                   else
                      @rep.log("Found unsupported value for <textfield clear" +
                         "=\"true/false\" />!\n", SodaUtils::WARN)
+							@rep.IncTestWarningCount()
                      @rep.log("Unsupported clear value =>" +
                         " \"#{event['clear']}\".\n", SodaUtils::WARN)
+							@rep.IncTestWarningCount()
                end
             end
          when "focus"
@@ -2127,6 +2255,7 @@ JSCode
          else
             msg = "Failed to find supported field action.\n"
             @rep.log(msg, SodaUtils::WARN)
+				@rep.IncTestWarningCount()
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)
       end
@@ -2280,11 +2409,7 @@ JSCode
             fieldType = nil
     
             event = SodaUtils.ConvertOldAssert(event, @rep, @currentTestFile)
-
-            $mutex.synchronize {
-               $global_time = Time.new()
-            }
-
+				RestartGlobalTime()
             crazyEvilIETabHack() 
 
             if (event.key?('set') && event['set'].is_a?(String) && 
@@ -2316,6 +2441,9 @@ JSCode
                   next
                when "breakexit"
                   @breakExit = true
+                  next
+               when "dialog"
+                  eventDialog(event)
                   next
                when "whitelist"
                   eventWhiteList(event)
@@ -2481,16 +2609,18 @@ JSCode
                @exceptionExit = true
                @rep.log("Exception in test: \"#{@currentTestFile}\", Line: " +
                   "#{event['line_number']}!\n", SodaUtils::ERROR)
-               @rep.ReportException(e, true, @fileStack[@fileStack.length - 1]);
+               @rep.ReportException(e, @fileStack[@fileStack.length - 1]);
                e_dump = SodaUtils.DumpEvent(event)
                @rep.log("Event Dump From Exception: #{e_dump}!\n", 
                   SodaUtils::EVENT)
 
                if (exception_event != nil)
                   @rep.log("Running Exception Handler.\n", SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   @exceptionExit = false
                   handleEvents(exception_event['children'])
                   @rep.log("Finished Exception Handler.\n", SodaUtils::WARN)
+						@rep.IncTestWarningCount()
                   @exceptionExit = true
                end
 
@@ -2549,11 +2679,11 @@ JSCode
 #     returns a SodaReport object.
 #
 ############################################################################### 
-   def run(file, rerun = false)
+   def run(file, rerun = false, genhtml = true)
       result = 0
       master_result = 0
       thread_soda = nil
-      thread_timeout = (60 * 5) # 5 minutes #
+      thread_timeout = (60 * 10) # 10 minutes #
       time_check = nil
 
       @currentTestFile = file
@@ -2580,6 +2710,17 @@ JSCode
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
+						@rep.IncTestWatchDogCount()
+						begin
+							result_dir = @rep.GetResultDir()
+							shooter = SodaScreenShot.new(result_dir)
+							image_file = shooter.GetOutputFile()
+							@rep.log("ScreenShot taken: #{image_file}\n")
+						rescue Excaption => e
+							@rep.ReportException(e)
+						ensure
+						end
+
                   result = -1
                   thread_soda.exit()
                   break
@@ -2594,18 +2735,167 @@ JSCode
 
          if (result != 0)
             master_result = -1
+			else
+				@rep.IncTestPassedCount()
          end
       else
          msg = "Failed trying to run soda test: \"#{@currentTestFile}\"!\n"
+			@rep.IncFailedTest()
          @rep.ReportFailure(msg)
       end
 
       @rep.SodaPrintCurrentReport()
       @rep.EndTestReport()
-      @rep.ReportHTML()
+      @rep.ReportHTML() if (genhtml)
 
       return master_result
    end
+
+############################################################################### 
+# RunAllSuites -- Method
+#		This function run a list of suite files as suites, not as tests.
+#
+# Input:
+#		suites: An array of Soda suite files to be ran.
+#
+# Output:
+#		returns a hash with the results from the ran suites.
+#
+###############################################################################
+	def RunAllSuites(suites)
+		results = {}
+		err = 0
+		indent = " " * 2
+		indent2 = "#{indent}" * 2
+		indent3 = "#{indent}" * 4
+		hostname = `hostname`
+		hostname = hostname.chomp()
+
+		suites.each do |s|
+			base_suite_name = File.basename(s)
+			RestartGlobalTime()
+			results[base_suite_name] = RunSuite(s)
+			RestartGlobalTime()
+		end
+
+		time = Time.now()
+		time = "#{time.to_i}-#{time.usec}"
+		suite_report = "#{@resultsDir}/#{hostname}-#{time}-suite.xml"
+		fd = File.new(suite_report, "w+")
+		fd.write("<data>\n")
+
+		RestartGlobalTime()
+
+		results.each do |k,v|
+			fd.write("\t<suite>\n")
+			fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
+			v.each do |testname, testhash|
+				fd.write("\t#{indent2}<test>\n")
+				fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
+				testhash.each do |tname, tvalue|
+					if (tname == "result")
+						err = -1 if (tvalue.to_i != 0)
+					end
+					new_name = "#{tname}"
+					new_name = new_name.gsub(" ", "_")
+					fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
+				end
+				fd.write("\t#{indent2}</test>\n")
+			end
+			fd.write("\t</suite>\n")
+		end
+		fd.write("</data>\n")
+		fd.close()
+
+		RestartGlobalTime()
+
+		return err
+	end
+
+############################################################################### 
+#
+############################################################################### 
+	def RunSuite(suitefile)
+		parser = nil
+		doc = nil
+		result = {}
+		tests = []
+		setup_test = nil
+		cleanup_test = nil
+		setup_results = 0
+
+		begin
+         parser = LibXML::XML::Parser.file(suitefile)
+         doc = parser.parse()
+			doc = doc.root()
+
+			doc.each do |node|
+				next if (node.name !~ /script/)
+				attrs = node.attributes()
+				attrs = attrs.to_h()
+
+				if (attrs.key?('file'))
+					base_name = File.basename(attrs['file'])
+					if (base_name =~ /^setup/)
+						setup_test = attrs['file']
+					elsif (base_name =~ /^cleanup/)
+						cleanup_test = attrs['file']
+					else
+						tests.push(attrs['file'])
+					end
+				elsif (attrs.key?('fileset'))
+					files = File.join(attrs['fileset'], "*.xml")
+					files = Dir.glob(files)
+					files.each do |f|
+						tests.push(f)
+					end
+				end
+			end
+		rescue Exception => e
+			print "ERROR: #{e.message}!\n"
+			print e.backtrace.join("\n")
+			result = nil
+		ensure
+		end	
+
+
+		if (setup_test != nil)
+			setup_result = run(setup_test, false, false)
+			if (setup_result != 0)
+				SodaUtils.PrintSoda("Failed calling setup test: "+
+					"'#{setup_test}'!\n", SodaUtils::ERROR)
+				result[setup_test] = {'result' => -1}
+				setup_result = false
+			else
+				setup_result = true
+				result[setup_test] = {'result' => 0}
+			end
+		else
+			setup_result = true
+		end
+
+		if (setup_result)
+			tests.each do |test|
+				result[test] = {}
+				result[test]['result'] = run(test, false)
+				result[test].merge!(@rep.GetRawResults)
+				@rep.ZeroTestResults()
+			end
+		end
+
+		if (cleanup_test != nil)
+			cleanup_result = run(cleanup_test, false, false)
+			if (cleanup_result != 0)
+				SodaUtils.PrintSoda("Failed calling cleanup test: "+
+					"'#{cleanup_test}'!\n", SodaUtils::ERROR)
+				result[cleanup_test] = {'result' => -1}
+			else
+				result[cleanup_test] = {'result' => 0}
+			end
+		end
+
+		return result
+	end
 
 ############################################################################### 
 # GetCurrentBrowser -- Method

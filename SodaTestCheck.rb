@@ -39,10 +39,12 @@ require 'SodaUtils'
 ###############################################################################
 class SodaTestCheck
 
+   CONFIG_FILE = File.dirname(__FILE__)
+
    def initialize(sodatest, reportobj)
       err = 0
       sodadata = nil
-      @SODA_ELEMENTS_FILE = "SodaElements.xml"
+      @SODA_ELEMENTS_FILE = "#{CONFIG_FILE}/SodaElements.xml"
       $ERROR_COUNT = 0
       @report = reportobj
       @sodatest = sodatest
@@ -332,7 +334,7 @@ class SodaTestCheck
             err += 1
          end
       rescue Exception => e
-         @report.ReportException(e, false, @sodatest)
+         @report.ReportException(e, @sodatest)
          err += 1
       ensure
       end

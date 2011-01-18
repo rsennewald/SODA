@@ -74,7 +74,12 @@ require 'FieldUtils'
             self.focus(field)
          end
 
-         field.fire_event("#{jsevent}", wait)
+         if (Watir::Browser.default =~ /firefox/i)
+            field.fire_event("#{jsevent}", wait)
+         elsif (Watir::Browser.default =~ /ie/i)
+            field.fire_event("#{jsevent}")
+         end
+
       rescue Exception => e
          $curSoda.rep.ReportException(e, true)
       ensure
@@ -293,7 +298,7 @@ require 'FieldUtils'
          end
 
          break if (result == 0)
-         $curSoda.rep.log("Retying: #{i}\n", SodaUtils::WARN)
+         $curSoda.rep.log("Retrying: #{i}\n", SodaUtils::WARN)
       end
 
       $curSoda.rep.log("Click finished.\n")

@@ -1,0 +1,146 @@
+#!/usr/bin/env ruby
+###############################################################################
+# Copyright (c) 2010, SugarCRM, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#    * Neither the name of SugarCRM, Inc. nor the
+#      names of its contributors may be used to endorse or promote products
+#      derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+# ARE DISCLAIMED. IN NO EVENT SHALL SugarCRM, Inc. BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+###############################################################################
+
+require 'rubygems'
+require 'SodaReportSummery'
+require 'SodaSuiteSummary'
+require 'getoptlong'
+
+###############################################################################
+# PrintHelp -- function
+#	This function prints out the help message for this script.
+#
+# Input:
+#		None.
+#
+# Output:
+#		None:
+#
+###############################################################################
+def PrintHelp()
+	help_msg = <<HLP
+#{$0}
+Usage:
+   #{$0} --reportdir="some directory with soda .log files"
+
+Required Flags:
+   --reportdir: This flag tells #{$0} where to find the Soda log files.
+
+Optional Flags:
+  --usesuites: This flag say that the summary to be generated is for reports
+    that were created by SodaSuite using the --suite flag and not the --test
+    flag.
+
+   --help: Prints this message and exits.
+
+HLP
+
+	print help_msg
+
+	return 0
+end
+
+###############################################################################
+# Main -- function
+#	This is a C like main function to help with program flow control and
+#	debugging.
+#
+# Input:
+#		None.
+#
+# Output:
+#		Always returns 0.
+#
+###############################################################################
+def Main()
+	opts = nil
+	reportdir = nil
+	summary_file = nil
+	summary_obj = nil
+   use_suites = false
+
+	opts = GetoptLong.new(
+		['--reportdir', '-r', GetoptLong::REQUIRED_ARGUMENT],
+		['--help', '-h', GetoptLong::OPTIONAL_ARGUMENT],
+      ['--usesuites', '-s', GetoptLong::OPTIONAL_ARGUMENT]
+	)
+	
+	opts.quiet = true
+	opts.each do |opt, arg|
+		case (opt)
+			when "--reportdir"
+				reportdir = arg
+         when "--usesuites"
+            use_suites = true
+			when "--help"
+				PrintHelp()
+				exit(0)
+		end
+	end
+
+	if (reportdir == nil)
+		print "(!)Error: Missing needed command line switch: --reportdir!\n\n"
+		PrintHelp()
+		exit(1)
+	end
+
+   if (reportdir =~ /\\/)
+      print "(*)Fond DOS style pathing!  This is not a good idea!\n"
+      print "(*)Converting path from: '#{reportdir}' to "
+      reportdir = reportdir.gsub('\\', "/")
+      print "'#{reportdir}'\n"
+   end
+
+	summary_file = "#{reportdir}/summary.html"
+	begin
+		print "(*)Creating summary report...\n"
+      if (use_suites)
+		   summary_obj = SodaSuiteSummary.new(reportdir, summary_file, true)
+      else
+		   summary_obj = SodaReportSummery.new(reportdir, summary_file, true)
+      end
+		print "(*)Finished creating report.\n"
+		print "(*)Summary File: #{summary_file}\n"
+	rescue Exception => e
+		print "(!)Error: #{e.message}!\n"
+      print e.backtrace.join("\n")
+      print "\n\n"
+		exit(2)
+	ensure
+	end
+
+	print "(*)Done.\n\n"
+
+	return 0
+end
+
+###############################################################################
+# Start executing code here --> 
+###############################################################################
+	Main()
+	exit(0)

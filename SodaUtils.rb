@@ -487,7 +487,8 @@ def SodaUtils.ConvertOldBrowserClose(event, reportobj, testfile)
          "=\"true\" /> Test file: \"#{testfile}\", Line: "+
          "#{event['line_number']}!\n", 
          SodaUtils::WARN)
-      reportobj.log("Use <browser action=\"close\" />.\n", SodaUtils::WARN)
+		reportobj.IncTestWarningCount()
+      reportobj.log("Use <browser action=\"close\" />.\n")
    end
 
    return event
@@ -523,9 +524,10 @@ def SodaUtils.ConvertOldAssert(event, reportobj, testfile)
          "< assert=\"something\" exist=\"false\" />" +
          " Test file: \"#{testfile}\", Line: #{event['line_number']}\n."
       reportobj.log(msg, SodaUtils::WARN)
+		reportobj.IncTestWarningCount()
       
       msg = "Use: < assertnot=\"something\" />\n"
-      reportobj.log(msg, SodaUtils::WARN)
+      reportobj.log(msg)
 
       event.delete('exist')
       event.delete('assert')
@@ -710,6 +712,12 @@ def SodaUtils.IEConvertHref(event, url)
    new_url = ""
    uri = nil
    path = nil
+
+   if (href =~ /^#/)
+      href = "#{url}#{href}"
+      event['href'] = href
+      return event
+   end
 
    uri = URI::split(url)
    path = uri[5]

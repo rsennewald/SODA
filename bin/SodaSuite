@@ -30,11 +30,14 @@
 ###############################################################################
 # Needed Ruby libs:
 ###############################################################################
+require 'rubygems'
 require 'Soda'
+require 'sodainfo'
 require 'getoptlong'
 require 'libxml'
-require 'commonwatir'
+require 'watir'
 require 'SodaReportSummery'
+require 'SodaSuiteSummary'
 require 'pp'
 
 ###############################################################################
@@ -60,7 +63,7 @@ require 'pp'
 class SodaSuite
 	attr_accessor :scripts, :soda
 
-   NEEDED_SODA_VERSION = 1.0
+   NEEDED_SODA_VERSION = 1.1
 
    def initialize(params)
       @SodaParams = params
@@ -73,11 +76,11 @@ class SodaSuite
          exit(-1)
       end
 
-      if ("#{CommonWatir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
+      if ("#{Watir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
          print "(!)Failed matching installed Watir version to Soda's" +
             " required version!\n" +
             "--)Required Version: #{Soda::SODA_WATIR_VERSION}\n" +
-            "--)Found Version   : #{CommonWatir::VERSION}\n\n"
+            "--)Found Version   : #{Watir::VERSION}\n\n"
          exit(-1)
       end
 	end
@@ -119,46 +122,15 @@ class SodaSuite
 #     None.
 #
 ###############################################################################
-   def ExecuteTestSuite(suite, rerun = false, reruntest = nil)
+   def ExecuteTestSuites(suites)
       soda = nil
-      master_result = 0
       result = nil
-      
+
       soda = Soda::Soda.new(@SodaParams)
-
-      if (reruntest != nil)
-         SodaUtils.PrintSoda("Running rerun test setup script: "+
-            "'#{reruntest}'.\n")
-         soda.run(reruntest)
-      end
-
-      suite.each do |test|
-         result = soda.run(test, rerun)
-         if (result == -1)
-            SodaUtils.PrintSoda("Failed executing test file: #{test}!\n",
-               SodaUtils::ERROR)
-            master_result = -1
-         
-            begin
-               soda.browser.close()
-            rescue Exception => e
-               print "Exception: #{e.message}\n"
-            ensure
-            end
-            soda = Soda::Soda.new(@SodaParams)
-         end
-      end
-
-      begin
-         soda.browser.close()
-      rescue Exception => e
-         print "Exception: #{e.message}\n"
-      ensure
-      end
-
-      soda = nil
-      return master_result
-   end
+		result = soda.RunAllSuites(suites)
+	
+		return result
+end
 
 ###############################################################################
 # Execute -- Medhod
@@ -271,7 +243,11 @@ Optional Flags:
    --restarttest: This is a soda test that will be ran right after the browser
       is restarted.
 
+   --skipcsserrors: This tells soda to not report on css errors.
+
    --help:  Prints this message and exits.
+
+   --version: Print the Soda Version string.
 
 HLP
    
@@ -508,7 +484,7 @@ def Main
       'suites' => [],
       'test_files' => [],
       'hijacks' => {},
-      'gvars' => [],
+      'gvars' => {},
       'errorskip' => [],
       'restart_count' => 0,
       'restart_test' => ""
@@ -527,11 +503,13 @@ def Main
    else
       config_data = nil
    end
-  
-   config_data['cmdopts'].each do |o|
-      if (o.key?('browser'))
-         params['browser'] = o['browser']
-         break
+ 
+   if ((config_data != nil) && (config_data.key?('cmdopts'))) 
+      config_data['cmdopts'].each do |o|
+         if (o.key?('browser'))
+            params['browser'] = o['browser']
+            break
+         end
       end
    end
 
@@ -554,7 +532,9 @@ def Main
                [ '--sugarwait', '-w', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restartcount', '-1', GetoptLong::OPTIONAL_ARGUMENT ],
                [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT],
-               [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ]
+               [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ],
+					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT],
+               [ '--version', '-5', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
       opts.quiet = true
@@ -596,6 +576,11 @@ def Main
                rerun_failed_test = true
             when "--reruntest"
                rerun_test_script = arg
+				when "--skipcsserrors"
+					params['errorskip'].push("css")
+            when "--version"
+               print "(*)SODA Version: #{SODA_GEM_VERSION}\n\n"
+               return 0
          end
       end
    rescue Exception => e
@@ -614,6 +599,11 @@ def Main
       PrintHelp()
    end
 
+	if (params['suites'].length > 0 && params['resultsdir'] == nil)
+		SodaUtils.PrintSoda("Missing argument --resultsdir!\n")
+		PrintHelp()
+	end
+
    if (params['debug'])
       SodaUtils.PrintSoda("SodaSuite Params:\n")
       params.each do |k, v|
@@ -624,7 +614,7 @@ def Main
    SodaUtils.PrintSoda("SodaSuite Settings:\n--)Browser:" +
       " #{params['browser']}\n--)Debug: #{params['debug']}\n--)Verbose:"+
       " #{params['verbose']}\n" +
-      "--)Watir Version: #{CommonWatir::VERSION}\n")
+      "--)Watir Version: #{Watir::VERSION}\n")
    SodaUtils.PrintSoda("Starting testing...\n")
 
    if (params['resultsdir'] != nil)
@@ -642,12 +632,7 @@ def Main
 
    if (params['suites'].length > 0)
       sweet = SodaSuite.new(params)
-      params['suites'].each do |swt|
-         result = sweet.ExecuteTestSuite(swt)
-         if (result != 0) 
-            master_result = -1
-         end
-      end
+      result = sweet.ExecuteTestSuites(params['suites'])
    end
 
    if (params['test_files'].length > 0)
@@ -665,20 +650,19 @@ def Main
       end
    end
 
-   # see if we should rerun failed tests #
-   if (rerun_failed_test && failed_tests.length > 0)
-      SodaUtils.PrintSoda("Rerunning failed tests.\n")
-      sweet.ExecuteTestSuite(failed_tests, true, rerun_test_script)
-      SodaUtils.PrintSoda("Finished rerunning failed tests.\n")
-   end
-
    if (params['resultsdir'] != nil)
       begin
-         summery = SodaReportSummery.new(params['resultsdir'], 
-            params['summaryfile'], true)
+         if (params['suites'].length > 0)
+            summary = SodaSuiteSummary.new(params['resultsdir'], 
+               params['summaryfile'], true)
+         else
+            summery = SodaReportSummery.new(params['resultsdir'], 
+               params['summaryfile'], true)
+         end
       rescue Exception => e
-         print "Error: calling: SodaReportSummery!\n"
-         print "StackTrace: #{e.backtrace}\n\n"
+         print "Error: calling: SodaReportSummery: #{e.message}\n"
+         print e.backtrace.join("\n")
+         print "\n\n"
          exit(-1)
       ensure
       end

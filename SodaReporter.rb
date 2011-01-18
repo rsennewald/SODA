@@ -45,20 +45,30 @@ require 'SodaLogReporter'
 # simple reporter class that tracks asserts, exceptions, and log messages
 ###############################################################################
 class SodaReporter
+   attr_accessor :asserts_count, :js_error_count, :css_error_count,
+      :assertFails_count, :exception_count, :test_skip_count, 
+      :test_blocked_count, :test_watchdog_count
 
 	def initialize(testfile, savehtml = false, resultsdir = nil, debug = 0,
          callback = nil, rerun = false)
 		@sodatest_file = testfile
       @saveHtmlFiles = savehtml
       @debug = debug
+      @start_time = nil
+      @end_time = nil
       @js_error_count = 0
       @css_error_count = 0
 		@asserts_count = 0
-		@exception_major_count = 0
 		@assertFails_count = 0
 		@exception_count = 0	
       @test_count = 0
       @test_skip_count = 0
+		@test_blocked_count = 0
+		@test_failed_count = 0
+		@test_passed_count = 0
+		@test_watchdog_count = 0
+		@test_warning_count = 0
+		@test_total_count = 0
 		@fatals = 0
 		@total = 0
       @failureCount = 0
@@ -111,8 +121,90 @@ class SodaReporter
       log("[New Test]\n")
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
+      @start_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
 	end
 
+###############################################################################
+# GetRawResults -- Method
+#     This method gets test results data.
+#
+# Input:
+#     None.
+#
+# Output:
+#     returns a hash of test report data.
+#
+###############################################################################
+   def GetRawResults()
+
+      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S") if (@end_time == nil)
+      start = DateTime.strptime("#{@start_time}",
+         "%m/%d/%Y-%H:%M:%S")
+      stop = DateTime.strptime("#{@end_time}",
+         "%m/%d/%Y-%H:%M:%S")
+      total_time = (stop - start)
+
+      results = {
+         'Test Assert Count' => @asserts_count,
+         'Test JavaScript Error Count' => @js_error_count,
+         'Test CSS Error Count' => @css_error_count,
+         'Test Assert Failures' => @assertFails_count,
+         'Test Exceptions' => @exception_count,
+         'Test Skip Count' => @test_skip_count,
+         'Test Blocked Count' => @test_blocked_count,
+         'Test WatchDog Count' => @test_watchdog_count,
+         'Test Warning Count' => @test_warning_count,
+         'Test Event Count' => @total,
+         'Test Start Time' => @start_time,
+         'Test Stop Time' => @end_time
+      }
+
+      return results
+   end
+
+###############################################################################
+# ZeroTestResults -- Method
+#     This method zero's out needed reported values for a test when running
+#     a suite.  Really this is only needed until SugarCRM internally starts
+#     using real suites and I can go back to undo the hack's put in place to
+#     do suite reporting when using the --test option to run suites.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def ZeroTestResults()
+         @asserts_count = 0
+         @js_error_count = 0
+         @css_error_count = 0
+         @assertFails_count = 0
+         @exception_count = 0
+         @test_skip_count = 0
+         @test_blocked_count = 0
+         @test_watchdog_count = 0
+         @test_warning_count = 0
+         @total = 0
+         @start_time = nil
+         @end_time = nil
+   end
+
+###############################################################################
+# GetResultDir -- Method
+#		This method returns the current result dir.
+#
+# Input:
+#		None.
+#
+# Output:
+#		returns the current result directory.
+#
+###############################################################################
+	def GetResultDir()
+		return @ResultsDir
+	end
 
 ###############################################################################
 # IncSkippedTest -- Method
@@ -131,6 +223,54 @@ class SodaReporter
    public :IncSkippedTest
 
 ###############################################################################
+# IncTestTotalCount -- Method
+#     This method incerments the count by 1 for tests that were skipped.
+#
+# Input:
+#     n: the number to inc by, 1 is the default.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestTotalCount(n = 1)
+      @test_total_count += 1
+   end
+   public :IncTestTotalCount
+
+###############################################################################
+# IncBlockedTest -- Method
+#     This method incerments the count by 1 for tests that were blocked.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncBlockedTest()
+      @test_blocked_count += 1
+   end
+   public :IncBlockedTest
+
+###############################################################################
+# IncFailedTest -- Method
+#     This method incerments the count by 1 for tests that failed.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncFailedTest()
+      @test_failed_count += 1
+   end
+   public :IncFailedTest
+
+###############################################################################
 # IncTestCount -- Method
 #     This method incerments the count by 1 for tests that were ran
 #
@@ -145,6 +285,54 @@ class SodaReporter
       @test_count += 1
    end
    public :IncTestCount
+
+###############################################################################
+# IncTestWarningCount -- Method
+#     This method incerments the count by 1 for tests that were ran
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestWarningCount()
+      @test_warning_count += 1
+   end
+   public :IncTestWarningCount
+
+###############################################################################
+# IncTestPassedCount -- Method
+#     This method incerments the count by 1 for tests that passed.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestPassedCount()
+      @test_passed_count += 1
+   end
+   public :IncTestPassedCount
+
+###############################################################################
+# IncTestWatchDogCount -- Method
+#     This method incerments the count by 1 for tests that watchdog'd.
+#
+# Input:
+#     None.
+#
+# Output:
+#     None.
+#
+###############################################################################
+   def IncTestWatchDogCount()
+      @test_watchdog_count += 1
+   end
+   public :IncTestWatchDogCount
 
 ###############################################################################
 # ReportHTML -- Method
@@ -279,10 +467,58 @@ class SodaReporter
       tmp_logfile += "/" 
       tmp_logfile += File.basename("#{@log_filename}", ".tmp")
       tmp_logfile += ".log"
-      File.rename(@log_filename, tmp_logfile)
+#      File.rename(@log_filename, tmp_logfile) # put back after hack!!!
+		NFSRenameHack(@log_filename, tmp_logfile)
+
       @log_filename = tmp_logfile
-      
+      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
    end
+
+###############################################################################
+# NFSRenameHack -- hack!!!
+#
+#	This is a total hack because of the very lame ass way hudson was setup
+#	to run soda tests using an nfs mount as a writing point for test
+#	results!!!  This hack will be taken out as soon as hudson is updated.
+#
+###############################################################################
+	def NFSRenameHack(old_file, new_file)
+		err = false
+		count = 0
+
+		while (err != true)
+			err = @logfile.closed?()
+			count += 1
+			sleep(1)
+			break if (count > 20)
+		end
+
+		tmp_log = File.open(old_file, "r")
+		new_log = File.new(new_file, "w+")
+		line = nil
+		while (line = tmp_log.gets)
+			new_log.write(line)
+		end
+		tmp_log.close()
+		new_log.close()
+
+		sleep(1)
+		
+		is_deleted = false
+		for i in 0..30
+			begin
+				File.unlink(old_file)
+				is_deleted = true
+			rescue Exception => e
+				print "(!)Failed calling delete on file: '#{old_file}'!\n"
+				is_deleted = false
+			ensure
+			end
+
+			break if (is_deleted)
+			sleep(1)
+		end
+	end
 
 ###############################################################################
 # log -- Method
@@ -309,9 +545,6 @@ class SodaReporter
 #
 # Params:
 #     sodaException: This is the exception that is passed from Soda.
-#     
-#     mojor: Tells use if this was a mojor exception or now.
-#
 #     file: The soda test file that the exception was raised by durring the
 #        test.
 #
@@ -324,7 +557,7 @@ class SodaReporter
 #     So I will be killer this param soon...
 #
 ###############################################################################
-   def ReportException(sodaException, major = false, file = false)
+   def ReportException(sodaException, file = false)
       msg = nil
       @exception_count += 1
 	
@@ -340,14 +573,11 @@ class SodaReporter
          log("Exception raised: #{msg}\n", SodaUtils::ERROR)
       end
 
-		if (major)
-			@exception_major_count += 1
-         bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
-            "\n"
-         btm = "--Exception Message: #{msg}\n"
-         log("Major exception raised for file: #{file}" + btm + bt, 
-            SodaUtils::ERROR)
-		end
+		bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
+			"\n"
+		btm = "--Exception Message: #{msg}\n"
+		log("Exception raised for file: #{file}" + btm + bt, 
+			SodaUtils::ERROR)
 	end
 
 ###############################################################################
@@ -442,9 +672,13 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}" +
-         "--Test Major Exceptions: #{@exception_major_count}" +
          "--Test Count:#{@test_count}" +
-         "--Test Skip Count:#{@test_skip_count}\n"
+         "--Test Skip Count:#{@test_skip_count}" +
+			"--Test Blocked Count:#{@test_blocked_count}" +
+			"--Test Failed Count:#{@test_failed_count}" +
+			"--Test Passed Count:#{@test_passed_count}" +
+			"--Test WatchDog Count:#{@test_watchdog_count}"+
+			"--Test Warning Count:#{@test_warning_count}\n"
          log(msg)
 	end
 
