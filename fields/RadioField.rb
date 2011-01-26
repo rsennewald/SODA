@@ -27,7 +27,7 @@
 
 class SodaRadioField < SodaCheckBoxField
 
-   def self.set(field, value)
+   def self.set(field, value, zippytext = false)
       result = 0
       if (!field.enabled?)
          result = -1

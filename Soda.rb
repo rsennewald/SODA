@@ -99,6 +99,7 @@ class Soda
       @currentTestFile = "" 
       @exceptionExit = false
       @ieHwnd = 0
+      @zippytext = false
       $global_time = Time.now()
       $mutex = Mutex.new()
       @whiteList = []
@@ -124,6 +125,7 @@ class Soda
       @sugarFlavor = params['flavor'] if (params.key?('flavor'))
       @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
       @globalVars = params['gvars'] if (params.key?('gvars'))
+      @zippytext = params['zippytext'] if (params.key?('zippytext'))
 
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
@@ -2214,7 +2216,7 @@ JSCode
             end
          when "set"
             PrintDebug("Setting value to #{event['set']}\n")
-            result = fieldType.set(@curEl, event['set'])
+            result = fieldType.set(@curEl, event['set'], @zippytext)
             if (result != 0)
                event['current_test_file'] = @currentTestFile
                e_dump = SodaUtils.DumpEvent(event)

@@ -27,7 +27,7 @@
 
 class SodaSelectField < SodaField
    
-   def self.set(field, value)
+   def self.set(field, value, zippytext = false)
       result = 0
 
       if (!field.enabled?)

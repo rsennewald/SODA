@@ -247,6 +247,8 @@ Optional Flags:
 
    --help:  Prints this message and exits.
 
+   --zippytext: This turns on zippy text entry for Watir.
+
    --version: Print the Soda Version string.
 
 HLP
@@ -472,6 +474,7 @@ def Main
    test_files = []
    hijacks = {}
    params = {
+      'zippytext' => false,
       'sugarwait' => false,
       'verbose' => false,
       'browser' => nil,
@@ -534,6 +537,7 @@ def Main
                [ '--restarttest', '-2', GetoptLong::OPTIONAL_ARGUMENT],
                [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ],
 					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT],
+               [ '--zippytext', '-6', GetoptLong::OPTIONAL_ARGUMENT],
                [ '--version', '-5', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
@@ -578,6 +582,8 @@ def Main
                rerun_test_script = arg
 				when "--skipcsserrors"
 					params['errorskip'].push("css")
+            when "--zippytext"
+               params['zippytext'] = true
             when "--version"
                print "(*)SODA Version: #{SODA_GEM_VERSION}\n\n"
                return 0
@@ -614,6 +620,7 @@ def Main
    SodaUtils.PrintSoda("SodaSuite Settings:\n--)Browser:" +
       " #{params['browser']}\n--)Debug: #{params['debug']}\n--)Verbose:"+
       " #{params['verbose']}\n" +
+      "--)ZippyText: #{params['zippytext']}\n" +
       "--)Watir Version: #{Watir::VERSION}\n")
    SodaUtils.PrintSoda("Starting testing...\n")
 

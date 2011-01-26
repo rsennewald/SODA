@@ -103,12 +103,13 @@ require 'FieldUtils'
 # Params: 
 #     field: this is the watir object for the field.
 #     value: The vale to set the field to.
+#     zippy: this turns on zippy text entry.
 #
 # Results:
 #     returns 0 on success, or -1 on error
 #
 ###############################################################################
-   def self.set(field, value)
+   def self.set(field, value, zippy = false)
       result = 0
       msg = "Setting Element: "
 
@@ -122,7 +123,11 @@ require 'FieldUtils'
                "Error: Trying to set a value for a disabled Element!\n")
             result = -1
          else
-            field.set(value)
+            if (zippy)
+               field.value = value
+            else
+               field.set(value)
+            end
             result = 0
          end
       rescue Exception => e
