@@ -117,6 +117,59 @@ JS
 end
 
 ###############################################################################
+# KillProcessWindows -- function
+#     This function find all running firefox processes and then tries to 
+#     kill them.
+#
+# Input:
+#     None.
+#
+# Output:
+#     returns -1 on error else 0 on success.
+#
+###############################################################################
+def SodaFireFox.KillProcessWindows()
+   firefox = []
+   tmp = nil
+   result = 0
+
+   tmp = Kernel.open("| tasklist /NH")
+   lines = tmp.readlines()
+   tmp.close()
+
+   lines.each do |l|
+      l = l.chomp()
+      if (l =~ /firefox/i)
+         hash = {
+            'pid' => nil,
+            'name' => nil
+         }
+         data = l.split(/\s+/)
+         hash['name'] = data[0]
+         hash['pid'] = data[1].to_i()
+         firefox.push(hash)
+      end
+   end
+
+   if (firefox.length < 1)
+      $curSoda.rep.log("No firefox processes to kill, browser closed clean.\n")
+   end
+
+   firefox.each do |hash|
+      begin
+         $curSoda.rep.log("Killing Process ID: #{hash['pid']}, Name:"+
+            "#{hash['name']}\n")
+         Process.kill("KILL", hash['pid'])
+      rescue Exception => e
+         $curSoda.rep.ReportException(e, true, false)
+         result = -1
+      end
+   end
+
+   return result
+end
+
+###############################################################################
 # KillProcessUnix -- function
 #     This function find all running firefox processes and then tries to 
 #     kill them.
@@ -135,6 +188,8 @@ def SodaFireFox.KillProcessUnix()
 
    tmp = Kernel.open("| ps -e")
    lines = tmp.readlines()
+   tmp.close()
+
    lines.shift()
    lines.each do |l|
       l = l.chomp()
@@ -191,6 +246,8 @@ def SodaFireFox.KillProcesses()
    case (os)
       when /linux/i
          err = KillProcessUnix()
+      when /windows/i
+         err = KillProcessWindows()
    end
 
    return err
