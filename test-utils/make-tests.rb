@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'getoptlong'
 require 'fileutils'
+require 'rbconfig'
 
 ###############################################################################
 #
@@ -24,6 +25,11 @@ end
 def Main()
    test_count = 20
    output_dir = "/tmp/soda-tests"
+
+   if (Config::CONFIG['host_os'] =~ /ms/i)
+      output_dir = "c:/tmp/soda-tests"
+   end
+
    output_tests_dir = "#{output_dir}/tests"
    master_test = "#{output_dir}/test-master.xml"
 
