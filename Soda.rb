@@ -827,6 +827,10 @@ class Soda
 
 			RestartGlobalTime()
 
+         if (@params['browser'] =~ /firefox/i)
+            SodaFireFox.KillProcesses()
+         end
+
          err = NewBrowser()
          if (err != 0)
             @rep.ReportFailure("Failed to restart browser!\n")
