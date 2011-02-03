@@ -826,7 +826,7 @@ class Soda
          begin 
             @browser.close()
             sleep(1)
-         ensure Exception => e
+         rescue Exception => e
          end
 
          RestartGlobalTime()
