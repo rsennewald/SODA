@@ -914,6 +914,7 @@ HTML
 
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
+      suite_mini_file = File.basename(suite_mini_file)
 
       str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
