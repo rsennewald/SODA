@@ -104,8 +104,15 @@ class SodaReporter
       end
 
       FileUtils.mkdir_p(@ResultsDir)
-
       @path = "#{@ResultsDir}/#{base_testfile_name}"
+      
+      if (File.exist?("#{@path}.tmp") || File.exist?("#{@path}.log") )
+         t = Time.now()
+         t = t.strftime("%Y%m%d%H%M%S")
+         base_testfile_name << "-#{t}"
+         @path = "#{@ResultsDir}/#{base_testfile_name}"
+      end
+
       if (@path =~ /sugarinit/i)
 		   @log_filename = "#{@path}-#{hostname}.tmp"
          @htmllog_filename = "#{@ResultsDir}/Report-#{base_testfile_name}"+
@@ -672,13 +679,6 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}\n"
-#         "--Test Count:#{@test_count}" +
-#         "--Test Skip Count:#{@test_skip_count}" +
-#			"--Test Blocked Count:#{@test_blocked_count}" +
-#			"--Test Failed Count:#{@test_failed_count}" +
-#			"--Test Passed Count:#{@test_passed_count}" +
-#			"--Test WatchDog Count:#{@test_watchdog_count}"+
-#			"--Test Warning Count:#{@test_warning_count}\n"
          log(msg)
 	end
 

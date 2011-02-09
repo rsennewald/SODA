@@ -42,7 +42,7 @@ class SodaSuiteSummary
 #     This is the class constructor.  Really this does all the needed work.
 #
 # Params:
-#     dir: This is the dorectory with raw soda logs in it.
+#     dir: This is the directory with raw soda logs in it.
 #     outfile: This is the new summery html file to create.
 #     create_links: This will create links to the soda report files in the
 #        summery.
