@@ -99,7 +99,7 @@ class Soda
       @currentTestFile = "" 
       @exceptionExit = false
       @ieHwnd = 0
-      @zippytext = false
+      @nonzippytext = false
       $global_time = Time.now()
       $mutex = Mutex.new()
       @whiteList = []
@@ -125,7 +125,7 @@ class Soda
       @sugarFlavor = params['flavor'] if (params.key?('flavor'))
       @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
       @globalVars = params['gvars'] if (params.key?('gvars'))
-      @zippytext = params['zippytext'] if (params.key?('zippytext'))
+      @nonzippytext = params['nonzippytext'] if (params.key?('nonzippytext'))
 
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
@@ -2138,7 +2138,7 @@ JSCode
          foundaction = event['do']
       end
 
-      if (event.key?("alert") )
+      if (event.key?("alert"))
        if (event['alert'] =~ /true/i)
           @rep.log("Enabling Alert Hack\n")
           fieldType.alertHack(true, true) 
@@ -2154,7 +2154,7 @@ JSCode
          js = replaceVars(event['jscriptevent'])
       end
 
-      case foundaction
+      case (foundaction)
          when "append"
             result = fieldType.append(@curEl, replaceVars(event['append']))
             if (result != 0)
@@ -2224,7 +2224,12 @@ JSCode
             end
          when "set"
             PrintDebug("Setting value to #{event['set']}\n")
-            result = fieldType.set(@curEl, event['set'], @zippytext)
+            if (@curEl.class.to_s =~ /textfield/i)
+               result = fieldType.set(@curEl, event['set'], @nonzippytext)
+            else
+               result = fieldType.set(@curEl, event['set'])
+            end
+
             if (result != 0)
                event['current_test_file'] = @currentTestFile
                e_dump = SodaUtils.DumpEvent(event)

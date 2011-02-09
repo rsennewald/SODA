@@ -43,7 +43,7 @@ class SodaCheckBoxField < SodaField
 # Results: 
 #
 ###############################################################################
-   def self.set(field, value, zippytext = false)
+   def self.set(field, value)
       result = 0
 
       if (!field.enabled?)
