@@ -2860,7 +2860,7 @@ JSCode
                end
             elsif (attrs.key?('fileset'))
                files = File.join(attrs['fileset'], "*.xml")
-               files = Dir.glob(files)
+               files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
                files.each do |f|
                   tests.push(f)
                end
@@ -2890,12 +2890,6 @@ JSCode
 
       if (setup_result)
          tests.each do |test|
-            if (result.key?(test))
-               rand_num = rand(99999999)
-               ran_test_name = "#{test}-#{rand_num}"
-            else
-               ran_test_name = test
-            end
             tmp_result = {}
             tmp_result['result'] = run(test, false)
             tmp_result.merge!(@rep.GetRawResults)
@@ -2903,7 +2897,9 @@ JSCode
             test_basename = File.basename(test, ".xml")
             logfile = tmp_result['Test Log File']
             if (logfile =~ /#{test_basename}-\d+/)
-               ran_test_name = File.basename(logfile, ".log")
+               test =~ /(.*\/)#{test_basename}/
+               ran_test_name = $1
+               ran_test_name << File.basename(logfile, ".log")
                ran_test_name << ".xml"
             else
                ran_test_name = test

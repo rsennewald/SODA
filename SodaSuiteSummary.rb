@@ -125,7 +125,9 @@ def GetLogFiles(dir)
    end
 
    files = File.join("#{dir}", "*.xml")
-   files = Dir.glob(files)
+   #files = Dir.glob(files)
+   files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
+
    return files
 end
 
