@@ -126,13 +126,20 @@ def GetLogFiles(dir)
 
    files = File.join("#{dir}", "*.xml")
    files = Dir.glob(files)
-   files = files.sort()
    return files
 end
 
    private :GetLogFiles
 
 ###############################################################################
+# GetTestInfo -- method
+#     This method reads the suite xml report and converts it into a hash.
+#
+# Input:
+#     kids: The XML node for the <test> element.
+#
+# Output:
+#     returns a hash of data.
 #
 ###############################################################################
 def GetTestInfo(kids)
@@ -1098,12 +1105,12 @@ HTML
    id = 0
    suite_hash['tests'].each do |test|
       id += 1
-      test_report = test['testfile']
-      test_report = File.basename(test_report, ".xml")
+      test_report = test['Test Log File']
+      test_report = File.basename(test_report, ".log")
       test_report = "Report-#{test_report}.html"
 
       str = "<tr id=\"#{id}\">\n"+
-      "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
+      "\t<td class=\"td_file_data\">#{test['Real Test Name']}</td>\n"
 
       if (test['result'].to_i != 0)
          str << "\t<td class=\"td_failed_data\">Failed</td>\n"
@@ -1123,7 +1130,6 @@ HTML
    return suite_file
 
 end
-
 
 end
 

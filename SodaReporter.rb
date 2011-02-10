@@ -163,7 +163,8 @@ class SodaReporter
          'Test Warning Count' => @test_warning_count,
          'Test Event Count' => @total,
          'Test Start Time' => @start_time,
-         'Test Stop Time' => @end_time
+         'Test Stop Time' => @end_time,
+         'Test Log File' => @log_filename
       }
 
       return results

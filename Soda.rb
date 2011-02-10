@@ -2891,9 +2891,16 @@ JSCode
 
       if (setup_result)
          tests.each do |test|
-            result[test] = {}
-            result[test]['result'] = run(test, false)
-            result[test].merge!(@rep.GetRawResults)
+            if (result.key?(test))
+               rand_num = rand(99999999)
+               ran_test_name = "#{test}-#{rand_num}"
+            else
+               ran_test_name = test
+            end
+            result[ran_test_name] = {}
+            result[ran_test_name]['result'] = run(test, false)
+            result[ran_test_name].merge!(@rep.GetRawResults)
+            result[ran_test_name]['Real_Test_Name'] = test
             @rep.ZeroTestResults()
          end
       end
