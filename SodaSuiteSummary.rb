@@ -1066,7 +1066,6 @@ table {
 	border-right: 0px solid black;
 	border-bottom: 2px solid black;
 }
-
 .td_failed_data {
 	whitw-space: nowrap;
 	text-align: center;
@@ -1088,6 +1087,12 @@ table {
 	border-right: 1px solid black;
 	border-bottom: 2px solid black;
 }
+.highlight {
+   background-color: #8888FF;
+}
+.tr_normal {
+   background-color: #FFFFFF;
+}
 </style>
 <body>
 <table id="tests">
@@ -1107,14 +1112,16 @@ HTML
    fd.write(html)
    id = 0
 
-   #suite_hash['tests'].each do |test|
+   tr_css = "onMouseOver=\"this.className='highlight'\""+
+      " onMouseOut=\"this.className='tr_normal'\" class=\"tr_normal\""
+
    suite_hash['tests'].sort_by { |h| h['Test Log File'] }.each do |test|
       id += 1
       test_report = test['Test Log File']
       test_report = File.basename(test_report, ".log")
       test_report = "Report-#{test_report}.html"
 
-      str = "<tr id=\"#{id}\">\n"+
+      str = "<tr id=\"#{id}\" #{tr_css} >\n"+
       "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
