@@ -125,7 +125,6 @@ def GetLogFiles(dir)
    end
 
    files = File.join("#{dir}", "*.xml")
-   #files = Dir.glob(files)
    files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
 
    return files
@@ -170,6 +169,7 @@ end
 ###############################################################################
 def GenerateReportData(files)
    test_info = {}
+   test_info_list = []
 
    files.each do |f|
       print "(*)Opening file: #{f}\n"
@@ -204,6 +204,7 @@ def GenerateReportData(files)
          
          base_name = File.basename(tmp_hash['suitefile'])
          test_info[base_name] = tmp_hash
+         test_info_list.push(tmp_hash)
       end
    end
 
@@ -1105,7 +1106,9 @@ HTML
    fd = File.new(suite_file, "w+")
    fd.write(html)
    id = 0
-   suite_hash['tests'].each do |test|
+
+   #suite_hash['tests'].each do |test|
+   suite_hash['tests'].sort_by { |h| h['Test Log File'] }.each do |test|
       id += 1
       test_report = test['Test Log File']
       test_report = File.basename(test_report, ".log")
