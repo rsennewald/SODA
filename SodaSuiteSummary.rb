@@ -1110,7 +1110,7 @@ HTML
       test_report = "Report-#{test_report}.html"
 
       str = "<tr id=\"#{id}\">\n"+
-      "\t<td class=\"td_file_data\">#{test['Real Test Name']}</td>\n"
+      "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
          str << "\t<td class=\"td_failed_data\">Failed</td>\n"

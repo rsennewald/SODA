@@ -2873,7 +2873,6 @@ JSCode
       ensure
       end   
 
-
       if (setup_test != nil)
          setup_result = run(setup_test, false, false)
          if (setup_result != 0)
@@ -2897,10 +2896,20 @@ JSCode
             else
                ran_test_name = test
             end
-            result[ran_test_name] = {}
-            result[ran_test_name]['result'] = run(test, false)
-            result[ran_test_name].merge!(@rep.GetRawResults)
-            result[ran_test_name]['Real_Test_Name'] = test
+            tmp_result = {}
+            tmp_result['result'] = run(test, false)
+            tmp_result.merge!(@rep.GetRawResults)
+            tmp_result['Real_Test_Name'] = test
+            test_basename = File.basename(test, ".xml")
+            logfile = tmp_result['Test Log File']
+            if (logfile =~ /#{test_basename}-\d+/)
+               ran_test_name = File.basename(logfile, ".log")
+               ran_test_name << ".xml"
+            else
+               ran_test_name = test
+            end
+
+            result[ran_test_name] = tmp_result
             @rep.ZeroTestResults()
          end
       end
