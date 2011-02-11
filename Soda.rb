@@ -2850,14 +2850,7 @@ JSCode
             attrs = attrs.to_h()
 
             if (attrs.key?('file'))
-               base_name = File.basename(attrs['file'])
-               if (base_name =~ /^setup/)
-                  setup_test = attrs['file']
-               elsif (base_name =~ /^cleanup/)
-                  cleanup_test = attrs['file']
-               else
-                  tests.push(attrs['file'])
-               end
+               tests.push(attrs['file'])
             elsif (attrs.key?('fileset'))
                files = File.join(attrs['fileset'], "*.xml")
                files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
