@@ -197,27 +197,27 @@ class Soda
 
 ###############################################################################
 # RestartGlobalTime -- Method
-#		This method reset the global time, for the watchdog timer.
+#     This method reset the global time, for the watchdog timer.
 #
 # Input:
-#		None.
+#     None.
 #
 # Output:
-#		None.
+#     None.
 #
 ###############################################################################
-	def RestartGlobalTime()
-		$mutex.synchronize {
-			$global_time = Time.now()
-		}
-	end
+   def RestartGlobalTime()
+      $mutex.synchronize {
+         $global_time = Time.now()
+      }
+   end
 
 ###############################################################################
 ###############################################################################
    def NewBrowser()
       err = 0
 
-		RestartGlobalTime()
+      RestartGlobalTime()
 
       if ( @current_os =~ /WINDOWS/i && 
          @params['browser'] =~ /ie|firefox/i ) 
@@ -823,7 +823,7 @@ class Soda
          @browser.close()
          sleep(1)
 
-			RestartGlobalTime()
+         RestartGlobalTime()
 
          err = NewBrowser()
          if (err != 0)
@@ -873,14 +873,14 @@ class Soda
          fd = Dir.open(file)
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
-#				@rep.IncTestTotalCount() if (f !~ /lib/i)
+#           @rep.IncTestTotalCount() if (f !~ /lib/i)
          end
          fd.close()
 
          if (files.empty?)
             @rep.log("No tests found in directory: '#{file}'!\n",
                SodaUtils::WARN)
-				@rep.IncTestWarningCount()
+            @rep.IncTestWarningCount()
             return nil
          end   
 
@@ -913,9 +913,9 @@ class Soda
                PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
-						@rep.IncFailedTest()
-					else
-						@rep.IncTestPassedCount() if (file !~ /lib/i)
+                  @rep.IncFailedTest()
+               else
+                  @rep.IncTestPassedCount() if (file !~ /lib/i)
                end
                @currentTestFile = parent_test_file
             else
@@ -946,7 +946,7 @@ class Soda
          tmp_file = File.basename(test_file)
          if (tmp_file =~ /#{bhash['testfile']}/)
             @rep.log("Blocklist: blocking file: \"#{test_file}\".\n")
-				@rep.IncBlockedTest()
+            @rep.IncBlockedTest()
             result = true
             break
          end
@@ -1419,7 +1419,7 @@ class Soda
                else
                   PrintDebug("For some reason I got a nill @browser object!",
                      SodaUtils::WARN)
-						@rep.IncTestWarningCount()
+                  @rep.IncTestWarningCount()
                   result['browser_closed'] = true
                end
             when "refresh"
@@ -1578,7 +1578,7 @@ class Soda
          else
             @rep.log("Found requires event without any children!\n", 
                SodaUtils::WARN)
-				@rep.IncTestWarningCount()
+            @rep.IncTestWarningCount()
          end 
       end
    end
@@ -1780,7 +1780,7 @@ class Soda
 #
 ############################################################################### 
    def eventScript(event)
-		results = 0
+      results = 0
 
       if (event.key?('file'))
          # specified a new csv to file
@@ -1796,11 +1796,11 @@ class Soda
             parent_script = @currentTestFile
             @currentTestFile = event['file']
             results = handleEvents(script)
-				if (@currentTestFile !~ /lib/i && results != 0)
-					@rep.IncFailedTest()
-				else
-					@rep.IncTestPassedCount() if (@currentTestFile !~ /lib/i)
-				end
+            if (@currentTestFile !~ /lib/i && results != 0)
+               @rep.IncFailedTest()
+            else
+               @rep.IncTestPassedCount() if (@currentTestFile !~ /lib/i)
+            end
             @currentTestFile = parent_script
          else
             msg = "Failed opening script file: \"#{event['file']}\"!\n"
@@ -1931,7 +1931,7 @@ JSCode
    def eventWait(event)
       result = false
 
-		RestartGlobalTime()
+      RestartGlobalTime()
 
       if ( event.key?('condition') && 
            getStringBool(event['condition']) && 
@@ -1955,7 +1955,7 @@ JSCode
          result = true
       end
 
-		RestartGlobalTime()
+      RestartGlobalTime()
 
       return result
    end
@@ -2129,15 +2129,15 @@ JSCode
       end
 
       if (event.key?("alert") )
-		 if (event['alert'] =~ /true/i)
-			 @rep.log("Enabling Alert Hack\n")
-			 fieldType.alertHack(true, true) 
-		 else
-			 fieldType.alertHack(false, false)
-			 @rep.log("Disabeling alert!\n")
-			 PrintDebug("eventFieldAction: Finished.\n")
-			 return
-		 end
+       if (event['alert'] =~ /true/i)
+          @rep.log("Enabling Alert Hack\n")
+          fieldType.alertHack(true, true) 
+       else
+          fieldType.alertHack(false, false)
+          @rep.log("Disabeling alert!\n")
+          PrintDebug("eventFieldAction: Finished.\n")
+          return
+       end
       end
 
       if (event.key?("jscriptevent"))
@@ -2184,10 +2184,10 @@ JSCode
                   else
                      @rep.log("Found unsupported value for <textfield clear" +
                         "=\"true/false\" />!\n", SodaUtils::WARN)
-							@rep.IncTestWarningCount()
+                     @rep.IncTestWarningCount()
                      @rep.log("Unsupported clear value =>" +
                         " \"#{event['clear']}\".\n", SodaUtils::WARN)
-							@rep.IncTestWarningCount()
+                     @rep.IncTestWarningCount()
                end
             end
          when "focus"
@@ -2255,7 +2255,7 @@ JSCode
          else
             msg = "Failed to find supported field action.\n"
             @rep.log(msg, SodaUtils::WARN)
-				@rep.IncTestWarningCount()
+            @rep.IncTestWarningCount()
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)
       end
@@ -2409,7 +2409,7 @@ JSCode
             fieldType = nil
     
             event = SodaUtils.ConvertOldAssert(event, @rep, @currentTestFile)
-				RestartGlobalTime()
+            RestartGlobalTime()
             crazyEvilIETabHack() 
 
             if (event.key?('set') && event['set'].is_a?(String) && 
@@ -2616,11 +2616,11 @@ JSCode
 
                if (exception_event != nil)
                   @rep.log("Running Exception Handler.\n", SodaUtils::WARN)
-						@rep.IncTestWarningCount()
+                  @rep.IncTestWarningCount()
                   @exceptionExit = false
                   handleEvents(exception_event['children'])
                   @rep.log("Finished Exception Handler.\n", SodaUtils::WARN)
-						@rep.IncTestWarningCount()
+                  @rep.IncTestWarningCount()
                   @exceptionExit = true
                end
 
@@ -2710,16 +2710,16 @@ JSCode
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
-						@rep.IncTestWatchDogCount()
-						begin
-							result_dir = @rep.GetResultDir()
-							shooter = SodaScreenShot.new(result_dir)
-							image_file = shooter.GetOutputFile()
-							@rep.log("ScreenShot taken: #{image_file}\n")
-						rescue Excaption => e
-							@rep.ReportException(e)
-						ensure
-						end
+                  @rep.IncTestWatchDogCount()
+                  begin
+                     result_dir = @rep.GetResultDir()
+                     shooter = SodaScreenShot.new(result_dir)
+                     image_file = shooter.GetOutputFile()
+                     @rep.log("ScreenShot taken: #{image_file}\n")
+                  rescue Excaption => e
+                     @rep.ReportException(e)
+                  ensure
+                  end
 
                   result = -1
                   thread_soda.exit()
@@ -2735,12 +2735,12 @@ JSCode
 
          if (result != 0)
             master_result = -1
-			else
-				@rep.IncTestPassedCount()
+         else
+            @rep.IncTestPassedCount()
          end
       else
          msg = "Failed trying to run soda test: \"#{@currentTestFile}\"!\n"
-			@rep.IncFailedTest()
+         @rep.IncFailedTest()
          @rep.ReportFailure(msg)
       end
 
@@ -2753,149 +2753,141 @@ JSCode
 
 ############################################################################### 
 # RunAllSuites -- Method
-#		This function run a list of suite files as suites, not as tests.
+#     This function run a list of suite files as suites, not as tests.
 #
 # Input:
-#		suites: An array of Soda suite files to be ran.
+#     suites: An array of Soda suite files to be ran.
 #
 # Output:
-#		returns a hash with the results from the ran suites.
+#     returns a hash with the results from the ran suites.
 #
 ###############################################################################
-	def RunAllSuites(suites)
-		results = {}
-		err = 0
-		indent = " " * 2
-		indent2 = "#{indent}" * 2
-		indent3 = "#{indent}" * 4
-		hostname = `hostname`
-		hostname = hostname.chomp()
+   def RunAllSuites(suites)
+      results = {}
+      err = 0
+      indent = " " * 2
+      indent2 = "#{indent}" * 2
+      indent3 = "#{indent}" * 4
+      hostname = `hostname`
+      hostname = hostname.chomp()
 
-		suites.each do |s|
-			base_suite_name = File.basename(s)
-			RestartGlobalTime()
-			results[base_suite_name] = RunSuite(s)
-			RestartGlobalTime()
-		end
+      suites.each do |s|
+         base_suite_name = File.basename(s)
+         RestartGlobalTime()
+         results[base_suite_name] = RunSuite(s)
+         RestartGlobalTime()
+      end
 
-		time = Time.now()
-		time = "#{time.to_i}-#{time.usec}"
-		suite_report = "#{@resultsDir}/#{hostname}-#{time}-suite.xml"
-		fd = File.new(suite_report, "w+")
-		fd.write("<data>\n")
+      time = Time.now()
+      time = "#{time.to_i}-#{time.usec}"
+      suite_report = "#{@resultsDir}/#{hostname}-#{time}-suite.xml"
+      fd = File.new(suite_report, "w+")
+      fd.write("<data>\n")
 
-		RestartGlobalTime()
+      RestartGlobalTime()
 
-		results.each do |k,v|
-			fd.write("\t<suite>\n")
-			fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
-			v.each do |testname, testhash|
-				fd.write("\t#{indent2}<test>\n")
-				fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
-				testhash.each do |tname, tvalue|
-					if (tname == "result")
-						err = -1 if (tvalue.to_i != 0)
-					end
-					new_name = "#{tname}"
-					new_name = new_name.gsub(" ", "_")
-					fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
-				end
-				fd.write("\t#{indent2}</test>\n")
-			end
-			fd.write("\t</suite>\n")
-		end
-		fd.write("</data>\n")
-		fd.close()
+      results.each do |k,v|
+         fd.write("\t<suite>\n")
+         fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
+         v.each do |testname, testhash|
+            fd.write("\t#{indent2}<test>\n")
+            fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
+            testhash.each do |tname, tvalue|
+               if (tname == "result")
+                  err = -1 if (tvalue.to_i != 0)
+               end
+               new_name = "#{tname}"
+               new_name = new_name.gsub(" ", "_")
+               fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
+            end
+            fd.write("\t#{indent2}</test>\n")
+         end
+         fd.write("\t</suite>\n")
+      end
+      fd.write("</data>\n")
+      fd.close()
 
-		RestartGlobalTime()
+      RestartGlobalTime()
 
-		return err
-	end
+      return err
+   end
 
 ############################################################################### 
 #
 ############################################################################### 
-	def RunSuite(suitefile)
-		parser = nil
-		doc = nil
-		result = {}
-		tests = []
-		setup_test = nil
-		cleanup_test = nil
-		setup_results = 0
+   def RunSuite(suitefile)
+      parser = nil
+      doc = nil
+      result = {}
+      tests = []
+      setup_test = nil
+      cleanup_test = nil
+      setup_results = 0
 
-		begin
+      begin
          parser = LibXML::XML::Parser.file(suitefile)
          doc = parser.parse()
-			doc = doc.root()
+         doc = doc.root()
 
-			doc.each do |node|
-				next if (node.name !~ /script/)
-				attrs = node.attributes()
-				attrs = attrs.to_h()
+         doc.each do |node|
+            next if (node.name !~ /script/)
+            attrs = node.attributes()
+            attrs = attrs.to_h()
 
-				if (attrs.key?('file'))
-					base_name = File.basename(attrs['file'])
-					if (base_name =~ /^setup/)
-						setup_test = attrs['file']
-					elsif (base_name =~ /^cleanup/)
-						cleanup_test = attrs['file']
-					else
-						tests.push(attrs['file'])
-					end
-				elsif (attrs.key?('fileset'))
-					files = File.join(attrs['fileset'], "*.xml")
-					files = Dir.glob(files)
-					files.each do |f|
-						tests.push(f)
-					end
-				end
-			end
-		rescue Exception => e
-			print "ERROR: #{e.message}!\n"
-			print e.backtrace.join("\n")
-			result = nil
-		ensure
-		end	
+            if (attrs.key?('file'))
+               tests.push(attrs['file'])
+            elsif (attrs.key?('fileset'))
+               files = File.join(attrs['fileset'], "*.xml")
+               files = Dir.glob(files)
+               files.each do |f|
+                  tests.push(f)
+               end
+            end
+         end
+      rescue Exception => e
+         print "ERROR: #{e.message}!\n"
+         print e.backtrace.join("\n")
+         result = nil
+      ensure
+      end   
 
+      if (setup_test != nil)
+         setup_result = run(setup_test, false, false)
+         if (setup_result != 0)
+            SodaUtils.PrintSoda("Failed calling setup test: "+
+               "'#{setup_test}'!\n", SodaUtils::ERROR)
+            result[setup_test] = {'result' => -1}
+            setup_result = false
+         else
+            setup_result = true
+            result[setup_test] = {'result' => 0}
+         end
+      else
+         setup_result = true
+      end
 
-		if (setup_test != nil)
-			setup_result = run(setup_test, false, false)
-			if (setup_result != 0)
-				SodaUtils.PrintSoda("Failed calling setup test: "+
-					"'#{setup_test}'!\n", SodaUtils::ERROR)
-				result[setup_test] = {'result' => -1}
-				setup_result = false
-			else
-				setup_result = true
-				result[setup_test] = {'result' => 0}
-			end
-		else
-			setup_result = true
-		end
+      if (setup_result)
+         tests.each do |test|
+            result[test] = {}
+            result[test]['result'] = run(test, false)
+            result[test].merge!(@rep.GetRawResults)
+            @rep.ZeroTestResults()
+         end
+      end
 
-		if (setup_result)
-			tests.each do |test|
-				result[test] = {}
-				result[test]['result'] = run(test, false)
-				result[test].merge!(@rep.GetRawResults)
-				@rep.ZeroTestResults()
-			end
-		end
+      if (cleanup_test != nil)
+         cleanup_result = run(cleanup_test, false, false)
+         if (cleanup_result != 0)
+            SodaUtils.PrintSoda("Failed calling cleanup test: "+
+               "'#{cleanup_test}'!\n", SodaUtils::ERROR)
+            result[cleanup_test] = {'result' => -1}
+         else
+            result[cleanup_test] = {'result' => 0}
+         end
+      end
 
-		if (cleanup_test != nil)
-			cleanup_result = run(cleanup_test, false, false)
-			if (cleanup_result != 0)
-				SodaUtils.PrintSoda("Failed calling cleanup test: "+
-					"'#{cleanup_test}'!\n", SodaUtils::ERROR)
-				result[cleanup_test] = {'result' => -1}
-			else
-				result[cleanup_test] = {'result' => 0}
-			end
-		end
-
-		return result
-	end
+      return result
+   end
 
 ############################################################################### 
 # GetCurrentBrowser -- Method
