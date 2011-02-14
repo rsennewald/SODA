@@ -410,12 +410,16 @@ class Soda
       if (value.instance_of?(Hash))
          msg << " Hash:{"
          value.each do |k ,v|
-            msg << "'#{k}'=>'#{v}',"
+            tmp_k = k.gsub("\n", '\n')
+            tmp_v = v.gsub("\n", '\n')
+            msg << "'#{tmp_k}'=>'#{tmp_v}',"
          end
          msg = msg.chop()
          msg << "}\n" 
       else
-         msg << " \"#{value}\"\n"
+         tmp_value = "#{value}"
+         tmp_value = tmp_value.gsub("\n", '\n')
+         msg << " \"#{tmp_value}\"\n"
       end
 
       PrintDebug(msg)
@@ -485,7 +489,9 @@ class Soda
             " \"#{val}\" to \"#{@hiJacks["#{org_name}"]}\"\n")
          val = @hiJacks["#{org_name}"]
       else
-         PrintDebug("Value for \"#{tmp_name}\" => \"#{val}\".\n")
+         tmp_val = "#{val}"
+         tmp_val = tmp_val.gsub("\n", '\n')
+         PrintDebug("Value for \"#{tmp_name}\" => \"#{tmp_val}\".\n")
       end
 
       val = "" if (val == nil) # default it to be an empty string. #
@@ -1065,7 +1071,11 @@ class Soda
       end
 
       if (org_str != str)
-         PrintDebug("Replacing string '#{org_str}' with '#{str}'\n")
+         tmp_org_str = "#{org_str}"
+         tmp_org_str = tmp_org_str.gsub("\n", '\n')
+         tmp_str = "#{str}"
+         tmp_str = tmp_str.gsub("\n", '\n')
+         PrintDebug("Replacing string '#{tmp_org_str}' with '#{tmp_str}'\n")
       end
 
       return str  
@@ -2223,7 +2233,6 @@ JSCode
                end
             end
          when "set"
-            PrintDebug("Setting value to #{event['set']}\n")
             if (@curEl.class.to_s =~ /textfield/i)
                result = fieldType.set(@curEl, event['set'], @nonzippytext)
             else

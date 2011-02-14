@@ -116,7 +116,9 @@ require 'FieldUtils'
       begin
          tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
          tmp = "Unknown" if (tmp == nil)
-         $curSoda.rep.log("#{msg}#{tmp}: Value => '#{value}'.\n")
+         tmp_value = "#{value}"
+         tmp_value = tmp_value.gsub("\n", '\n')
+         $curSoda.rep.log("#{msg}#{tmp}: Value => '#{tmp_value}'.\n")
 
          if (!field.enabled?)
             $curSoda.rep.ReportFailure(
