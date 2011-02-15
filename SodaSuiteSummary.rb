@@ -924,7 +924,6 @@ HTML
 
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
-      suite_mini_file = File.basename(suite_mini_file)
 
       str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
@@ -1021,8 +1020,10 @@ end
 def GenSuiteMiniSummary(suite_hash, reportdir)
    suite_file = suite_hash['suitefile']
    suite_file = File.basename(suite_file, ".xml")
+   suite_name = "#{suite_file}"
    suite_file << ".html"
-   suite_file = "#{reportdir}/#{suite_file}"
+   href = "#{suite_name}/#{suite_file}"
+   suite_file = "#{reportdir}/#{suite_name}/#{suite_file}"
 
    html = <<HTML
 <html>
@@ -1139,8 +1140,7 @@ HTML
    fd.write("</table>\n</body>\n</html>\n")
    fd.close()
 
-   return suite_file
-
+   return href
 end
 
 end
