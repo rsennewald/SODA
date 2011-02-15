@@ -176,11 +176,13 @@ def GenerateReportData(files)
 
       begin
          parser = LibXML::XML::Parser.file(f)
+         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
          doc = parser.parse()
       rescue Exception => e
          print "(!)Error: Failed trying to parse XML file: '#{f}'!\n"
-         print "--)Exception: #{e.message}\n\n"
-         exit(1)
+         print "--)Exception: #{e.message}\n"
+         print "--)Skipping file!\n"
+         next
       ensure
       end
 
