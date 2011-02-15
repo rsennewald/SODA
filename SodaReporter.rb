@@ -152,6 +152,7 @@ class SodaReporter
       total_time = (stop - start)
 
       results = {
+         'Test Failure Count' => @failureCount,
          'Test Assert Count' => @asserts_count,
          'Test JavaScript Error Count' => @js_error_count,
          'Test CSS Error Count' => @css_error_count,
@@ -197,6 +198,7 @@ class SodaReporter
          @total = 0
          @start_time = nil
          @end_time = nil
+         @failureCount = 0
    end
 
 ###############################################################################
