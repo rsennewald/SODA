@@ -256,542 +256,542 @@ def GenHtmlReport(data, reportfile, create_links = false)
 <style type="text/css">
 
 .highlight {
-	background-color: #8888FF;
+   background-color: #8888FF;
 }
 
 .unhighlight {
-	background: #FFFFFF;
+   background: #FFFFFF;
 }
 
 .td_header_master {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_header_sub {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 1px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 1px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_header_skipped {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 1px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 1px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_header_watchdog {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 table {
-	width: 100%;
-	border: 2px solid black;
-	border-collapse: collapse;
-	padding: 0px;
-	background: #FFFFFF;
+   width: 100%;
+   border: 2px solid black;
+   border-collapse: collapse;
+   padding: 0px;
+   background: #FFFFFF;
 }
 
 .td_file_data {
-	whitw-space: nowrap;
-	text-align: left;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   text-align: left;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_run_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_run_data_error {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_passed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #00FF00;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #00FF00;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_failed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_blocked_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FFCF10;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FFCF10;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_skipped_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #D9D9D9;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #D9D9D9;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_watchdog_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_watchdog_error_data {
-	whitw-space: nowrap;
-	color: #FF0000;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   color: #FF0000;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_exceptions_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_exceptions_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_javascript_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_javascript_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_assert_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_assert_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_other_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_other_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_total_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_total_error_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_css_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_sodawarnings_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_time_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 1px solid black;
-	border-bottom: 0px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 1px solid black;
+   border-bottom: 0px solid black;
 }
 
 .td_footer_run {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #000000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_passed {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #00FF00;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #00FF00;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_failed {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_blocked {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FFCF10;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FFCF10;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_skipped {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #D9D9D9;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #D9D9D9;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_watchdog {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_exceptions {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_javascript {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_assert {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_other {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_total {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #FF0000;
-	border-top: 2px solid black;
-	border-left: 2px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #FF0000;
+   border-top: 2px solid black;
+   border-left: 2px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_css {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #000000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_sodawarnings {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #000000;
+   border-top: 2px solid black;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 
 .td_footer_times {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	color: #000000;
-	border-top: 2px solid black;
-	border-left: 2px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   color: #000000;
+   border-top: 2px solid black;
+   border-left: 2px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 </style>
 <body>
 <table>
 <tr>
-	<td class="td_header_master" rowspan="2">Suite</br>
-	(click link for full report)</td>
-	<td class="td_header_master" colspan="5">Tests</td>
-	<td class="td_header_master" colspan="6">Failures</td>
-	<td class="td_header_master" colspan="2">Warnings</td>
-	<td class="td_header_master" rowspan="2">Run Time</br>(hh:mm:ss)</td>
+   <td class="td_header_master" rowspan="2">Suite</br>
+   (click link for full report)</td>
+   <td class="td_header_master" colspan="5">Tests</td>
+   <td class="td_header_master" colspan="6">Failures</td>
+   <td class="td_header_master" colspan="2">Warnings</td>
+   <td class="td_header_master" rowspan="2">Run Time</br>(hh:mm:ss)</td>
 </tr>
 <tr>
-	<td class="td_header_sub">Run</td>
-	<td class="td_header_sub">Passed</td>
-	<td class="td_header_sub">Failed</td>
-	<td class="td_header_sub">Blocked</td>
-	<td class="td_header_skipped">Skipped</td>
-	<td class="td_header_watchdog">Watchdogs</td>
-	<td class="td_header_sub">Exceptions</td>
-	<td class="td_header_sub">JavaScript</br>Errors</td>
-	<td class="td_header_sub">Assert</br>Failures</td>
-	<td class="td_header_sub">Other</br>Failures</td>
-	<td class="td_header_skipped">Total</br>Failures</td>
-	<td class="td_header_watchdog">CSS Errors</td>
-	<td class="td_header_skipped">Soda</br>Warnings</td>	
+   <td class="td_header_sub">Run</td>
+   <td class="td_header_sub">Passed</td>
+   <td class="td_header_sub">Failed</td>
+   <td class="td_header_sub">Blocked</td>
+   <td class="td_header_skipped">Skipped</td>
+   <td class="td_header_watchdog">Watchdogs</td>
+   <td class="td_header_sub">Exceptions</td>
+   <td class="td_header_sub">JavaScript</br>Errors</td>
+   <td class="td_header_sub">Assert</br>Failures</td>
+   <td class="td_header_sub">Other</br>Failures</td>
+   <td class="td_header_skipped">Total</br>Failures</td>
+   <td class="td_header_watchdog">CSS Errors</td>
+   <td class="td_header_skipped">Soda</br>Warnings</td>  
 </tr>
 HTML
 
@@ -865,7 +865,7 @@ HTML
       hours,minutes,seconds,frac = 
          Date.day_fraction_to_time(suite_hash['Total Time'])
       
-	   if (hours < 10)
+      if (hours < 10)
          hours = "0#{hours}"
       end
 
@@ -880,39 +880,39 @@ HTML
       suite_hash['Test Other Failures'] = 0
 
       test_run_class = "td_run_data"
-		if (suite_hash['Test Assert Failures'] > 0 ||
+      if (suite_hash['Test Assert Failures'] > 0 ||
           suite_hash['Test Exceptions'] > 0)
-			test_run_class = "td_run_data_error"
-		end
+         test_run_class = "td_run_data_error"
+      end
 
       exceptions_td = "td_exceptions_data"
-		if (suite_hash['Test Exceptions'] > 0)
-			exceptions_td = "td_exceptions_error_data"
-		end
+      if (suite_hash['Test Exceptions'] > 0)
+         exceptions_td = "td_exceptions_error_data"
+      end
 
-		asserts_td = "td_assert_data"
-		if (suite_hash['Test Assert Failures'] > 0)
-			asserts_td = "td_assert_error_data"
-		end
+      asserts_td = "td_assert_data"
+      if (suite_hash['Test Assert Failures'] > 0)
+         asserts_td = "td_assert_error_data"
+      end
 
-		watchdog_td = "td_watchdog_data"
-		if (suite_hash['Test WatchDog Count'] > 0)
-			watchdog_td = "td_watchdog_error_data"
-		end
+      watchdog_td = "td_watchdog_data"
+      if (suite_hash['Test WatchDog Count'] > 0)
+         watchdog_td = "td_watchdog_error_data"
+      end
 
-		jscript_td = "td_javascript_data"
-		if (suite_hash['Test JavaScript Error Count'] > 0)
-			jscript_td = "td_javascript_error_data"
-		end
+      jscript_td = "td_javascript_data"
+      if (suite_hash['Test JavaScript Error Count'] > 0)
+         jscript_td = "td_javascript_error_data"
+      end
 
       t_passedcount = suite_hash['Test Count']
-		t_passedcount -= suite_hash['Test Failure Count']
-		total_failures = 0
-#		total_failures += suite_hash['Test Failure Count']
-		total_failures += suite_hash['Test WatchDog Count']
-		total_failures += suite_hash['Test Assert Failures']
-		total_failures += suite_hash['Test Other Failures']
-		total_failures += suite_hash['Test JavaScript Error Count']
+      t_passedcount -= suite_hash['Test Failure Count']
+      total_failures = 0
+#     total_failures += suite_hash['Test Failure Count']
+      total_failures += suite_hash['Test WatchDog Count']
+      total_failures += suite_hash['Test Assert Failures']
+      total_failures += suite_hash['Test Other Failures']
+      total_failures += suite_hash['Test JavaScript Error Count']
 #      total_failure_count += total_failures
 
       ran_count = suite_hash['Test Count'].to_i()
@@ -931,38 +931,38 @@ HTML
          "\t<td class=\"td_file_data\"><a href=\"#{suite_mini_file}\">"+
          "#{suite_name}</a></td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
-				"#{ran_count}/#{suite_hash['Test Count']}</td>\n"+
-			"\t<td class=\"td_passed_data\">"+
-				"#{suite_hash['Test Passed Count']}</td>\n"+
+            "#{ran_count}/#{suite_hash['Test Count']}</td>\n"+
+         "\t<td class=\"td_passed_data\">"+
+            "#{suite_hash['Test Passed Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
-				"#{suite_hash['Test Failure Count']}</td>\n"+
+            "#{suite_hash['Test Failure Count']}</td>\n"+
          "\t<td class=\"td_blocked_data\">"+
-				"#{suite_hash['Test Blocked Count']}</td>\n"+
+            "#{suite_hash['Test Blocked Count']}</td>\n"+
          "\t<td class=\"td_skipped_data\">"+
-				"#{suite_hash['Test Skip Count']}</td>\n"+
-			"\t<td class=\"#{watchdog_td}\">"+
-				"#{suite_hash['Test WatchDog Count']}</td>\n"+
-			"\t<td class=\"#{exceptions_td}\">"+
-				"#{suite_hash['Test Exceptions']}</td>\n"+
+            "#{suite_hash['Test Skip Count']}</td>\n"+
+         "\t<td class=\"#{watchdog_td}\">"+
+            "#{suite_hash['Test WatchDog Count']}</td>\n"+
+         "\t<td class=\"#{exceptions_td}\">"+
+            "#{suite_hash['Test Exceptions']}</td>\n"+
          "\t<td class=\"#{jscript_td}\">"+
-				"#{suite_hash['Test JavaScript Error Count']}</td>\n"+
+            "#{suite_hash['Test JavaScript Error Count']}</td>\n"+
          "\t<td class=\"#{asserts_td}\">"+
-				"#{suite_hash['Test Assert Failures']}</td>\n"+
-			"\t<td class=\"td_other_data\">"+
-				"0</td>\n"+
-			"\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
+            "#{suite_hash['Test Assert Failures']}</td>\n"+
+         "\t<td class=\"td_other_data\">"+
+            "0</td>\n"+
+         "\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
-				"#{suite_hash['Test CSS Error Count']}</td>\n"+
-			"\t<td class=\"td_sodawarnings_data\">"+
-				"#{suite_hash['Test Warning Count']}</td>\n"+
+            "#{suite_hash['Test CSS Error Count']}</td>\n"+
+         "\t<td class=\"td_sodawarnings_data\">"+
+            "#{suite_hash['Test Warning Count']}</td>\n"+
          "\t<td class=\"td_time_data\">"+
-				"#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
+            "#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
       fd.write(str)
    end
 
    test_totals = suite_totals['Test Count'] 
-	test_totals += suite_totals['Test Skip Count']
-	test_totals += suite_totals['Test Blocked Count']
+   test_totals += suite_totals['Test Skip Count']
+   test_totals += suite_totals['Test Blocked Count']
 
    hours,minutes,seconds,frac = 
       Date.day_fraction_to_time(suite_totals['Total Time'])
@@ -981,32 +981,32 @@ HTML
    sub_totals = "<tr id=\"totals\">\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
       "\t<td class=\"td_footer_run\">#{suite_totals['Test Count']}"+
-			"/#{test_totals}</td>\n"+
-		"\t<td class=\"td_footer_passed\">#{suite_totals['Test Passed Count']}"+
-			"</td>\n"+
-	   "\t<td class=\"td_footer_failed\">"+
-			"#{suite_totals['Test Failure Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_blocked\">"+
-			"#{suite_totals['Test Blocked Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_skipped\">"+
-			"#{suite_totals['Test Skip Count']}</td>\n"+	
-	   "\t<td class=\"td_footer_watchdog\">"+
-			"#{suite_totals['Test WatchDog Count']}</td>\n"+	
-		"\t<td class=\"td_footer_exceptions\">"+
-			"#{suite_totals['Test Exceptions']}</td>\n"+
+         "/#{test_totals}</td>\n"+
+      "\t<td class=\"td_footer_passed\">#{suite_totals['Test Passed Count']}"+
+         "</td>\n"+
+      "\t<td class=\"td_footer_failed\">"+
+         "#{suite_totals['Test Failure Count']}</td>\n"+ 
+      "\t<td class=\"td_footer_blocked\">"+
+         "#{suite_totals['Test Blocked Count']}</td>\n"+ 
+      "\t<td class=\"td_footer_skipped\">"+
+         "#{suite_totals['Test Skip Count']}</td>\n"+ 
+      "\t<td class=\"td_footer_watchdog\">"+
+         "#{suite_totals['Test WatchDog Count']}</td>\n"+   
+      "\t<td class=\"td_footer_exceptions\">"+
+         "#{suite_totals['Test Exceptions']}</td>\n"+
       "\t<td class=\"td_footer_javascript\">"+
-			"#{suite_totals['Test JavaScript Error Count']}</td>\n"+
+         "#{suite_totals['Test JavaScript Error Count']}</td>\n"+
       "\t<td class=\"td_footer_assert\">"+
-			"#{suite_totals['Test Assert Failures']}</td>\n"+
+         "#{suite_totals['Test Assert Failures']}</td>\n"+
       "\t<td class=\"td_footer_other\">0</td>\n"+
       "\t<td class=\"td_footer_total\">"+
-			"#{total_failure_count}</td>\n"+
+         "#{total_failure_count}</td>\n"+
       "\t<td class=\"td_footer_css\">"+
-			"#{suite_totals['Test CSS Error Count']}</td>\n"+
-		"\t<td class=\"td_footer_sodawarnings\">"+
-			"#{suite_totals['Test Warning Count']}</td>\n"+
-		"\t<td class=\"td_footer_times\">"+
-			"#{hours}:#{minutes}:#{seconds}</td>\n"+
+         "#{suite_totals['Test CSS Error Count']}</td>\n"+
+      "\t<td class=\"td_footer_sodawarnings\">"+
+         "#{suite_totals['Test Warning Count']}</td>\n"+
+      "\t<td class=\"td_footer_times\">"+
+         "#{hours}:#{minutes}:#{seconds}</td>\n"+
       "</tr>\n"
    fd.write(sub_totals)
    fd.write("</table>\n</body>\n</html>\n")
@@ -1036,57 +1036,57 @@ table {
    background: #FFFFFF;
 }
 .td_header_master {
-	whitw-space: nowrap;
-	background: #99CCFF;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   background: #99CCFF;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 .td_file_data {
-	whitw-space: nowrap;
-	text-align: left;
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 2px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   text-align: left;
+   font-family: Arial;
+   font-weight: bold;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
 }
 .td_passed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #00FF00;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #00FF00;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 .td_failed_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: bold;
-	color: #FF0000;
-	font-size: 12px;
-	border-left: 0px solid black;
-	border-right: 0px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
 }
 .td_report_data {
-	whitw-space: nowrap;
-	text-align: center;
-	font-family: Arial;
-	font-weight: normal;
-	font-size: 12px;
-	border-left: 2px solid black;
-	border-right: 1px solid black;
-	border-bottom: 2px solid black;
+   whitw-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 2px solid black;
+   border-right: 1px solid black;
+   border-bottom: 2px solid black;
 }
 .highlight {
    background-color: #8888FF;
