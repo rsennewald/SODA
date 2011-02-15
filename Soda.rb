@@ -2698,22 +2698,31 @@ JSCode
 #     file: The Soda test file.
 #     rerun: true/false, this tells soda that this tests is a rerun of a
 #        failed test.
+#     suitename: The name of the suite to group the results into.
 #
 # Results:
 #     returns a SodaReport object.
 #
 ############################################################################### 
-   def run(file, rerun = false, genhtml = true)
+   def run(file, rerun = false, genhtml = true, suitename = nil)
       result = 0
       master_result = 0
       thread_soda = nil
       thread_timeout = (60 * 10) # 10 minutes #
       time_check = nil
+      resultsdir = nil
+
+      if (suitename != nil)
+         resultsdir = "#{@resultsDir}/#{suitename}"
+      else
+         resultsdir = @resultsDir
+      end
 
       @currentTestFile = file
       @exceptionExit = false      
       @fileStack.push(file)
-      @rep = SodaReporter.new(file, @saveHtml, @resultsDir, 0, nil, rerun);
+
+      @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
        
       script = getScript(file)
@@ -2842,12 +2851,11 @@ JSCode
    def RunSuite(suitefile)
       parser = nil
       doc = nil
+      test_order = 0
       result = {}
       tests = []
-      setup_test = nil
-      cleanup_test = nil
-      setup_results = 0
-
+      suite_name = File.basename(suitefile, ".xml")
+      
       begin
          parser = LibXML::XML::Parser.file(suitefile)
          doc = parser.parse()
@@ -2875,52 +2883,26 @@ JSCode
       ensure
       end   
 
-      if (setup_test != nil)
-         setup_result = run(setup_test, false, false)
-         if (setup_result != 0)
-            SodaUtils.PrintSoda("Failed calling setup test: "+
-               "'#{setup_test}'!\n", SodaUtils::ERROR)
-            result[setup_test] = {'result' => -1}
-            setup_result = false
+      tests.each do |test|
+         test_order += 1
+         tmp_result = {}
+         tmp_result['result'] = run(test, false, true, suite_name)
+         tmp_result['Test_Order'] = test_order
+         tmp_result.merge!(@rep.GetRawResults)
+         tmp_result['Real_Test_Name'] = test
+         test_basename = File.basename(test, ".xml")
+         logfile = tmp_result['Test Log File']
+         if (logfile =~ /#{test_basename}-\d+/)
+            test =~ /(.*\/)#{test_basename}/
+            ran_test_name = $1
+            ran_test_name << File.basename(logfile, ".log")
+            ran_test_name << ".xml"
          else
-            setup_result = true
-            result[setup_test] = {'result' => 0}
+            ran_test_name = test
          end
-      else
-         setup_result = true
-      end
 
-      if (setup_result)
-         tests.each do |test|
-            tmp_result = {}
-            tmp_result['result'] = run(test, false)
-            tmp_result.merge!(@rep.GetRawResults)
-            tmp_result['Real_Test_Name'] = test
-            test_basename = File.basename(test, ".xml")
-            logfile = tmp_result['Test Log File']
-            if (logfile =~ /#{test_basename}-\d+/)
-               test =~ /(.*\/)#{test_basename}/
-               ran_test_name = $1
-               ran_test_name << File.basename(logfile, ".log")
-               ran_test_name << ".xml"
-            else
-               ran_test_name = test
-            end
-
-            result[ran_test_name] = tmp_result
-            @rep.ZeroTestResults()
-         end
-      end
-
-      if (cleanup_test != nil)
-         cleanup_result = run(cleanup_test, false, false)
-         if (cleanup_result != 0)
-            SodaUtils.PrintSoda("Failed calling cleanup test: "+
-               "'#{cleanup_test}'!\n", SodaUtils::ERROR)
-            result[cleanup_test] = {'result' => -1}
-         else
-            result[cleanup_test] = {'result' => 0}
-         end
+         result[ran_test_name] = tmp_result
+         @rep.ZeroTestResults()
       end
 
       return result
