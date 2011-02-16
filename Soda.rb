@@ -2898,6 +2898,12 @@ JSCode
          
          if (tmp_result['Test Failure Count'].to_i != 0)
             tmp_result['result'] = -1
+         elsif (tmp_result['Test JavaScript Error Count'].to_i != 0)
+            tmp_result['result'] = -1
+         elsif (tmp_result['Test Assert Failures'].to_i != 0)
+            tmp_result['result'] = -1
+         elsif (tmp_result['Test Exceptions'].to_i != 0)
+            tmp_result['result'] = -1
          end
 
          tmp_result['Real_Test_Name'] = test

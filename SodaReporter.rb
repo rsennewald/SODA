@@ -682,8 +682,7 @@ class SodaReporter
          "--Test Event Count:#{@total}" +
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}\n"
-         log(msg)
+      log(msg)
 	end
-
 end
 
