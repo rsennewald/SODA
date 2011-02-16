@@ -41,8 +41,10 @@ require 'FieldUtils'
 ###############################################################################
    def self.assert(field, value)
       comp = (!field.value.empty?)? field.value: field.text
+      
       $curSoda.rep.log("Field Value: #{field.value}\n")
-      if value.kind_of? Regexp
+
+      if (value.kind_of?(Regexp))
          return value.match(comp)
       end
       return value == comp

@@ -1402,6 +1402,8 @@ class Soda
       if (result < 1)
          @rep.ReportFailure("Failed trying to close browser: '#{result}'!\n")
       end
+
+      @browser = nil
    end
 
 ###############################################################################
@@ -2721,6 +2723,10 @@ JSCode
       @currentTestFile = file
       @exceptionExit = false      
       @fileStack.push(file)
+
+      if (@browser == nil)
+         NewBrowser()
+      end
 
       @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
