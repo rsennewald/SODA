@@ -2889,6 +2889,11 @@ JSCode
          tmp_result['result'] = run(test, false, true, suite_name)
          tmp_result['Test_Order'] = test_order
          tmp_result.merge!(@rep.GetRawResults)
+         
+         if (tmp_result['Test Failure Count'].to_i != 0)
+            tmp_result['result'] = -1
+         end
+
          tmp_result['Real_Test_Name'] = test
          test_basename = File.basename(test, ".xml")
          logfile = tmp_result['Test Log File']

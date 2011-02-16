@@ -1094,7 +1094,7 @@ table {
    background-color: #8888FF;
 }
 .tr_normal {
-   background-color: #FFFFFF;
+   background-color: #e5eef3;
 }
 </style>
 <body>
