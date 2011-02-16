@@ -72,7 +72,13 @@ class SodaCSV
             if (!data[k].to_s.empty?)
                all_nil = false
             end
-            data[k] = data[k].gsub('\n', "\n")
+
+            if (data[k] != nil)
+               data[k] = data[k].gsub('\n', "\n")
+            else
+               data[k] = ""
+            end
+
             record[@fieldMap[k]] = data[k]
          end
       else 
