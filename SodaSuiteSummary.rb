@@ -256,13 +256,16 @@ def GenHtmlReport(data, reportfile, create_links = false)
    html_header = <<HTML
 <html>
 <style type="text/css">
+body {
+   background: #e5eef3;
+}
 
 .highlight {
    background-color: #8888FF;
 }
 
 .unhighlight {
-   background: #FFFFFF;
+   background: #e5eef3;
 }
 
 .td_header_master {
