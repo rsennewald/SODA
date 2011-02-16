@@ -1075,7 +1075,7 @@ class Soda
          tmp_org_str = tmp_org_str.gsub("\n", '\n')
          tmp_str = "#{str}"
          tmp_str = tmp_str.gsub("\n", '\n')
-         PrintDebug("Replacing string '#{tmp_org_str}' with '#{tmp_str}'")
+         PrintDebug("Replacing string '#{tmp_org_str}' with '#{tmp_str}'\n")
       end
 
       return str  
