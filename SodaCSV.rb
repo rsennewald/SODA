@@ -49,6 +49,14 @@ class SodaCSV
    def initialize(file)
       @csvdata = CSV.open(file, 'r')
       @fieldMap = @csvdata.shift
+           len = @fieldMap.length() -1
+
+      # this is to deal with badly writen CSV files #
+      for i in 0..len do
+         if (@fieldMap[i] == nil)
+            @fieldMap[i] = ""
+         end
+      end
    end
    
 ###############################################################################
