@@ -864,7 +864,8 @@ HTML
    end
 
    row_id = 0
-   totals.each do |suite_name, suite_hash|
+   totals.keys.sort.each { |suite_name|
+      suite_hash = totals[suite_name]
       next if (suite_name =~ /Total\sFailure\sCount/i)
       row_id += 1
       report_file = "#{suite_name}"
@@ -965,7 +966,7 @@ HTML
          "\t<td class=\"td_time_data\">"+
             "#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
       fd.write(str)
-   end
+   }
 
    test_totals = suite_totals['Test Count'] 
    test_totals += suite_totals['Test Skip Count']
@@ -1123,7 +1124,7 @@ HTML
    tr_css = "onMouseOver=\"this.className='highlight'\""+
       " onMouseOut=\"this.className='tr_normal'\" class=\"tr_normal\""
 
-   suite_hash['tests'].sort_by { |h| h['Test Order'] }.each do |test|
+   suite_hash['tests'].sort_by { |h| h['Test Order'].to_i }.each do |test|
       id += 1
       test_report = test['Test Log File']
       test_report = File.basename(test_report, ".log")
