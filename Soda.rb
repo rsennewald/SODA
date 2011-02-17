@@ -99,6 +99,7 @@ class Soda
       @currentTestFile = "" 
       @exceptionExit = false
       @ieHwnd = 0
+      @nonzippytext = false
       $global_time = Time.now()
       $mutex = Mutex.new()
       @whiteList = []
@@ -124,6 +125,7 @@ class Soda
       @sugarFlavor = params['flavor'] if (params.key?('flavor'))
       @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
       @globalVars = params['gvars'] if (params.key?('gvars'))
+      @nonzippytext = params['nonzippytext'] if (params.key?('nonzippytext'))
 
       if (@globalVars.key?('scriptsdir'))
          blocked_file_list = "#{@globalVars['scriptsdir']}/modules/" +
@@ -408,12 +410,16 @@ class Soda
       if (value.instance_of?(Hash))
          msg << " Hash:{"
          value.each do |k ,v|
-            msg << "'#{k}'=>'#{v}',"
+            tmp_k = k.gsub("\n", '\n')
+            tmp_v = v.gsub("\n", '\n')
+            msg << "'#{tmp_k}'=>'#{tmp_v}',"
          end
          msg = msg.chop()
          msg << "}\n" 
       else
-         msg << " \"#{value}\"\n"
+         tmp_value = "#{value}"
+         tmp_value = tmp_value.gsub("\n", '\n')
+         msg << " \"#{tmp_value}\"\n"
       end
 
       PrintDebug(msg)
@@ -483,7 +489,9 @@ class Soda
             " \"#{val}\" to \"#{@hiJacks["#{org_name}"]}\"\n")
          val = @hiJacks["#{org_name}"]
       else
-         PrintDebug("Value for \"#{tmp_name}\" => \"#{val}\".\n")
+         tmp_val = "#{val}"
+         tmp_val = tmp_val.gsub("\n", '\n')
+         PrintDebug("Value for \"#{tmp_name}\" => \"#{tmp_val}\".\n")
       end
 
       val = "" if (val == nil) # default it to be an empty string. #
@@ -820,10 +828,18 @@ class Soda
 
       if (@non_lib_test_count >= @restart_count)
          @rep.log("Restarting browser.\n")
-         @browser.close()
-         sleep(1)
+        
+         begin 
+            @browser.close()
+            sleep(1)
+         rescue Exception => e
+         end
 
          RestartGlobalTime()
+
+         if (@params['browser'] =~ /firefox/i)
+            SodaFireFox.KillProcesses()
+         end
 
          err = NewBrowser()
          if (err != 0)
@@ -1055,7 +1071,11 @@ class Soda
       end
 
       if (org_str != str)
-         PrintDebug("Replacing string '#{org_str}' with '#{str}'\n")
+         tmp_org_str = "#{org_str}"
+         tmp_org_str = tmp_org_str.gsub("\n", '\n')
+         tmp_str = "#{str}"
+         tmp_str = tmp_str.gsub("\n", '\n')
+         PrintDebug("Replacing string '#{tmp_org_str}' with '#{tmp_str}'\n")
       end
 
       return str  
@@ -1382,6 +1402,8 @@ class Soda
       if (result < 1)
          @rep.ReportFailure("Failed trying to close browser: '#{result}'!\n")
       end
+
+      @browser = nil
    end
 
 ###############################################################################
@@ -2128,7 +2150,7 @@ JSCode
          foundaction = event['do']
       end
 
-      if (event.key?("alert") )
+      if (event.key?("alert"))
        if (event['alert'] =~ /true/i)
           @rep.log("Enabling Alert Hack\n")
           fieldType.alertHack(true, true) 
@@ -2144,7 +2166,7 @@ JSCode
          js = replaceVars(event['jscriptevent'])
       end
 
-      case foundaction
+      case (foundaction)
          when "append"
             result = fieldType.append(@curEl, replaceVars(event['append']))
             if (result != 0)
@@ -2213,8 +2235,12 @@ JSCode
                end
             end
          when "set"
-            PrintDebug("Setting value to #{event['set']}\n")
-            result = fieldType.set(@curEl, event['set'])
+            if (@curEl.class.to_s =~ /textfield/i)
+               result = fieldType.set(@curEl, event['set'], @nonzippytext)
+            else
+               result = fieldType.set(@curEl, event['set'])
+            end
+
             if (result != 0)
                event['current_test_file'] = @currentTestFile
                e_dump = SodaUtils.DumpEvent(event)
@@ -2674,22 +2700,35 @@ JSCode
 #     file: The Soda test file.
 #     rerun: true/false, this tells soda that this tests is a rerun of a
 #        failed test.
+#     suitename: The name of the suite to group the results into.
 #
 # Results:
 #     returns a SodaReport object.
 #
 ############################################################################### 
-   def run(file, rerun = false, genhtml = true)
+   def run(file, rerun = false, genhtml = true, suitename = nil)
       result = 0
       master_result = 0
       thread_soda = nil
       thread_timeout = (60 * 10) # 10 minutes #
       time_check = nil
+      resultsdir = nil
+
+      if (suitename != nil)
+         resultsdir = "#{@resultsDir}/#{suitename}"
+      else
+         resultsdir = @resultsDir
+      end
 
       @currentTestFile = file
       @exceptionExit = false      
       @fileStack.push(file)
-      @rep = SodaReporter.new(file, @saveHtml, @resultsDir, 0, nil, rerun);
+
+      if (@browser == nil)
+         NewBrowser()
+      end
+
+      @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
        
       script = getScript(file)
@@ -2818,12 +2857,11 @@ JSCode
    def RunSuite(suitefile)
       parser = nil
       doc = nil
+      test_order = 0
       result = {}
       tests = []
-      setup_test = nil
-      cleanup_test = nil
-      setup_results = 0
-
+      suite_name = File.basename(suitefile, ".xml")
+      
       begin
          parser = LibXML::XML::Parser.file(suitefile)
          doc = parser.parse()
@@ -2838,7 +2876,7 @@ JSCode
                tests.push(attrs['file'])
             elsif (attrs.key?('fileset'))
                files = File.join(attrs['fileset'], "*.xml")
-               files = Dir.glob(files)
+               files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
                files.each do |f|
                   tests.push(f)
                end
@@ -2851,39 +2889,37 @@ JSCode
       ensure
       end   
 
-      if (setup_test != nil)
-         setup_result = run(setup_test, false, false)
-         if (setup_result != 0)
-            SodaUtils.PrintSoda("Failed calling setup test: "+
-               "'#{setup_test}'!\n", SodaUtils::ERROR)
-            result[setup_test] = {'result' => -1}
-            setup_result = false
-         else
-            setup_result = true
-            result[setup_test] = {'result' => 0}
+      tests.each do |test|
+         test_order += 1
+         tmp_result = {}
+         tmp_result['result'] = run(test, false, true, suite_name)
+         tmp_result['Test_Order'] = test_order
+         tmp_result.merge!(@rep.GetRawResults)
+         
+         if (tmp_result['Test Failure Count'].to_i != 0)
+            tmp_result['result'] = -1
+         elsif (tmp_result['Test JavaScript Error Count'].to_i != 0)
+            tmp_result['result'] = -1
+         elsif (tmp_result['Test Assert Failures'].to_i != 0)
+            tmp_result['result'] = -1
+         elsif (tmp_result['Test Exceptions'].to_i != 0)
+            tmp_result['result'] = -1
          end
-      else
-         setup_result = true
-      end
 
-      if (setup_result)
-         tests.each do |test|
-            result[test] = {}
-            result[test]['result'] = run(test, false)
-            result[test].merge!(@rep.GetRawResults)
-            @rep.ZeroTestResults()
-         end
-      end
-
-      if (cleanup_test != nil)
-         cleanup_result = run(cleanup_test, false, false)
-         if (cleanup_result != 0)
-            SodaUtils.PrintSoda("Failed calling cleanup test: "+
-               "'#{cleanup_test}'!\n", SodaUtils::ERROR)
-            result[cleanup_test] = {'result' => -1}
+         tmp_result['Real_Test_Name'] = test
+         test_basename = File.basename(test, ".xml")
+         logfile = tmp_result['Test Log File']
+         if (logfile =~ /#{test_basename}-\d+/)
+            test =~ /(.*\/)#{test_basename}/
+            ran_test_name = $1
+            ran_test_name << File.basename(logfile, ".log")
+            ran_test_name << ".xml"
          else
-            result[cleanup_test] = {'result' => 0}
+            ran_test_name = test
          end
+
+         result[ran_test_name] = tmp_result
+         @rep.ZeroTestResults()
       end
 
       return result
