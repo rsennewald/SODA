@@ -198,7 +198,6 @@ def GenerateReportData(files)
 
    return test_info
 end
-
    private :GenerateReportData
 
 ###############################################################################
@@ -330,16 +329,13 @@ table
 <tr class="tr_header">
 \t<td>Test File:<br>
 \tClick link for full report</td>
-\t<td>Test Count:</td>
-\t<td>Test Skip Count:</td>
-\t<td>Failure Count:</td>
+\t<td>Test Failure Count:</td>
 \t<td>CSS Error Count:</td>
 \t<td>JavaScript Error Count:</td>
 \t<td>Assert Failures:</td>
 \t<td>Event Count:</td>
 \t<td>Assert Count:</td>
 \t<td>Exceptions:</td>
-\t<td>Major Exceptions:</td>
 \t<td>Running Time:<br>(hh:mm:ss):</td>
 </tr>
 HTML
@@ -361,8 +357,6 @@ HTML
          rpt['report_hash']['Test Assert Count'].to_i()
       totals['Test Exceptions'] += 
          rpt['report_hash']['Test Exceptions'].to_i()
-      totals['Test Major Exceptions'] +=
-         rpt['report_hash']['Test Major Exceptions'].to_i()
       totals['Test Count'] += rpt['report_hash']['Test Count'].to_i()
       totals['Test Skip Count'] += rpt['report_hash']['Test Skip Count'].to_i()
 
@@ -407,8 +401,6 @@ HTML
          "onMouseOver=\"this.className='highlight'\" "+
          "onMouseOut=\"this.className='tr_normal'\">\n" +
          "\t<td class=\"td_file\">#{log_file_td}</td>\n" +
-         "\t<td>#{rpt['report_hash']['Test Count']}</td>\n"+
-         "\t<td>#{rpt['report_hash']['Test Skip Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test Failure Count']}</td>\n"+
          "\t<td>#{rpt['report_hash']['Test CSS Error Count']}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test JavaScript Error Count']}</td>\n" +
@@ -416,7 +408,6 @@ HTML
          "\t<td>#{rpt['report_hash']['Test Event Count']}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test Assert Count']}</td>\n" +
          "\t<td>#{rpt['report_hash']['Test Exceptions']}</td>\n" +
-         "\t<td>#{rpt['report_hash']['Test Major Exceptions']}</td>\n" +
          "\t<td>#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
          fd.write(str)
    end
@@ -440,8 +431,6 @@ HTML
    test_totals = totals['Test Count'] + totals['Test Skip Count']
    sub_totals = "<tr class=\"tr_header\">\n"+
       "\t<td>Totals:</td>\n"+
-      "\t<td>#{totals['Test Count']}</td>\n"+
-      "\t<td>#{totals['Test Skip Count']}</td>\n"+
       "\t<td>#{totals['Test Failure Count']}</td>\n"+
       "\t<td>#{totals['Test CSS Error Count']}</td>\n"+
       "\t<td>#{totals['Test JavaScript Error Count']}</td>\n"+
@@ -449,12 +438,11 @@ HTML
       "\t<td>#{totals['Test Event Count']}</td>\n"+
       "\t<td>#{totals['Test Assert Count']}</td>\n"+
       "\t<td>#{totals['Test Exceptions']}</td>\n"+
-      "\t<td>#{totals['Test Major Exceptions']}</td>\n"+
       "\t<td>#{hours}:#{minutes}:#{seconds}</td>\n"+
-      "</tr>\n" +
-      "<tr class=\"tr_header\">\n"+
-      "\t<td>Total Test Count:</td>\n"+
-      "\t<td colspan=\"2\">#{test_totals}</td>\n</tr>\n"
+      "</tr>\n"
+#      "<tr class=\"tr_header\">\n"+
+#      "\t<td>Total Test Count:</td>\n"+
+#      "\t<td colspan=\"2\">#{test_totals}</td>\n</tr>\n"
 
    fd.write(sub_totals)
    fd.write("</table>\n</body>\n</html>\n")

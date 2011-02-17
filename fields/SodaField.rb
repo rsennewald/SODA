@@ -41,8 +41,10 @@ require 'FieldUtils'
 ###############################################################################
    def self.assert(field, value)
       comp = (!field.value.empty?)? field.value: field.text
+      
       $curSoda.rep.log("Field Value: #{field.value}\n")
-      if value.kind_of? Regexp
+
+      if (value.kind_of?(Regexp))
          return value.match(comp)
       end
       return value == comp
@@ -103,26 +105,33 @@ require 'FieldUtils'
 # Params: 
 #     field: this is the watir object for the field.
 #     value: The vale to set the field to.
+#     nonzippy: this turns on zippy text entry.
 #
 # Results:
 #     returns 0 on success, or -1 on error
 #
 ###############################################################################
-   def self.set(field, value)
+   def self.set(field, value, nonzippy = false)
       result = 0
       msg = "Setting Element: "
 
       begin
          tmp = FieldUtils.WatirFieldToStr(field, $curSoda.rep)
          tmp = "Unknown" if (tmp == nil)
-         $curSoda.rep.log("#{msg}#{tmp}: Value => '#{value}'.\n")
+         tmp_value = "#{value}"
+         tmp_value = tmp_value.gsub("\n", '\n')
+         $curSoda.rep.log("#{msg}#{tmp}: Value => '#{tmp_value}'.\n")
 
          if (!field.enabled?)
             $curSoda.rep.ReportFailure(
                "Error: Trying to set a value for a disabled Element!\n")
             result = -1
          else
-            field.set(value)
+            if (nonzippy)
+               field.set(value)
+            else
+               field.value = value
+            end
             result = 0
          end
       rescue Exception => e
