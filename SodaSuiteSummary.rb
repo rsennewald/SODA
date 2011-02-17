@@ -841,6 +841,7 @@ HTML
                if (!totals[suite].key?(test_k))
                   totals[suite][test_k] = 0
                else
+                  next if (test_k =~ /Test Failure Count/)
                   totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
                end
             end   
