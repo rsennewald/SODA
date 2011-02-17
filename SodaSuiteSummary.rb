@@ -920,7 +920,7 @@ HTML
       total_failures += suite_hash['Test Assert Failures']
       total_failures += suite_hash['Test Other Failures']
       total_failures += suite_hash['Test JavaScript Error Count']
-#      total_failure_count += total_failures
+ #      total_failure_count += total_failures
 
       ran_count = suite_hash['Test Count'].to_i()
       ran_count -= suite_hash['Test WatchDog Count']
