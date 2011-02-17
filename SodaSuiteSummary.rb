@@ -864,7 +864,8 @@ HTML
    end
 
    row_id = 0
-   totals.each do |suite_name, suite_hash|
+   totals.keys.sort.each { |suite_name|
+      suite_hash = totals[suite_name]
       next if (suite_name =~ /Total\sFailure\sCount/i)
       row_id += 1
       report_file = "#{suite_name}"
@@ -964,7 +965,7 @@ HTML
          "\t<td class=\"td_time_data\">"+
             "#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
       fd.write(str)
-   end
+   }
 
    test_totals = suite_totals['Test Count'] 
    test_totals += suite_totals['Test Skip Count']
