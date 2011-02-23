@@ -112,8 +112,8 @@ class Soda
       @restart_test_running = false
       @FAILEDTESTS = []
       @vars = Hash.new
-      blocked_file_list = "scripts/sugarcrm/modules/blockScriptList.xml"
-      whitelist_file = "scripts/sugarcrm/modules/whitelist.xml"
+      blocked_file_list = "tests/modules/blockScriptList.xml"
+      whitelist_file = "tests/modules/whitelist.xml"
       result = nil
       sigs = [
          "INT",
