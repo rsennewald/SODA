@@ -33,12 +33,12 @@ TMP_DIR = "/tmp/Soda"
 
 SODA_EXES = [
    "bin/SodaSuite",
-	"bin/SodaSummaryCreator"
+   "bin/SodaSummaryCreator"
 ]
 
 SODA_FILES = [
       "SodaSuiteSummary.rb",
-		"SodaScreenShot.rb",
+      "SodaScreenShot.rb",
       "SodaElements.xml",
       "FieldUtils.rb",
       "SodaCSV.rb",
@@ -60,24 +60,30 @@ SODA_FILES = [
       "fields/TextField.rb"
    ]
 
-SODA_DIRS = [
-   "utils",
-   "fields",
-   "bin"
-]
+   SODA_DIRS = [
+      "utils",
+      "fields",
+      "bin"
+   ]
 
 
    user_version = nil
-   opts = GetoptLong.new(
-            ['--version', '-v', GetoptLong::REQUIRED_ARGUMENT ])
+   begin
+      opts = GetoptLong.new(
+               ['--version', '-v', GetoptLong::REQUIRED_ARGUMENT ])
 
-   opts.quiet = true
-   opts.each do | opt, arg|
-      case (opt)
-         when "--version"
-            user_version = arg
+      opts.quiet = true
+      opts.each do | opt, arg|
+         case (opt)
+            when "--version"
+               user_version = arg
+         end
       end
+   rescue Exception => e
+      print "(!)Error: #{e.message}!\n\n"
+      exit(2)
    end
+
 
    if (user_version == nil)
       print "(!)Missing needed command line flag: --version=\"x.x.x\"!\n\n"
