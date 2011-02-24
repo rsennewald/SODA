@@ -916,6 +916,7 @@ HTML
       t_passedcount -= suite_hash['Test Failure Count']
       total_failures = 0
 #     total_failures += suite_hash['Test Failure Count']
+      total_failures += suite_hash['Test Exceptions']
       total_failures += suite_hash['Test WatchDog Count']
       total_failures += suite_hash['Test Assert Failures']
       total_failures += suite_hash['Test Other Failures']
