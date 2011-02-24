@@ -153,6 +153,12 @@ def GetTestInfo(kids)
       test_info[name] = kid.content()
    end
 
+   if (test_info['testfile'] =~ /604/i)
+      print "DBUG:!\n"
+      pp(test_info)
+#      exit(1)
+   end
+
    return test_info
 end
 
@@ -807,6 +813,8 @@ HTML
       totals[suite]['Test Failure Count'] = 0
       totals[suite]['Test Passed Count'] = 0
       totals[suite]['Total Time'] = nil
+      totals[suite]['Tests Failed'] = 0
+      totals[suite]['Test Other Failures'] = 0
 
       suite_hash.each do |k, v|
          next if (k !~ /tests/)
@@ -815,8 +823,9 @@ HTML
          v.each do |test|
             time_set = false
             if (test['result'].to_i != 0)
-               totals[suite]['Test Failure Count'] += 1
-               total_failure_count += 1
+               totals[suite]['Tests Failed'] += 1
+#               totals[suite]['Test Failure Count'] += 1
+#               total_failure_count += 1
             else
                totals[suite]['Test Passed Count'] += 1
             end
@@ -841,7 +850,6 @@ HTML
                if (!totals[suite].key?(test_k))
                   totals[suite][test_k] = 0
                else
-                  next if (test_k =~ /Test Failure Count/)
                   totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
                end
             end   
@@ -866,7 +874,6 @@ HTML
    row_id = 0
    totals.keys.sort.each { |suite_name|
       suite_hash = totals[suite_name]
-      next if (suite_name =~ /Total\sFailure\sCount/i)
       row_id += 1
       report_file = "#{suite_name}"
       hours,minutes,seconds,frac = 
@@ -884,7 +891,10 @@ HTML
          seconds = "0#{seconds}"
       end
 
-      suite_hash['Test Other Failures'] = 0
+      # debug
+      suite_hash['Test Other Failures'] = 
+         suite_hash['Total Failure Count'].to_i()
+      # end debug
 
       test_run_class = "td_run_data"
       if (suite_hash['Test Assert Failures'] > 0 ||
@@ -914,14 +924,19 @@ HTML
 
       t_passedcount = suite_hash['Test Count']
       t_passedcount -= suite_hash['Test Failure Count']
+      
       total_failures = 0
-#     total_failures += suite_hash['Test Failure Count']
+      total_failures += suite_hash['Test Failure Count']
       total_failures += suite_hash['Test Exceptions']
       total_failures += suite_hash['Test WatchDog Count']
       total_failures += suite_hash['Test Assert Failures']
       total_failures += suite_hash['Test Other Failures']
       total_failures += suite_hash['Test JavaScript Error Count']
- #      total_failure_count += total_failures
+      total_failure_count += total_failures
+
+      # debug # 
+      suite_hash['Test Other Failures'] = suite_hash['Test Failure Count']
+      # end debug #
 
       ran_count = suite_hash['Test Count'].to_i()
       ran_count -= suite_hash['Test WatchDog Count']
@@ -943,7 +958,7 @@ HTML
          "\t<td class=\"td_passed_data\">"+
             "#{suite_hash['Test Passed Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
-            "#{suite_hash['Test Failure Count']}</td>\n"+
+            "#{suite_hash['Tests Failed']}</td>\n"+
          "\t<td class=\"td_blocked_data\">"+
             "#{suite_hash['Test Blocked Count']}</td>\n"+
          "\t<td class=\"td_skipped_data\">"+
@@ -957,7 +972,7 @@ HTML
          "\t<td class=\"#{asserts_td}\">"+
             "#{suite_hash['Test Assert Failures']}</td>\n"+
          "\t<td class=\"td_other_data\">"+
-            "0</td>\n"+
+            "#{suite_hash['Test Failure Count']}</td>\n"+
          "\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
             "#{suite_hash['Test CSS Error Count']}</td>\n"+
@@ -993,7 +1008,7 @@ HTML
       "\t<td class=\"td_footer_passed\">#{suite_totals['Test Passed Count']}"+
          "</td>\n"+
       "\t<td class=\"td_footer_failed\">"+
-         "#{suite_totals['Test Failure Count']}</td>\n"+ 
+         "#{suite_totals['Tests Failed']}</td>\n"+ 
       "\t<td class=\"td_footer_blocked\">"+
          "#{suite_totals['Test Blocked Count']}</td>\n"+ 
       "\t<td class=\"td_footer_skipped\">"+
@@ -1006,7 +1021,8 @@ HTML
          "#{suite_totals['Test JavaScript Error Count']}</td>\n"+
       "\t<td class=\"td_footer_assert\">"+
          "#{suite_totals['Test Assert Failures']}</td>\n"+
-      "\t<td class=\"td_footer_other\">0</td>\n"+
+      "\t<td class=\"td_footer_other\">"+
+         "#{suite_totals['Test Failure Count']}</td>\n"+
       "\t<td class=\"td_footer_total\">"+
          "#{total_failure_count}</td>\n"+
       "\t<td class=\"td_footer_css\">"+
