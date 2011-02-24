@@ -2890,6 +2890,7 @@ JSCode
       end   
 
       tests.each do |test|
+         next if (remBlockScript(test))
          test_order += 1
          tmp_result = {}
          tmp_result['result'] = run(test, false, true, suite_name)
