@@ -153,12 +153,6 @@ def GetTestInfo(kids)
       test_info[name] = kid.content()
    end
 
-   if (test_info['testfile'] =~ /604/i)
-      print "DBUG:!\n"
-      pp(test_info)
-#      exit(1)
-   end
-
    return test_info
 end
 
