@@ -872,12 +872,8 @@ HTML
    end
 
    row_id = 0
-#   pp(totals)
-#   print "\n\n"
-#   exit(1)
    totals.keys.sort.each { |suite_name|
       suite_hash = totals[suite_name]
-      print "Suite Name: #{suite_name}\n"
       row_id += 1
       report_file = "#{suite_name}"
       hours,minutes,seconds,frac = 
@@ -895,13 +891,6 @@ HTML
          seconds = "0#{seconds}"
       end
 
-
-      if (suite_name =~ /teams/i)
-         print "SUITE: #{suite_name}:\n"
-         print "Test Failure Count: #{suite_hash['Test Failure Count']}\n"
-         print "Total Failure Count: #{suite_hash['Total Failure Count']}\n"
-      end
-      
       # debug
       suite_hash['Test Other Failures'] = 
          suite_hash['Total Failure Count'].to_i()
