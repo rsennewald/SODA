@@ -1153,7 +1153,7 @@ table {
    </td>
 </tr>
 <tr id="header_key">
-   <td class="td_header_master">Id</td>
+   <td class="td_header_master"></td>
    <td class="td_header_master">Test File</td>
    <td class="td_header_master">Status</td>
    <td class="td_header_master">Report Log</td>
