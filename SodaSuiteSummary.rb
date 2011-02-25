@@ -1148,7 +1148,7 @@ table {
 <body>
 <table id="tests">
 <tr id="header">
-   <td class="td_header_master" colspan="3">
+   <td class="td_header_master" colspan="4">
    Suite: #{suite_hash['suitefile']} Test Results
    </td>
 </tr>
