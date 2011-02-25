@@ -153,12 +153,6 @@ def GetTestInfo(kids)
       test_info[name] = kid.content()
    end
 
-   if (test_info['testfile'] =~ /604/i)
-      print "DBUG:!\n"
-      pp(test_info)
-#      exit(1)
-   end
-
    return test_info
 end
 
@@ -275,7 +269,7 @@ body {
 }
 
 .td_header_master {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -287,7 +281,7 @@ body {
 }
 
 .td_header_sub {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -299,7 +293,7 @@ body {
 }
 
 .td_header_skipped {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -311,7 +305,7 @@ body {
 }
 
 .td_header_watchdog {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -331,7 +325,7 @@ table {
 }
 
 .td_file_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: left;
    font-family: Arial;
    font-weight: bold;
@@ -342,7 +336,7 @@ table {
 }
 
 .td_run_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -353,7 +347,7 @@ table {
 }
 
 .td_run_data_error {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -365,7 +359,7 @@ table {
 }
 
 .td_passed_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -377,7 +371,7 @@ table {
 }
 
 .td_failed_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -389,7 +383,7 @@ table {
 }
 
 .td_blocked_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -401,7 +395,7 @@ table {
 }
 
 .td_skipped_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -413,7 +407,7 @@ table {
 }
 
 .td_watchdog_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -424,7 +418,7 @@ table {
 }
 
 .td_watchdog_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    color: #FF0000;
    text-align: center;
    font-family: Arial;
@@ -436,7 +430,7 @@ table {
 }
 
 .td_exceptions_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -447,7 +441,7 @@ table {
 }
 
 .td_exceptions_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -459,7 +453,7 @@ table {
 }
 
 .td_javascript_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -470,7 +464,7 @@ table {
 }
 
 .td_javascript_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -482,7 +476,7 @@ table {
 }
 
 .td_assert_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -493,7 +487,7 @@ table {
 }
 
 .td_assert_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -505,7 +499,7 @@ table {
 }
 
 .td_other_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -516,7 +510,18 @@ table {
 }
 
 .td_other_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
+   color: #FF0000;
+}
+.td_other_error_data {
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -528,7 +533,7 @@ table {
 }
 
 .td_total_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -539,7 +544,7 @@ table {
 }
 
 .td_total_error_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -551,7 +556,7 @@ table {
 }
 
 .td_css_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -562,7 +567,7 @@ table {
 }
 
 .td_sodawarnings_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -573,7 +578,7 @@ table {
 }
 
 .td_time_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -584,7 +589,7 @@ table {
 }
 
 .td_footer_run {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -598,7 +603,7 @@ table {
 }
 
 .td_footer_passed {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -612,7 +617,7 @@ table {
 }
 
 .td_footer_failed {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -626,7 +631,7 @@ table {
 }
 
 .td_footer_blocked {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -640,7 +645,7 @@ table {
 }
 
 .td_footer_skipped {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -654,7 +659,7 @@ table {
 }
 
 .td_footer_watchdog {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -668,7 +673,7 @@ table {
 }
 
 .td_footer_exceptions {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -682,7 +687,7 @@ table {
 }
 
 .td_footer_javascript {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -696,7 +701,7 @@ table {
 }
 
 .td_footer_assert {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -710,7 +715,7 @@ table {
 }
 
 .td_footer_other {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -724,7 +729,7 @@ table {
 }
 
 .td_footer_total {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -738,7 +743,7 @@ table {
 }
 
 .td_footer_css {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -752,7 +757,7 @@ table {
 }
 
 .td_footer_sodawarnings {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -766,7 +771,7 @@ table {
 }
 
 .td_footer_times {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -815,19 +820,22 @@ HTML
       totals[suite]['Total Time'] = nil
       totals[suite]['Tests Failed'] = 0
       totals[suite]['Test Other Failures'] = 0
+      totals[suite]['Lib File Count'] = 0
 
       suite_hash.each do |k, v|
          next if (k !~ /tests/)
-         totals[suite]['Test Count'] = v.length()
+         totals[suite]['Test Count'] = v.length() 
 
          v.each do |test|
             time_set = false
             if (test['result'].to_i != 0)
                totals[suite]['Tests Failed'] += 1
-#               totals[suite]['Test Failure Count'] += 1
-#               total_failure_count += 1
             else
                totals[suite]['Test Passed Count'] += 1
+            end
+
+            if (test['testfile'] =~ /lib/i)
+               totals[suite]['Lib File Count'] += 1
             end
 
             if (!time_set)
@@ -848,15 +856,17 @@ HTML
 
             test.each do |test_k, test_v|
                if (!totals[suite].key?(test_k))
-                  totals[suite][test_k] = 0
+                  totals[suite][test_k] = 0 
                else
-                  totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
+                  if (test['testfile'] !~ /lib/i)
+                     totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
+                  end
                end
             end   
          end
       end
    end
-     
+    
    totals.each do |suite, suite_hash|
       suite_hash.each do |k, v|
          if (!suite_totals.key?(k))
@@ -897,6 +907,9 @@ HTML
       # end debug
 
       test_run_class = "td_run_data"
+      if (suite_hash['Test Assert Failures'] == nil)
+         suite_hash['Test Assert Failures'] = 0
+      end
       if (suite_hash['Test Assert Failures'] > 0 ||
           suite_hash['Test Exceptions'] > 0)
          test_run_class = "td_run_data_error"
@@ -922,6 +935,11 @@ HTML
          jscript_td = "td_javascript_error_data"
       end
 
+      other_td = "td_other_data"
+      if (suite_hash['Test Failure Count'] > 0)
+         other_td = "td_other_error_data"
+      end
+
       t_passedcount = suite_hash['Test Count']
       t_passedcount -= suite_hash['Test Failure Count']
       
@@ -941,9 +959,17 @@ HTML
       ran_count = suite_hash['Test Count'].to_i()
       ran_count -= suite_hash['Test WatchDog Count']
       ran_count -= suite_hash['Test Blocked Count']
+      ran_count -= suite_hash['Lib File Count']
 
       total_non_ran_count += suite_hash['Test WatchDog Count']
       total_non_ran_count += suite_hash['Test Blocked Count']
+      total_non_lib_count = suite_hash['Test Count']
+      total_non_lib_count -= suite_hash['Lib File Count']
+
+      total_failures_td = "td_total_data"
+      if (total_failures > 0)
+         total_failures_td = "td_total_error_data"
+      end
 
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
@@ -954,7 +980,7 @@ HTML
          "\t<td class=\"td_file_data\"><a href=\"#{suite_mini_file}\">"+
          "#{suite_name}</a></td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
-            "#{ran_count}/#{suite_hash['Test Count']}</td>\n"+
+            "#{ran_count}/#{total_non_lib_count}</td>\n"+
          "\t<td class=\"td_passed_data\">"+
             "#{suite_hash['Test Passed Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
@@ -971,9 +997,9 @@ HTML
             "#{suite_hash['Test JavaScript Error Count']}</td>\n"+
          "\t<td class=\"#{asserts_td}\">"+
             "#{suite_hash['Test Assert Failures']}</td>\n"+
-         "\t<td class=\"td_other_data\">"+
+         "\t<td class=\"#{other_td}\">"+
             "#{suite_hash['Test Failure Count']}</td>\n"+
-         "\t<td class=\"td_total_data\">#{total_failures}</td>\n"+
+         "\t<td class=\"#{total_failures_td}\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
             "#{suite_hash['Test CSS Error Count']}</td>\n"+
          "\t<td class=\"td_sodawarnings_data\">"+
@@ -1060,7 +1086,7 @@ table {
    background: #FFFFFF;
 }
 .td_header_master {
-   whitw-space: nowrap;
+   white-space: nowrap;
    background: #99CCFF;
    text-align: center;
    font-family: Arial;
@@ -1071,7 +1097,7 @@ table {
    border-bottom: 2px solid black;
 }
 .td_file_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: left;
    font-family: Arial;
    font-weight: bold;
@@ -1081,7 +1107,7 @@ table {
    border-bottom: 2px solid black;
 }
 .td_passed_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -1092,7 +1118,7 @@ table {
    border-bottom: 2px solid black;
 }
 .td_failed_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -1103,7 +1129,7 @@ table {
    border-bottom: 2px solid black;
 }
 .td_report_data {
-   whitw-space: nowrap;
+   white-space: nowrap;
    text-align: center;
    font-family: Arial;
    font-weight: normal;
@@ -1127,6 +1153,7 @@ table {
    </td>
 </tr>
 <tr id="header_key">
+   <td class="td_header_master">Id</td>
    <td class="td_header_master">Test File</td>
    <td class="td_header_master">Status</td>
    <td class="td_header_master">Report Log</td>
@@ -1147,6 +1174,7 @@ HTML
       test_report = "Report-#{test_report}.html"
 
       str = "<tr id=\"#{id}\" #{tr_css} >\n"+
+      "\t<td class=\"td_file_data\">#{id}</td>\n"+
       "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
