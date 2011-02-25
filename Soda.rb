@@ -2713,6 +2713,7 @@ JSCode
       thread_timeout = (60 * 10) # 10 minutes #
       time_check = nil
       resultsdir = nil
+      blocked = false
 
       if (suitename != nil)
          resultsdir = "#{@resultsDir}/#{suitename}"
@@ -2730,8 +2731,14 @@ JSCode
 
       @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
-       
-      script = getScript(file)
+      blocked = remBlockScript(file)
+      
+      if (!blocked)
+         script = getScript(file)
+      else 
+         script = nil
+      end
+
       if (script != nil) 
          @currentTestFile = file
          thread_soda = Thread.new {
@@ -2778,9 +2785,11 @@ JSCode
             @rep.IncTestPassedCount()
          end
       else
-         msg = "Failed trying to run soda test: \"#{@currentTestFile}\"!\n"
-         @rep.IncFailedTest()
-         @rep.ReportFailure(msg)
+         if (!blocked)
+            msg = "Failed trying to run soda test: \"#{@currentTestFile}\"!\n"
+            @rep.IncFailedTest()
+            @rep.ReportFailure(msg)
+         end
       end
 
       @rep.SodaPrintCurrentReport()
@@ -2890,7 +2899,7 @@ JSCode
       end   
 
       tests.each do |test|
-         next if (remBlockScript(test))
+#         next if (remBlockScript(test))
          test_order += 1
          tmp_result = {}
          tmp_result['result'] = run(test, false, true, suite_name)
