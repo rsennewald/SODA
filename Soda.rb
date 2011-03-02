@@ -31,7 +31,7 @@ module Soda
 # Module Global Info:
 ###############################################################################
 SODA_VERSION = 1.1
-SODA_WATIR_VERSION = "1.7.1"
+SODA_WATIR_VERSION = "1.8.0"
 
 ###############################################################################
 # Needed Ruby libs:
@@ -39,8 +39,8 @@ SODA_WATIR_VERSION = "1.7.1"
 require 'rubygems'
 require 'rbconfig'
 require 'pathname'
-gem 'commonwatir', '= 1.7.1'
-gem 'firewatir', '= 1.7.1'
+gem 'commonwatir', '= 1.8.0'
+gem 'firewatir', '= 1.8.0'
 require "watir"
 require 'SodaUtils'
 require "SodaReporter"

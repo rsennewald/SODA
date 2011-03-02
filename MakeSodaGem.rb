@@ -147,7 +147,7 @@ spec = Gem::Specification.new do |s|
    s.email = "trichmond@sugarcrm.com"
    s.homepage = "http://www.github.com/sugarcrm/SODA"
    s.rubyforge_project = "Soda"
-   s.add_dependency 'firewatir', '=1.7.1'
+   s.add_dependency 'firewatir', '=1.8.0'
    s.add_dependency 'libxml-ruby'
 end
 RUBY
