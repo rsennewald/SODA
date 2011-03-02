@@ -1074,7 +1074,6 @@ def GenSuiteMiniSummary(suite_hash, reportdir)
    suite_file << ".html"
    href = "#{suite_name}/#{suite_file}"
    suite_file = "#{reportdir}/#{suite_name}/#{suite_file}"
-
    html = <<HTML
 <html>
 <style type="text/css">
@@ -1112,6 +1111,17 @@ table {
    font-family: Arial;
    font-weight: bold;
    color: #00FF00;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
+}
+.td_blocked_data {
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FFCF10;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 0px solid black;
@@ -1169,6 +1179,7 @@ HTML
 
    suite_hash['tests'].sort_by { |h| h['Test Order'].to_i }.each do |test|
       id += 1
+      result_str = ""
       test_report = test['Test Log File']
       test_report = File.basename(test_report, ".log")
       test_report = "Report-#{test_report}.html"
@@ -1178,11 +1189,17 @@ HTML
       "\t<td class=\"td_file_data\">#{test['testfile']}</td>\n"
 
       if (test['result'].to_i != 0)
-         str << "\t<td class=\"td_failed_data\">Failed</td>\n"
+         result_str = "\t<td class=\"td_failed_data\">Failed</td>\n"
       else
-         str << "\t<td class=\"td_passed_data\">Passed</td>\n"
+         result_str = "\t<td class=\"td_passed_data\">Passed</td>\n"
       end
 
+      # hack #
+      if (test['Test Blocked Count'].to_i > 0)
+         result_str = "\t<td class=\"td_blocked_data\">Blocked</td>\n"
+      end
+
+      str << "#{result_str}"
       str << "\t<td class=\"td_report_data\">"
       str << "<a href=\"#{test_report}\">Report Log</a></td>\n"
       str << "</tr>\n"
