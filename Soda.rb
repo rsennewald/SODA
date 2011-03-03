@@ -2762,7 +2762,7 @@ JSCode
                      shooter = SodaScreenShot.new(result_dir)
                      image_file = shooter.GetOutputFile()
                      @rep.log("ScreenShot taken: #{image_file}\n")
-                  rescue Excaption => e
+                  rescue Exception => e
                      @rep.ReportException(e)
                   ensure
                   end
