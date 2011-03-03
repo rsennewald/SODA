@@ -92,8 +92,11 @@ class SodaScreenShot
 			when /windows/i
 				require 'win32/screenshot'
 				@outputfile = "#{dir}/#{OUTPUT_FILE}#{time}-#{hostname}.bmp"
-            img = Win32::Screenshot::Take.of(:desktop)
-            img.write(@outputfile)
+            begin
+               img = Win32::Screenshot::Take.of(:desktop)
+               img.write(@outputfile)
+            rescue Exception => e
+            end
 		end
 	end
 
