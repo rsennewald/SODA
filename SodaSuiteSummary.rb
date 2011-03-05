@@ -35,225 +35,7 @@ require 'libxml'
 require 'pp'
 require 'SodaReportSummery'
 
-class SodaSuiteSummary
-
-###############################################################################
-# initialize -- constructor
-#     This is the class constructor.  Really this does all the needed work.
-#
-# Params:
-#     dir: This is the directory with raw soda logs in it.
-#     outfile: This is the new summery html file to create.
-#     create_links: This will create links to the soda report files in the
-#        summery.
-#
-# Results:
-#     Creates a new class and html summery file.  Will raise and exception on
-#     any errors.
-#
-###############################################################################
-def initialize(dir ="", outfile = "", create_links = false)
-   log_files = nil
-   report_data = nil
-   result = 0
-   html_tmp_file = ""
-   timout = true
-
-   if (dir.empty?)
-      raise "Empty 'dir' param!\n"
-   elsif (outfile.empty?)
-      raise "Empty 'outfile param!"
-   end
-
-   html_tmp_file = File.dirname(outfile)
-   html_tmp_file += "/summery.tmp"
-
-   for i in 0..120
-      if (!File.exist?(html_tmp_file))
-         timeout = false
-         break
-      end
-
-      timeout = true
-      sleep(1)
-   end
-
-#  This should go back into production after moving away from our
-#  internal nfs sever we are using for reporting...
-#
-#   if (timeout != false)
-#      raise "Timed out waiting for lock to be released on file:"+
-#         " \"#{html_tmp_file}\"!\n"
-#   end
-
-   log_files = GetLogFiles(dir)
-   if ( (log_files == nil) || (log_files.length < 1) )
-      raise "Failed calling: GetLogFiles(#{dir})!"
-   end
-   
-   report_data = GenerateReportData(log_files)
-   if (report_data.length < 1)
-      raise "No report data found when calling: GenerateReportData()!"
-   end
-
-   result = GenHtmlReport(report_data, html_tmp_file, create_links)
-   if (result != 0)
-      raise "Failed calling: GenHtmlReport()!"
-   end
-
-   File.rename(html_tmp_file, outfile)
-
-end
-
-###############################################################################
-# GetLogFiles -- method
-#     This function gets all the log files in a given dir puts them in a list.
-#
-# Params:
-#     dir: this is the directory that holds the log files.
-#
-# Results:
-#     returns nil on error, else a list of all the log files in the dir.
-#
-###############################################################################
-def GetLogFiles(dir)
-   files = nil
-
-   if (!File.directory?(dir))
-      print "(!)Error: #{dir} is not a directory!\n"
-      return nil
-   end
-
-   files = File.join("#{dir}", "*.xml")
-   files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
-
-   return files
-end
-
-   private :GetLogFiles
-
-###############################################################################
-# GetTestInfo -- method
-#     This method reads the suite xml report and converts it into a hash.
-#
-# Input:
-#     kids: The XML node for the <test> element.
-#
-# Output:
-#     returns a hash of data.
-#
-###############################################################################
-def GetTestInfo(kids)
-   test_info = {}
-
-   kids.each do |kid|
-      next if (kid.name =~ /text/i)
-      name = kid.name
-      name = name.gsub("_", " ")
-      test_info[name] = kid.content()
-   end
-
-   return test_info
-end
-
-###############################################################################
-# GenerateReportData -- method
-#     This function generates needed data from each file passed in.
-#
-# Params:
-#     files: This is a list of files to read data from.
-#
-# Results:
-#     returns an array of hashed data.
-#
-###############################################################################
-def GenerateReportData(files)
-   test_info = {}
-   test_info_list = []
-
-   files.each do |f|
-      print "(*)Opening file: #{f}\n"
-
-      begin
-         parser = LibXML::XML::Parser.file(f)
-         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
-         doc = parser.parse()
-      rescue Exception => e
-         print "(!)Error: Failed trying to parse XML file: '#{f}'!\n"
-         print "--)Exception: #{e.message}\n"
-         print "--)Skipping file!\n"
-         next
-      ensure
-      end
-
-      suites = []
-      doc.root.each do |suite|
-         next if (suite.name !~ /suite/)
-         suites.push(suite)
-      end
-
-      suites.each do |suite|
-         tmp_hash = {'tests' => []}
-         suite.children.each do |kid|
-            case (kid.name)
-               when "suitefile"
-                  tmp_hash['suitefile'] = kid.content()
-               when "test"
-                  tmp_test_data = GetTestInfo(kid.children)
-                  tmp_hash['tests'].push(tmp_test_data)
-            end # end case #
-         end
-         
-         base_name = File.basename(tmp_hash['suitefile'])
-         test_info[base_name] = tmp_hash
-         test_info_list.push(tmp_hash)
-      end
-   end
-
-   return test_info
-end
-
-   private :GenerateReportData
-
-###############################################################################
-# GenHtmlReport -- method
-#     This function generates an html report from an array of hashed data.
-#
-# Params:
-#     data: A hash of suites, and their test info.
-#     reportfile: This is the html file to create.
-#
-# Results:
-#     Creates an html report file.  Retruns -1 on error, else 0 on success.
-#
-###############################################################################
-def GenHtmlReport(data, reportfile, create_links = false)
-   fd = nil
-   result = 0
-   totals = {}
-   log_file_td = ""
-   report_file = ""
-   now = nil
-   suite_totals = {}
-   total_failure_count = 0
-   total_non_ran_count = 0
-
-   begin
-      fd = File.new(reportfile, "w+")
-   rescue Exception => e
-      fd = nil
-      result = -1
-      print "Error: trying to open file!\n"
-      print "Exception: #{e.message}\n"
-      print "StackTrace: #{e.backtrace.join("\n")}\n"
-   ensure
-      if (result != 0)
-         return -1
-      end
-   end
-
-   now = Time.now.getlocal() 
-   html_header = <<HTML
+$HTML_HEADER = <<HTML
 <html>
 <style type="text/css">
 body {
@@ -811,160 +593,381 @@ table {
 </tr>
 HTML
 
-   fd.write(html_header)
+class SodaSuiteSummary
 
-   data.each do |suite, suite_hash|
-      totals[suite] = Hash.new()
-      totals[suite]['Test Failure Count'] = 0
-      totals[suite]['Test Passed Count'] = 0
-      totals[suite]['Total Time'] = nil
-      totals[suite]['Tests Failed'] = 0
-      totals[suite]['Test Other Failures'] = 0
-      totals[suite]['Lib File Count'] = 0
+###############################################################################
+# initialize -- constructor
+#     This is the class constructor.  Really this does all the needed work.
+#
+# Params:
+#     dir: This is the directory with raw soda logs in it.
+#     outfile: This is the new summery html file to create.
+#     create_links: This will create links to the soda report files in the
+#        summery.
+#
+# Results:
+#     Creates a new class and html summery file.  Will raise and exception on
+#     any errors.
+#
+###############################################################################
+def initialize(dir ="", outfile = "", create_links = false)
+   log_files = nil
+   report_data = nil
+   result = 0
+   html_tmp_file = ""
+   timout = true
 
-      suite_hash.each do |k, v|
-         next if (k !~ /tests/)
-         totals[suite]['Test Count'] = v.length() 
+   if (dir.empty?)
+      raise "Empty 'dir' param!\n"
+   elsif (outfile.empty?)
+      raise "Empty 'outfile param!"
+   end
 
-         v.each do |test|
-            time_set = false
-            if (test['result'].to_i != 0)
-               totals[suite]['Tests Failed'] += 1
-            else
-               totals[suite]['Test Passed Count'] += 1
-            end
+   html_tmp_file = File.dirname(outfile)
+   html_tmp_file += "/summery.tmp"
 
-            if (test['testfile'] =~ /lib/i)
-               totals[suite]['Lib File Count'] += 1
-            end
+   for i in 0..120
+      if (!File.exist?(html_tmp_file))
+         timeout = false
+         break
+      end
 
-            if (!time_set)
-               time_set = true
-               stop = test['Test Stop Time']
-               start = DateTime.strptime("#{test['Test Start Time']}",
-                  "%m/%d/%Y-%H:%M:%S")
-               stop = DateTime.strptime("#{test['Test Stop Time']}",
-                  "%m/%d/%Y-%H:%M:%S")
+      timeout = true
+      sleep(1)
+   end
 
-               diff = (stop - start)
-               if (totals[suite]['Total Time'] == nil)
-                  totals[suite]['Total Time'] = diff
-               else
-                  totals[suite]['Total Time'] += diff
-               end
-            end
+#  This should go back into production after moving away from our
+#  internal nfs sever we are using for reporting...
+#
+#   if (timeout != false)
+#      raise "Timed out waiting for lock to be released on file:"+
+#         " \"#{html_tmp_file}\"!\n"
+#   end
 
-            test.each do |test_k, test_v|
-               if (!totals[suite].key?(test_k))
-                  totals[suite][test_k] = 0 
-               else
-                  if (test['testfile'] !~ /lib/i)
-                     totals[suite][test_k] += test_v.to_i if (test_k !~ /time/i)
-                  end
-               end
-            end   
+   log_files = GetLogFiles(dir)
+   if ( (log_files == nil) || (log_files.length < 1) )
+      raise "Failed calling: GetLogFiles(#{dir})!"
+   end
+   
+   report_data = GenerateReportData(log_files)
+   if (report_data.length < 1)
+      raise "No report data found when calling: GenerateReportData()!"
+   end
+
+   result = GenHtmlReport2(report_data, html_tmp_file, create_links)
+   if (result != 0)
+      raise "Failed calling: GenHtmlReport2()!"
+   end
+
+   File.rename(html_tmp_file, outfile)
+
+end
+
+###############################################################################
+# GetLogFiles -- method
+#     This function gets all the log files in a given dir puts them in a list.
+#
+# Params:
+#     dir: this is the directory that holds the log files.
+#
+# Results:
+#     returns nil on error, else a list of all the log files in the dir.
+#
+###############################################################################
+def GetLogFiles(dir)
+   files = nil
+
+   if (!File.directory?(dir))
+      print "(!)Error: #{dir} is not a directory!\n"
+      return nil
+   end
+
+   files = File.join("#{dir}", "*.xml")
+   files = Dir.glob(files).sort_by{|f| File.stat(f).mtime}
+
+   return files
+end
+
+   private :GetLogFiles
+
+###############################################################################
+# GetTestInfo -- method
+#     This method reads the suite xml report and converts it into a hash.
+#
+# Input:
+#     kids: The XML node for the <test> element.
+#
+# Output:
+#     returns a hash of data.
+#
+###############################################################################
+def GetTestInfo(kids)
+   test_info = {}
+
+   kids.each do |kid|
+      next if (kid.name =~ /text/i)
+      name = kid.name
+      name = name.gsub("_", " ")
+      test_info[name] = kid.content()
+   end
+
+   return test_info
+end
+
+###############################################################################
+# GenerateReportData -- method
+#     This function generates needed data from each file passed in.
+#
+# Params:
+#     files: This is a list of files to read data from.
+#
+# Results:
+#     returns an array of hashed data.
+#
+###############################################################################
+def GenerateReportData(files)
+   test_info = {}
+   test_info_list = []
+
+   files.each do |f|
+      print "(*)Reading XML file: #{f}\n"
+
+      begin
+         parser = LibXML::XML::Parser.file(f)
+         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
+         doc = parser.parse()
+      rescue Exception => e
+         print "(!)Error: Failed trying to parse XML file: '#{f}'!\n"
+         print "--)Exception: #{e.message}\n"
+         print "--)Skipping file!\n"
+         next
+      ensure
+      end
+
+      suites = []
+      doc.root.each do |suite|
+         next if (suite.name !~ /suite/)
+         suites.push(suite)
+      end
+
+      suites.each do |suite|
+         tmp_hash = {'tests' => []}
+         suite.children.each do |kid|
+            case (kid.name)
+               when "suitefile"
+                  tmp_hash['suitefile'] = kid.content()
+               when "test"
+                  tmp_test_data = GetTestInfo(kid.children)
+                  tmp_hash['tests'].push(tmp_test_data)
+            end # end case #
          end
+         
+         base_name = File.basename(tmp_hash['suitefile'])
+         test_info[base_name] = tmp_hash
+         test_info_list.push(tmp_hash)
+      end
+
+      print "(*)Finished.\n"
+   end
+
+   return test_info
+end
+   private :GenerateReportData
+
+
+def SumSuiteTests(tests, suitename)
+   lib_file_count = 0
+   report = {
+      'Total Time' => nil
+   }
+   summary_int_fields = [
+      'Test JavaScript Error Count',
+      'Test WatchDog Count',
+      'Test Assert Failures',
+      'Test CSS Error Count',
+      'Test Blocked Count',
+      'Test Assert Count',
+      'Test Warning Count',
+      'Test Skip Count',
+      'Test Event Count',
+      'Test Exceptions',
+      'Test Pass Count',
+      'Test Failed Count',
+      'Test Ran Count',
+      'Test Failure Count'
+      ]
+
+   print "(*)Summing #{suitename}..."
+
+   # zero out all of the int keys, and make sure they are int's and not
+   # strings.
+   summary_int_fields.each do |key|
+      report[key] = 0
+   end
+
+   tests.sort_by{|h| h['Test Order'].to_i}.each do |test|
+      dir_name = File.dirname(test['testfile'])
+      if (dir_name =~ /lib/i) 
+         lib_file_count += 1
+         # skip libs david doesn't want them.
+         next
+      end
+
+      summary_int_fields.each do |total_field|
+         report[total_field] += test[total_field].to_i()   
+      end
+      
+      report['Test Ran Count'] += 1
+
+      # count tests that pass and fail. #
+      if (test['result'].to_i != 0)
+         report['Test Failed Count'] += 1
+      else
+         report['Test Pass Count'] += 1
+      end
+
+      # add up times #
+      stop_time = test['Test Stop Time']
+      start_time = DateTime.strptime("#{test['Test Start Time']}",
+         "%m/%d/%Y-%H:%M:%S")
+      stop_time = DateTime.strptime("#{test['Test Stop Time']}",
+         "%m/%d/%Y-%H:%M:%S")
+
+      diff = (stop_time - start_time)
+      if (report['Total Time'] == nil)
+         report['Total Time'] = diff
+      else
+         report['Total Time'] += diff
       end
    end
-    
-   totals.each do |suite, suite_hash|
-      suite_hash.each do |k, v|
-         if (!suite_totals.key?(k))
-            suite_totals[k] = 0
+
+   # need to do away with tests that did not run for a good reason #
+   report['Test Ran Count'] -= report['Test Blocked Count']
+   report['Test Ran Count'] -= report['Test Skip Count']
+
+   report['Total Test Count'] = tests.length()
+   if (lib_file_count > 0)
+      report['Total Test Count'] -= lib_file_count
+   end 
+
+   print "\b\b\b: Done.\n"
+
+   return report
+end
+
+###############################################################################
+# GenHtmlReport2 -- method
+#     This function generates an html report from an array of hashed data.
+#
+# Params:
+#     data: A hash of suites, and their test info.
+#     reportfile: This is the html file to create.
+#
+# Results:
+#     Creates an html report file.  Retruns -1 on error, else 0 on success.
+#
+###############################################################################
+def GenHtmlReport2(data, reportfile, create_links = false)
+   suites_totals = {}
+   summary_totals = {}
+
+   print "(*)Processing data...\n"
+
+   # first sum up all of the test results for each suite #
+   suites = data.keys.sort()
+   suites.each do |suite_name|
+      suites_totals[suite_name] = {} # new suite name for the totals #
+      suite_data = data[suite_name]
+      suites_totals[suite_name] = SumSuiteTests(suite_data['tests'], suite_name)
+   end 
+
+   # second sum up all of the suite sums for the totals for the summary #
+   suites_totals.keys.each do |suite_name|
+      suite_data = suites_totals[suite_name]
+      suite_data.each do |suite_key, suite_val|
+         # make sure it is set to an int if it doesn't exist #
+         if (suite_key !~ /time/i && !summary_totals.key?(suite_key))
+            summary_totals[suite_key] = 0
          end
 
-         if (k =~ /Total Time/)
-            suite_totals[k] += v
+         if (suite_key =~ /time/i && !summary_totals.key?(suite_key)) 
+            summary_totals[suite_key] = suite_val
          else
-            suite_totals[k] += v.to_i()
+            # we can see a nil time if the suite only ran modules, and not
+            # any tests.  Once again this is because david doesn't want reports
+            # on modules....  Lame... Lame...
+            summary_totals[suite_key] += suite_val if (suite_val != nil)
          end
       end
    end
+
+   # create a new summary file # 
+   fd = File.new(reportfile, "w+")
+   fd.write($HTML_HEADER)
 
    row_id = 0
-   totals.keys.sort.each { |suite_name|
-      suite_hash = totals[suite_name]
+   suites_totals.sort.each do |suite_name, suite_data|
       row_id += 1
       report_file = "#{suite_name}"
-      hours,minutes,seconds,frac = 
-         Date.day_fraction_to_time(suite_hash['Total Time'])
-      
-      if (hours < 10)
-         hours = "0#{hours}"
-      end
 
-      if (minutes < 10)
-         minutes = "0#{minutes}"
-      end
+      # again another hack to avoid lib files in the reports... #
+      if (suite_data['Total Time'] != nil)
+         hours,minutes,seconds,frac = 
+            Date.day_fraction_to_time(suite_data['Total Time'])
+        
+         if (hours < 10)
+            hours = "0#{hours}"
+         end
 
-      if (seconds < 10)
-         seconds = "0#{seconds}"
-      end
+         if (minutes < 10)
+            minutes = "0#{minutes}"
+         end
 
-      # debug
-      suite_hash['Test Other Failures'] = 
-         suite_hash['Total Failure Count'].to_i()
-      # end debug
+         if (seconds < 10)
+            seconds = "0#{seconds}"
+         end
+      else
+         hours = 0
+         minutes = 0
+         seconds = 0
+      end
 
       test_run_class = "td_run_data"
-      if (suite_hash['Test Assert Failures'] == nil)
-         suite_hash['Test Assert Failures'] = 0
-      end
-      if (suite_hash['Test Assert Failures'] > 0 ||
-          suite_hash['Test Exceptions'] > 0)
+      if (suite_data['Test Assert Failures'] > 0 ||
+          suite_data['Test Exceptions'] > 0)
          test_run_class = "td_run_data_error"
       end
 
       exceptions_td = "td_exceptions_data"
-      if (suite_hash['Test Exceptions'] > 0)
+      if (suite_data['Test Exceptions'] > 0)
          exceptions_td = "td_exceptions_error_data"
       end
 
       asserts_td = "td_assert_data"
-      if (suite_hash['Test Assert Failures'] > 0)
+      if (suite_data['Test Assert Failures'] > 0)
          asserts_td = "td_assert_error_data"
       end
 
       watchdog_td = "td_watchdog_data"
-      if (suite_hash['Test WatchDog Count'] > 0)
+      if (suite_data['Test WatchDog Count'] > 0)
          watchdog_td = "td_watchdog_error_data"
       end
 
       jscript_td = "td_javascript_data"
-      if (suite_hash['Test JavaScript Error Count'] > 0)
+      if (suite_data['Test JavaScript Error Count'] > 0)
          jscript_td = "td_javascript_error_data"
       end
 
       other_td = "td_other_data"
-      if (suite_hash['Test Failure Count'] > 0)
+      if (suite_data['Test Failure Count'] > 0)
          other_td = "td_other_error_data"
       end
 
-      t_passedcount = suite_hash['Test Count']
-      t_passedcount -= suite_hash['Test Failure Count']
-      
       total_failures = 0
-      total_failures += suite_hash['Test Failure Count']
-      total_failures += suite_hash['Test Exceptions']
-      total_failures += suite_hash['Test WatchDog Count']
-      total_failures += suite_hash['Test Assert Failures']
-      total_failures += suite_hash['Test Other Failures']
-      total_failures += suite_hash['Test JavaScript Error Count']
-      total_failure_count += total_failures
-
-      # debug # 
-      suite_hash['Test Other Failures'] = suite_hash['Test Failure Count']
-      # end debug #
-
-      ran_count = suite_hash['Test Count'].to_i()
-      ran_count -= suite_hash['Test WatchDog Count']
-      ran_count -= suite_hash['Test Blocked Count']
-      ran_count -= suite_hash['Lib File Count']
-
-      total_non_ran_count += suite_hash['Test WatchDog Count']
-      total_non_ran_count += suite_hash['Test Blocked Count']
-      total_non_lib_count = suite_hash['Test Count']
-      total_non_lib_count -= suite_hash['Lib File Count']
+      total_failures += suite_data['Test Failure Count']
+      total_failures += suite_data['Test Exceptions']
+      total_failures += suite_data['Test Assert Failures']
+      total_failures += suite_data['Test JavaScript Error Count']
 
       total_failures_td = "td_total_data"
       if (total_failures > 0)
@@ -980,41 +983,39 @@ HTML
          "\t<td class=\"td_file_data\"><a href=\"#{suite_mini_file}\">"+
          "#{suite_name}</a></td>\n"+
          "\t<td class=\"#{test_run_class}\">"+
-            "#{ran_count}/#{total_non_lib_count}</td>\n"+
+         "#{suite_data['Test Ran Count']}/"+
+         "#{suite_data['Total Test Count']}</td>\n"+
          "\t<td class=\"td_passed_data\">"+
-            "#{suite_hash['Test Passed Count']}</td>\n"+
+            "#{suite_data['Test Pass Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
-            "#{suite_hash['Tests Failed']}</td>\n"+
+            "#{suite_data['Test Failed Count']}</td>\n"+
          "\t<td class=\"td_blocked_data\">"+
-            "#{suite_hash['Test Blocked Count']}</td>\n"+
+            "#{suite_data['Test Blocked Count']}</td>\n"+
          "\t<td class=\"td_skipped_data\">"+
-            "#{suite_hash['Test Skip Count']}</td>\n"+
+            "#{suite_data['Test Skip Count']}</td>\n"+
          "\t<td class=\"#{watchdog_td}\">"+
-            "#{suite_hash['Test WatchDog Count']}</td>\n"+
+            "#{suite_data['Test WatchDog Count']}</td>\n"+
          "\t<td class=\"#{exceptions_td}\">"+
-            "#{suite_hash['Test Exceptions']}</td>\n"+
+            "#{suite_data['Test Exceptions']}</td>\n"+
          "\t<td class=\"#{jscript_td}\">"+
-            "#{suite_hash['Test JavaScript Error Count']}</td>\n"+
+            "#{suite_data['Test JavaScript Error Count']}</td>\n"+
          "\t<td class=\"#{asserts_td}\">"+
-            "#{suite_hash['Test Assert Failures']}</td>\n"+
+            "#{suite_data['Test Assert Failures']}</td>\n"+
          "\t<td class=\"#{other_td}\">"+
-            "#{suite_hash['Test Failure Count']}</td>\n"+
+            "#{suite_data['Test Failure Count']}</td>\n"+
          "\t<td class=\"#{total_failures_td}\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
-            "#{suite_hash['Test CSS Error Count']}</td>\n"+
+            "#{suite_data['Test CSS Error Count']}</td>\n"+
          "\t<td class=\"td_sodawarnings_data\">"+
-            "#{suite_hash['Test Warning Count']}</td>\n"+
+            "#{suite_data['Test Warning Count']}</td>\n"+
          "\t<td class=\"td_time_data\">"+
             "#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
       fd.write(str)
-   }
-
-   test_totals = suite_totals['Test Count'] 
-   test_totals += suite_totals['Test Skip Count']
-   test_totals += suite_totals['Test Blocked Count']
+   end # end suites_totals loop #
 
    hours,minutes,seconds,frac = 
-      Date.day_fraction_to_time(suite_totals['Total Time'])
+      Date.day_fraction_to_time(summary_totals['Total Time'])
+
    if (hours < 10)
       hours = "0#{hours}"
    end
@@ -1027,34 +1028,44 @@ HTML
       seconds = "0#{seconds}"
    end
 
+   test_totals = summary_totals['Total Test Count'] 
+   test_totals += summary_totals['Test Skip Count']
+   test_totals += summary_totals['Test Blocked Count']
+
+   total_failures = 0
+   total_failures += summary_totals['Test Failure Count']
+   total_failures += summary_totals['Test Exceptions']
+   total_failures += summary_totals['Test Assert Failures']
+   total_failures += summary_totals['Test JavaScript Error Count']
+
    sub_totals = "<tr id=\"totals\">\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
-      "\t<td class=\"td_footer_run\">#{suite_totals['Test Count']}"+
+      "\t<td class=\"td_footer_run\">#{summary_totals['Total Test Count']}"+
          "/#{test_totals}</td>\n"+
-      "\t<td class=\"td_footer_passed\">#{suite_totals['Test Passed Count']}"+
+      "\t<td class=\"td_footer_passed\">#{summary_totals['Test Pass Count']}"+
          "</td>\n"+
       "\t<td class=\"td_footer_failed\">"+
-         "#{suite_totals['Tests Failed']}</td>\n"+ 
+         "#{summary_totals['Test Failed Count']}</td>\n"+ 
       "\t<td class=\"td_footer_blocked\">"+
-         "#{suite_totals['Test Blocked Count']}</td>\n"+ 
+         "#{summary_totals['Test Blocked Count']}</td>\n"+ 
       "\t<td class=\"td_footer_skipped\">"+
-         "#{suite_totals['Test Skip Count']}</td>\n"+ 
+         "#{summary_totals['Test Skip Count']}</td>\n"+ 
       "\t<td class=\"td_footer_watchdog\">"+
-         "#{suite_totals['Test WatchDog Count']}</td>\n"+   
+         "#{summary_totals['Test WatchDog Count']}</td>\n"+   
       "\t<td class=\"td_footer_exceptions\">"+
-         "#{suite_totals['Test Exceptions']}</td>\n"+
+         "#{summary_totals['Test Exceptions']}</td>\n"+
       "\t<td class=\"td_footer_javascript\">"+
-         "#{suite_totals['Test JavaScript Error Count']}</td>\n"+
+         "#{summary_totals['Test JavaScript Error Count']}</td>\n"+
       "\t<td class=\"td_footer_assert\">"+
-         "#{suite_totals['Test Assert Failures']}</td>\n"+
+         "#{summary_totals['Test Assert Failures']}</td>\n"+
       "\t<td class=\"td_footer_other\">"+
-         "#{suite_totals['Test Failure Count']}</td>\n"+
+         "#{summary_totals['Test Failure Count']}</td>\n"+
       "\t<td class=\"td_footer_total\">"+
-         "#{total_failure_count}</td>\n"+
+         "#{total_failures}</td>\n"+
       "\t<td class=\"td_footer_css\">"+
-         "#{suite_totals['Test CSS Error Count']}</td>\n"+
+         "#{summary_totals['Test CSS Error Count']}</td>\n"+
       "\t<td class=\"td_footer_sodawarnings\">"+
-         "#{suite_totals['Test Warning Count']}</td>\n"+
+         "#{summary_totals['Test Warning Count']}</td>\n"+
       "\t<td class=\"td_footer_times\">"+
          "#{hours}:#{minutes}:#{seconds}</td>\n"+
       "</tr>\n"
@@ -1062,10 +1073,12 @@ HTML
    fd.write("</table>\n</body>\n</html>\n")
    fd.close()
 
-   return 0
+   print "(*)Processing finished.\n"
 
+   return 0
 end
-   private :GenHtmlReport
+   private :GenHtmlReport2
+
 
 def GenSuiteMiniSummary(suite_hash, reportdir)
    suite_file = suite_hash['suitefile']
