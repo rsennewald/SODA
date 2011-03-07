@@ -2877,9 +2877,10 @@ JSCode
 
       tests.each do |test|
          if ((@restart_count > 0) && (test_since_restart >= @restart_count))
+            SodaUtils.PrintSoda("Restarting browser...\n")
             RestartBrowserTest(suite_name)
             test_since_restart = 0
-            print "(*)Restarted browser.\n"
+            SodaUtils.PrintSoda("(*)Browser restart finished.\n")
          end
 
          test_order += 1
