@@ -31,7 +31,7 @@ module Soda
 # Module Global Info:
 ###############################################################################
 SODA_VERSION = 1.1
-SODA_WATIR_VERSION = "1.7.1"
+SODA_WATIR_VERSION = "1.8.0"
 
 ###############################################################################
 # Needed Ruby libs:
@@ -39,8 +39,8 @@ SODA_WATIR_VERSION = "1.7.1"
 require 'rubygems'
 require 'rbconfig'
 require 'pathname'
-gem 'commonwatir', '= 1.7.1'
-gem 'firewatir', '= 1.7.1'
+gem 'commonwatir', '= 1.8.0'
+gem 'firewatir', '= 1.8.0'
 require "watir"
 require 'SodaUtils'
 require "SodaReporter"
@@ -2110,10 +2110,11 @@ JSCode
 # eventFieldAction -- Method
 #  
 #
-#
+# returns true of jsevent was fired.
 ############################################################################### 
    def eventFieldAction(event, fieldType)
       js = nil
+      js_fired = false
       result = nil
       foundaction = nil
       foundvalue = nil
@@ -2133,7 +2134,9 @@ JSCode
          'exists',
          'link',
          'append',
-         'disabled']
+         'disabled',
+         'jscriptevent'
+         ]
    
       if (@SIGNAL_STOP != false)
          exit(-1)
@@ -2167,6 +2170,9 @@ JSCode
       end
 
       case (foundaction)
+         when "jscriptevent"
+            fieldType.jsevent(@curEl, js, true)
+            js_fired = true
          when "append"
             result = fieldType.append(@curEl, replaceVars(event['append']))
             if (result != 0)
@@ -2285,6 +2291,8 @@ JSCode
             e_dump = SodaUtils.DumpEvent(event)
             @rep.log("Event Dump: #{e_dump}\n", SodaUtils::EVENT)
       end
+
+      return js_fired
    end
 
 ############################################################################### 
@@ -2417,6 +2425,7 @@ JSCode
       result = 0
       jswait = true
       result = 0
+      js_fired = false
       exception_event = nil 
 
       for next_event in events
@@ -2603,8 +2612,14 @@ JSCode
                next
             end
 
+            # If we have a field here is the default actions 
+            # that can be done on it 
+            if (@curEl)
+               js_fired = eventFieldAction(event, fieldType)
+            end
+
             jswait = true
-            if (event.key?("jscriptevent") && 
+            if (event.key?("jscriptevent") && (js_fired != true) && 
                (replaceVars(event['jscriptevent']) == "onkeyup"))
                if (event.key?('jswait'))
                   jswait = false if (event['jswait'] =~ /false/i)
@@ -2612,18 +2627,12 @@ JSCode
 
                js = replaceVars(event['jscriptevent'])
                fieldType.jsevent(@curEl, js, jswait)
-            elsif (event.key?("jscriptevent"))
+            elsif (event.key?("jscriptevent") && (js_fired != true))
                if (event.key?('jswait'))
                   jswait = false if (event['jswait'] =~ /false/i)
                end
                js = replaceVars(event['jscriptevent'])
                fieldType.jsevent(@curEl, js, jswait)
-            end
-
-            # If we have a field here is the default actions 
-            # that can be done on it 
-            if (@curEl)
-               eventFieldAction(event, fieldType)
             end
 
             if (browser_closed != true && jswait != false)

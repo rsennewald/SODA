@@ -348,6 +348,7 @@ def GetFileSetFiles(dir)
 
    files = File.join("#{dir}", "*.xml")
    test_files = Dir.glob(files)
+   test_files = test_files.sort()
 
    return test_files
 end
