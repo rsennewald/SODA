@@ -104,7 +104,7 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
-      @restart_test = ""
+      @restart_test = nil
       @restart_count = 0
       @non_lib_test_count = 0
       @last_test = ""
@@ -776,11 +776,6 @@ class Soda
          valid_xml = false
       end
 
-      if (valid_xml && !@restart_test_running && file != @last_file &&
-            @non_lib_test_count >= @restart_count)
-         RestartBrowserTest()
-      end
-
       if (valid_xml)
          $run_script = file
          PrintDebug("Parsing Soda test file: \"#{file}\".\n")
@@ -800,15 +795,6 @@ class Soda
          end
       end
 
-      dir = File.dirname(file)
-      if (dir !~ /lib/)
-         if(!is_restart && !@restart_test_running && file != @last_test)
-            @non_lib_test_count += 1
-            @rep.IncTestCount()
-            PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
-         end
-      end
-
       return script
    end
               
@@ -823,45 +809,37 @@ class Soda
 #     None.
 #
 ###############################################################################
-   def RestartBrowserTest()
-      return 0 if (@restart_count < 1)
-
-      if (@non_lib_test_count >= @restart_count)
-         @rep.log("Restarting browser.\n")
-        
-         begin 
-            @browser.close()
-            sleep(1)
-         rescue Exception => e
-         end
-
-         RestartGlobalTime()
-
-         if (@params['browser'] =~ /firefox/i)
-            SodaFireFox.KillProcesses()
-         end
-
-         err = NewBrowser()
-         if (err != 0)
-            @rep.ReportFailure("Failed to restart browser!\n")
-         end
-         @rep.log("Finished: Browser restart.\n")
-         @non_lib_test_count = 0
-
-         if (!@restart_test.empty?)
-            parent_test = @currentTestFile
-            restart_data = getScript(@restart_test, true)
-            if (restart_data != nil)
-               @currentTestFile = @restart_test
-               @restart_test_running = true
-               @rep.log("Executing restart test: '#{@restart_test}'\n")
-               handleEvents(restart_data)
-               @restart_test_running = false
-               @currentTestFile = parent_test
-               @rep.log("Finished restart test: '#{@restart_test}'\n")
-            end 
-         end
+   def RestartBrowserTest(suitename)
+     
+      begin 
+         @browser.close()
+         sleep(1)
+      rescue Exception => e
       end
+
+      RestartGlobalTime()
+
+      @rep = SodaReporter.new(@restart_test, @saveHtml, @resultsDir, 
+         0, nil, false);
+      @rep.log("Restarting browser.\n")
+      
+      if (@params['browser'] =~ /firefox/i)
+         SodaFireFox.KillProcesses()
+      end
+      
+      err = NewBrowser()
+      if (err != 0)
+         @rep.ReportFailure("Failed to restart browser!\n")
+      end
+
+      if (!@restart_test.empty?)
+         restart_script = getScript(@restart_test)
+         handleEvents(restart_script)
+      end
+
+      RestartGlobalTime()     
+      @rep.log("Finished: Browser restart.\n")
+      @rep.EndTestReport()
    end
 
 ###############################################################################
@@ -911,22 +889,11 @@ class Soda
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
-            if (file !~ /lib/i)
-               if (@non_lib_test_count >= @restart_count && file != @last_test)
-                  RestartBrowserTest()
-               end
-
-               @rep.IncTestCount()
-               @non_lib_test_count += 1
-               @last_test = file
-            end
-
             script = getScript(file)
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
                results = handleEvents(script)
-               PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
                   @rep.IncFailedTest()
@@ -2876,6 +2843,7 @@ JSCode
       parser = nil
       doc = nil
       test_order = 0
+      test_since_restart = 0
       result = {}
       tests = []
       suite_name = File.basename(suitefile, ".xml")
@@ -2908,7 +2876,12 @@ JSCode
       end   
 
       tests.each do |test|
-#         next if (remBlockScript(test))
+         if ((@restart_count > 0) && (test_since_restart >= @restart_count))
+            RestartBrowserTest(suite_name)
+            test_since_restart = 0
+            print "(*)Restarted browser.\n"
+         end
+
          test_order += 1
          tmp_result = {}
          tmp_result['result'] = run(test, false, true, suite_name)
@@ -2939,6 +2912,11 @@ JSCode
 
          result[ran_test_name] = tmp_result
          @rep.ZeroTestResults()
+
+         test_dir = File.dirname(test)
+         if (test_dir !~ /lib/i)
+            test_since_restart += 1
+         end
       end
 
       return result
