@@ -29,8 +29,8 @@
 # Needed ruby libs:
 ###############################################################################
 require 'rubygems'
-gem 'commonwatir', '= 1.8.0'
-gem 'firewatir', '= 1.8.0'
+gem 'commonwatir', '= 1.7.1'
+gem 'firewatir', '= 1.7.1'
 require 'watir'
 require 'SodaUtils'
 
