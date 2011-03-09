@@ -111,6 +111,7 @@ class Soda
       @SugarWait = false
       @restart_test_running = false
       @FAILEDTESTS = []
+      @GotWatchDog = false
       @vars = Hash.new
       blocked_file_list = "tests/modules/blockScriptList.xml"
       whitelist_file = "tests/modules/whitelist.xml"
@@ -810,11 +811,14 @@ class Soda
 #
 ###############################################################################
    def RestartBrowserTest(suitename)
-     
-      begin 
-         @browser.close()
-         sleep(1)
-      rescue Exception => e
+
+      if (!@GotWatchDog)   
+         begin 
+            @browser.close()
+            sleep(1)
+         rescue Exception => e
+         end
+         @GotWatchDog = false
       end
 
       RestartGlobalTime()
@@ -2729,6 +2733,7 @@ JSCode
 
                if (time_diff >= thread_timeout)
                   msg = "Soda watchdog timed out after #{time_diff} seconds!\n"
+                  @GotWatchDog = true
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
