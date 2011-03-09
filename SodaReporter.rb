@@ -49,30 +49,30 @@ class SodaReporter
       :assertFails_count, :exception_count, :test_skip_count, 
       :test_blocked_count, :test_watchdog_count
 
-	def initialize(testfile, savehtml = false, resultsdir = nil, debug = 0,
+   def initialize(testfile, savehtml = false, resultsdir = nil, debug = 0,
          callback = nil, rerun = false)
-		@sodatest_file = testfile
+      @sodatest_file = testfile
       @saveHtmlFiles = savehtml
       @debug = debug
       @start_time = nil
       @end_time = nil
       @js_error_count = 0
       @css_error_count = 0
-		@asserts_count = 0
-		@assertFails_count = 0
-		@exception_count = 0	
+      @asserts_count = 0
+      @assertFails_count = 0
+      @exception_count = 0 
       @test_count = 0
       @test_skip_count = 0
-		@test_blocked_count = 0
-		@test_failed_count = 0
-		@test_passed_count = 0
-		@test_watchdog_count = 0
-		@test_warning_count = 0
-		@test_total_count = 0
-		@fatals = 0
-		@total = 0
+      @test_blocked_count = 0
+      @test_failed_count = 0
+      @test_passed_count = 0
+      @test_watchdog_count = 0
+      @test_warning_count = 0
+      @test_total_count = 0
+      @fatals = 0
+      @total = 0
       @failureCount = 0
-		@savedPages = 0
+      @savedPages = 0
       @ResultsDir = "#{Dir.pwd}"
       @path = nil
       @htmllog_filename = nil
@@ -91,7 +91,7 @@ class SodaReporter
 
       SodaUtils.PrintSoda("Debugging: => #{debug}\n")
       SodaUtils.PrintSoda("Soda Test File: => #{@sodatest_file}\n")
-		base_testfile_name = File.basename(@sodatest_file, '.xml')
+      base_testfile_name = File.basename(@sodatest_file, '.xml')
 
       if (rerun)
          base_testfile_name << "-SodaRerun"
@@ -114,22 +114,22 @@ class SodaReporter
       end
 
       if (@path =~ /sugarinit/i)
-		   @log_filename = "#{@path}-#{hostname}.tmp"
+         @log_filename = "#{@path}-#{hostname}.tmp"
          @htmllog_filename = "#{@ResultsDir}/Report-#{base_testfile_name}"+
             "-#{hostname}.html"
       else
          @htmllog_filename = "#{@ResultsDir}/Report-#{base_testfile_name}.html"
-		   @log_filename = "#{@path}.tmp"
+         @log_filename = "#{@path}.tmp"
       end
 
-		@logfile = File.new(@log_filename, 'w+')
+      @logfile = File.new(@log_filename, 'w+')
       @logfile.sync = true # force buffers to write to disk asap! #
       SodaUtils.PrintSoda("Created log file: => #{@log_filename}\n")
       log("[New Test]\n")
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
       @start_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
-	end
+   end
 
 ###############################################################################
 # GetRawResults -- Method
@@ -203,18 +203,18 @@ class SodaReporter
 
 ###############################################################################
 # GetResultDir -- Method
-#		This method returns the current result dir.
+#     This method returns the current result dir.
 #
 # Input:
-#		None.
+#     None.
 #
 # Output:
-#		returns the current result directory.
+#     returns the current result directory.
 #
 ###############################################################################
-	def GetResultDir()
-		return @ResultsDir
-	end
+   def GetResultDir()
+      return @ResultsDir
+   end
 
 ###############################################################################
 # IncSkippedTest -- Method
@@ -424,7 +424,7 @@ class SodaReporter
 #     always returns 0.
 #
 ###############################################################################
-	def SavePage(reason = "")
+   def SavePage(reason = "")
       if (@saveHtmlFiles != true)
          return 0
       end
@@ -439,7 +439,7 @@ class SodaReporter
       log("HTML Saved: #{save_file_name}\n")
 
       return 0
-	end
+   end
 
 ###############################################################################
 # AddEventCount -- Method
@@ -452,9 +452,9 @@ class SodaReporter
 #     None.
 #
 ###############################################################################
-	def AddEventCount
+   def AddEventCount
       @total += 1
-	end
+   end
 
 ###############################################################################
 # EndTestReport -- Method
@@ -478,7 +478,7 @@ class SodaReporter
       tmp_logfile += File.basename("#{@log_filename}", ".tmp")
       tmp_logfile += ".log"
 #      File.rename(@log_filename, tmp_logfile) # put back after hack!!!
-		NFSRenameHack(@log_filename, tmp_logfile)
+      NFSRenameHack(@log_filename, tmp_logfile)
 
       @log_filename = tmp_logfile
       @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
@@ -487,48 +487,36 @@ class SodaReporter
 ###############################################################################
 # NFSRenameHack -- hack!!!
 #
-#	This is a total hack because of the very lame ass way hudson was setup
-#	to run soda tests using an nfs mount as a writing point for test
-#	results!!!  This hack will be taken out as soon as hudson is updated.
+#  This is a total hack because of the very lame ass way hudson was setup
+#  to run soda tests using an nfs mount as a writing point for test
+#  results!!!  This hack will be taken out as soon as hudson is updated.
 #
 ###############################################################################
-	def NFSRenameHack(old_file, new_file)
-		err = false
-		count = 0
+   def NFSRenameHack(old_file, new_file)
+      err = false
+      count = 0
 
-		while (err != true)
-			err = @logfile.closed?()
-			count += 1
-			sleep(1)
-			break if (count > 20)
-		end
+      while (err != true)
+         err = @logfile.closed?()
+         count += 1
+         sleep(1)
+         break if (count > 20)
+      end
 
-		tmp_log = File.open(old_file, "r")
-		new_log = File.new(new_file, "w+")
-		line = nil
-		while (line = tmp_log.gets)
-			new_log.write(line)
-		end
-		tmp_log.close()
-		new_log.close()
+      tmp_log = File.open(old_file, "r")
+      new_log = File.new(new_file, "w+")
+      line = nil
+      while (line = tmp_log.gets)
+         new_log.write(line)
+      end
+      tmp_log.close()
+      new_log.close()
 
-		sleep(1)
-		
-		is_deleted = false
-		for i in 0..30
-			begin
-				File.unlink(old_file)
-				is_deleted = true
-			rescue Exception => e
-				print "(!)Failed calling delete on file: '#{old_file}'!\n"
-				is_deleted = false
-			ensure
-			end
-
-			break if (is_deleted)
-			sleep(1)
-		end
-	end
+      sleep(1)
+      # using this because on Windows File.unlink doesn't want to remove the
+      # file.
+      FlieUtils.remove_file(old_file, true)
+   end
 
 ###############################################################################
 # log -- Method
@@ -547,7 +535,7 @@ class SodaReporter
    def log(msg, error = 0)
       SodaUtils.PrintSoda(msg, error, @logfile, @debug)
       SodaUtils.PrintSoda(msg, error, nil, @debug, 1, @print_callback)
-	end
+   end
 
 ###############################################################################
 # ReportException -- Method
@@ -570,7 +558,7 @@ class SodaReporter
    def ReportException(sodaException, file = false)
       msg = nil
       @exception_count += 1
-	
+   
       if (sodaException.message.empty?)
          msg = "No exception message found!"
       else
@@ -583,12 +571,12 @@ class SodaReporter
          log("Exception raised: #{msg}\n", SodaUtils::ERROR)
       end
 
-		bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
-			"\n"
-		btm = "--Exception Message: #{msg}\n"
-		log("Exception raised for file: #{file}" + btm + bt, 
-			SodaUtils::ERROR)
-	end
+      bt = "--Exception Backtrace: " + sodaException.backtrace.join("--") +
+         "\n"
+      btm = "--Exception Message: #{msg}\n"
+      log("Exception raised for file: #{file}" + btm + bt, 
+         SodaUtils::ERROR)
+   end
 
 ###############################################################################
 # Assert -- Method 
@@ -605,7 +593,7 @@ class SodaReporter
 ###############################################################################
    def Assert(exp, msg = "", file = "", line_number = "")
       result = 0
-		@asserts_count += 1
+      @asserts_count += 1
       url = nil
 
       url = "#{$curSoda.browser.url}"
@@ -625,27 +613,27 @@ class SodaReporter
          line_number = "Unknown line number"
       end
 
-		if (!exp)
+      if (!exp)
          ass_msg = "Assertion: Failed!:--#{url}--#{file}" +
          "--Assertion Message: #{msg}--Line: #{line_number}"
          ass_msg = ass_msg.sub(/\n/,"")
          ass_msg << "\n"
 
          log(ass_msg, 1)
-			SavePage(msg)
-			@assertFails_count += 1
+         SavePage(msg)
+         @assertFails_count += 1
          result = -1
-		else
+      else
          if (msg.empty?)
-   			log("Assertion: Passed.\n")
+            log("Assertion: Passed.\n")
          else
-   			log("Assertion: Passed: #{msg}.\n")
+            log("Assertion: Passed: #{msg}.\n")
          end
          result = 0
-		end
+      end
 
       return result
-	end
+   end
 
 ###############################################################################
 # AssertNot -- Method
@@ -658,8 +646,8 @@ class SodaReporter
 #
 ###############################################################################
    def AssertNot(exp, msg = "", file = "")
-		Assert(!exp, msg, file)
-	end
+      Assert(!exp, msg, file)
+   end
 
 ###############################################################################
 # SodaPrintCurrentReport -- Method
@@ -683,6 +671,6 @@ class SodaReporter
          "--Test Assert Count:#{@asserts_count}" +
          "--Test Exceptions:#{@exception_count}\n"
       log(msg)
-	end
+   end
 end
 
