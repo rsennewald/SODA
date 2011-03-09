@@ -512,10 +512,14 @@ class SodaReporter
       tmp_log.close()
       new_log.close()
 
-      sleep(1)
       # using this because on Windows File.unlink doesn't want to remove the
-      # file.
-      FlieUtils.remove_file(old_file, true)
+      # file.  There might be a file descripter hanging around but I can't
+      # find it and it is working fine one linux.  This shoudl be looked into
+      # at a later time...
+      begin
+         File.unlink(old_file)
+      rescue Exception => e
+      end
    end
 
 ###############################################################################
