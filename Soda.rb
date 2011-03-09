@@ -2691,6 +2691,8 @@ JSCode
       master_result = 0
       thread_soda = nil
       thread_timeout = (60 * 10) # 10 minutes #
+      print "THREAD TIMEOUT DEBUG!!!\n"
+      thread_timeout = 15
       time_check = nil
       resultsdir = nil
       blocked = false
@@ -2907,10 +2909,12 @@ JSCode
          tmp_result['Real_Test_Name'] = test
          test_basename = File.basename(test, ".xml")
          logfile = tmp_result['Test Log File']
+         print "logfile: #{logfile}\n"
+         print "test_basename: #{test_basename}\n"
+
          if (logfile =~ /#{test_basename}-\d+/)
-            test =~ /(.*\/)#{test_basename}/
-            ran_test_name = $1
-            ran_test_name << File.basename(logfile, ".log")
+            logfile =~ /#{test_basename}(-\d+)/
+            ran_test_name = "#{test_basename}#{$1}"
             ran_test_name << ".xml"
          else
             ran_test_name = test
