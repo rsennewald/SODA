@@ -823,27 +823,26 @@ class Soda
 
       RestartGlobalTime()
 
-      @rep = SodaReporter.new(@restart_test, @saveHtml, @resultsDir, 
-         0, nil, false);
-      @rep.log("Restarting browser.\n")
-      
       if (@params['browser'] =~ /firefox/i)
          SodaFireFox.KillProcesses()
       end
       
       err = NewBrowser()
       if (err != 0)
-         @rep.ReportFailure("Failed to restart browser!\n")
+         print "(!)Failed to restart browser!\n"
       end
 
       if (!@restart_test.empty?)
+         @rep = SodaReporter.new(@restart_test, @saveHtml, @resultsDir, 
+            0, nil, false);
+         @rep.log("Restarting browser.\n")
          restart_script = getScript(@restart_test)
          handleEvents(restart_script)
+         @rep.log("Finished: Browser restart.\n")
+         @rep.EndTestReport()
       end
 
-      RestartGlobalTime()     
-      @rep.log("Finished: Browser restart.\n")
-      @rep.EndTestReport()
+      RestartGlobalTime()
    end
 
 ###############################################################################
@@ -2690,9 +2689,7 @@ JSCode
       result = 0
       master_result = 0
       thread_soda = nil
-      thread_timeout = (60 * 10) # 10 minutes #
-      print "THREAD TIMEOUT DEBUG!!!\n"
-      thread_timeout = 15
+      thread_timeout = (60 * 6) # 6 minutes #
       time_check = nil
       resultsdir = nil
       blocked = false
@@ -2909,8 +2906,6 @@ JSCode
          tmp_result['Real_Test_Name'] = test
          test_basename = File.basename(test, ".xml")
          logfile = tmp_result['Test Log File']
-         print "logfile: #{logfile}\n"
-         print "test_basename: #{test_basename}\n"
 
          if (logfile =~ /#{test_basename}-\d+/)
             logfile =~ /#{test_basename}(-\d+)/

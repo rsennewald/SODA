@@ -106,7 +106,7 @@ class SodaReporter
       FileUtils.mkdir_p(@ResultsDir)
       @path = "#{@ResultsDir}/#{base_testfile_name}"
       
-      if (File.exist?("#{@path}.tmp") || File.exist?("#{@path}.log") )
+      if (File.exist?("#{@path}.log"))
          t = Time.now()
          t = t.strftime("%Y%m%d%H%M%S")
          base_testfile_name << "-#{t}"
@@ -114,12 +114,12 @@ class SodaReporter
       end
 
       if (@path =~ /sugarinit/i)
-         @log_filename = "#{@path}-#{hostname}.tmp"
+         @log_filename = "#{@path}-#{hostname}.log"
          @htmllog_filename = "#{@ResultsDir}/Report-#{base_testfile_name}"+
             "-#{hostname}.html"
       else
          @htmllog_filename = "#{@ResultsDir}/Report-#{base_testfile_name}.html"
-         @log_filename = "#{@path}.tmp"
+         @log_filename = "#{@path}.log"
       end
 
       @logfile = File.new(@log_filename, 'w+')
@@ -472,15 +472,6 @@ class SodaReporter
       log("Soda test: #{@sodatest_file} finished.\n")
       log("[End Test]\n")
       @logfile.close()
-
-      tmp_logfile = File.dirname(@log_filename)
-      tmp_logfile += "/" 
-      tmp_logfile += File.basename("#{@log_filename}", ".tmp")
-      tmp_logfile += ".log"
-#      File.rename(@log_filename, tmp_logfile) # put back after hack!!!
-      NFSRenameHack(@log_filename, tmp_logfile)
-
-      @log_filename = tmp_logfile
       @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
    end
 
