@@ -833,7 +833,8 @@ class Soda
       end
 
       if (!@restart_test.empty?)
-         @rep = SodaReporter.new(@restart_test, @saveHtml, @resultsDir, 
+         resultdir = "#{@resultsDir}/#{suitename}"
+         @rep = SodaReporter.new(@restart_test, @saveHtml, resultdir,
             0, nil, false);
          @rep.log("Restarting browser.\n")
          restart_script = getScript(@restart_test)
@@ -870,7 +871,6 @@ class Soda
          fd = Dir.open(file)
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
-#           @rep.IncTestTotalCount() if (f !~ /lib/i)
          end
          fd.close()
 
