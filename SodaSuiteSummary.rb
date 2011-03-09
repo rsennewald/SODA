@@ -810,20 +810,22 @@ def SumSuiteTests(tests, suitename)
       if (dir_name =~ /lib/i) 
          lib_file_count += 1
          # skip libs david doesn't want them.
-         next
+         #next
+      else
+         report['Test Ran Count'] += 1
       end
 
       summary_int_fields.each do |total_field|
          report[total_field] += test[total_field].to_i()   
       end
       
-      report['Test Ran Count'] += 1
-
-      # count tests that pass and fail. #
-      if (test['result'].to_i != 0)
-         report['Test Failed Count'] += 1
-      else
-         report['Test Pass Count'] += 1
+      if (dir_name !~ /lib/i)
+         # count tests that pass and fail. #
+         if (test['result'].to_i != 0)
+            report['Test Failed Count'] += 1
+         else
+            report['Test Pass Count'] += 1
+         end
       end
 
       # add up times #
@@ -850,7 +852,7 @@ def SumSuiteTests(tests, suitename)
       report['Total Test Count'] -= lib_file_count
    end 
 
-   print "\b\b\b: Done.\n"
+   print ": Done.\n"
 
    return report
 end
@@ -1013,8 +1015,14 @@ def GenHtmlReport2(data, reportfile, create_links = false)
       fd.write(str)
    end # end suites_totals loop #
 
-   hours,minutes,seconds,frac = 
-      Date.day_fraction_to_time(summary_totals['Total Time'])
+   if (summary_totals['Total Time'] != nil)
+      hours,minutes,seconds,frac = 
+         Date.day_fraction_to_time(summary_totals['Total Time'])
+   else
+      hours = 0
+      minutes = 0
+      seconds = 0
+   end
 
    if (hours < 10)
       hours = "0#{hours}"
