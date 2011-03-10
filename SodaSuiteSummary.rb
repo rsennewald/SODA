@@ -52,7 +52,7 @@ body {
 
 .td_header_master {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -64,7 +64,7 @@ body {
 
 .td_header_sub {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -76,7 +76,7 @@ body {
 
 .td_header_skipped {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -88,7 +88,7 @@ body {
 
 .td_header_watchdog {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -145,7 +145,7 @@ table {
    text-align: center;
    font-family: Arial;
    font-weight: bold;
-   color: #00FF00;
+   color: #00cc00;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 0px solid black;
@@ -181,7 +181,7 @@ table {
    text-align: center;
    font-family: Arial;
    font-weight: bold;
-   color: #D9D9D9;
+   color: #FF8200;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 2px solid black;
@@ -318,7 +318,7 @@ table {
    white-space: nowrap;
    text-align: center;
    font-family: Arial;
-   font-weight: normal;
+   font-weight: bold;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 2px solid black;
@@ -372,7 +372,7 @@ table {
 
 .td_footer_run {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -386,12 +386,12 @@ table {
 
 .td_footer_passed {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
    font-size: 12px;
-   color: #00FF00;
+   color: #00cc00;
    border-top: 2px solid black;
    border-left: 0px solid black;
    border-right: 0px solid black;
@@ -400,7 +400,7 @@ table {
 
 .td_footer_failed {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -414,7 +414,7 @@ table {
 
 .td_footer_blocked {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -428,12 +428,12 @@ table {
 
 .td_footer_skipped {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
    font-size: 12px;
-   color: #D9D9D9;
+   color: #FF8200;
    border-top: 2px solid black;
    border-left: 0px solid black;
    border-right: 2px solid black;
@@ -442,7 +442,7 @@ table {
 
 .td_footer_watchdog {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -456,7 +456,7 @@ table {
 
 .td_footer_exceptions {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -470,7 +470,7 @@ table {
 
 .td_footer_javascript {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -484,7 +484,7 @@ table {
 
 .td_footer_assert {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -498,7 +498,7 @@ table {
 
 .td_footer_other {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -512,7 +512,7 @@ table {
 
 .td_footer_total {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -526,7 +526,7 @@ table {
 
 .td_footer_css {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -540,7 +540,7 @@ table {
 
 .td_footer_sodawarnings {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -554,7 +554,7 @@ table {
 
 .td_footer_times {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
@@ -571,7 +571,7 @@ table {
 <tr>
    <td class="td_header_master" rowspan="2">Suite</br>
    (click link for full report)</td>
-   <td class="td_header_master" colspan="5">Tests</td>
+   <td class="td_header_master" colspan="4">Tests</td>
    <td class="td_header_master" colspan="6">Failures</td>
    <td class="td_header_master" colspan="2">Warnings</td>
    <td class="td_header_master" rowspan="2">Run Time</br>(hh:mm:ss)</td>
@@ -580,8 +580,7 @@ table {
    <td class="td_header_sub">Run</td>
    <td class="td_header_sub">Passed</td>
    <td class="td_header_sub">Failed</td>
-   <td class="td_header_sub">Blocked</td>
-   <td class="td_header_skipped">Skipped</td>
+   <td class="td_header_skipped">Blocked</td>
    <td class="td_header_watchdog">Watchdogs</td>
    <td class="td_header_sub">Exceptions</td>
    <td class="td_header_sub">JavaScript</br>Errors</td>
@@ -933,12 +932,6 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          seconds = 0
       end
 
-      test_run_class = "td_run_data"
-      if (suite_data['Test Assert Failures'] > 0 ||
-          suite_data['Test Exceptions'] > 0)
-         test_run_class = "td_run_data_error"
-      end
-
       exceptions_td = "td_exceptions_data"
       if (suite_data['Test Exceptions'] > 0)
          exceptions_td = "td_exceptions_error_data"
@@ -975,6 +968,11 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          total_failures_td = "td_total_error_data"
       end
 
+      test_run_class = "td_run_data"
+      if (suite_data['Test Ran Count'] != suite_data['Total Test Count'])
+         test_run_class = "td_run_data_error"
+      end
+
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
 
@@ -990,10 +988,8 @@ def GenHtmlReport2(data, reportfile, create_links = false)
             "#{suite_data['Test Pass Count']}</td>\n"+
          "\t<td class=\"td_failed_data\">"+
             "#{suite_data['Test Failed Count']}</td>\n"+
-         "\t<td class=\"td_blocked_data\">"+
-            "#{suite_data['Test Blocked Count']}</td>\n"+
          "\t<td class=\"td_skipped_data\">"+
-            "#{suite_data['Test Skip Count']}</td>\n"+
+            "#{suite_data['Test Blocked Count']}</td>\n"+
          "\t<td class=\"#{watchdog_td}\">"+
             "#{suite_data['Test WatchDog Count']}</td>\n"+
          "\t<td class=\"#{exceptions_td}\">"+
@@ -1053,10 +1049,8 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          "</td>\n"+
       "\t<td class=\"td_footer_failed\">"+
          "#{summary_totals['Test Failed Count']}</td>\n"+ 
-      "\t<td class=\"td_footer_blocked\">"+
-         "#{summary_totals['Test Blocked Count']}</td>\n"+ 
       "\t<td class=\"td_footer_skipped\">"+
-         "#{summary_totals['Test Skip Count']}</td>\n"+ 
+         "#{summary_totals['Test Blocked Count']}</td>\n"+ 
       "\t<td class=\"td_footer_watchdog\">"+
          "#{summary_totals['Test WatchDog Count']}</td>\n"+   
       "\t<td class=\"td_footer_exceptions\">"+
@@ -1130,7 +1124,7 @@ table {
    text-align: center;
    font-family: Arial;
    font-weight: bold;
-   color: #00FF00;
+   color: #00cc00;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 0px solid black;
