@@ -1094,7 +1094,7 @@ table {
 }
 .td_header_master {
    white-space: nowrap;
-   background: #99CCFF;
+   background: #b6dde8;
    text-align: center;
    font-family: Arial;
    font-weight: bold;
