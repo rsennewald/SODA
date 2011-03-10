@@ -41,15 +41,12 @@ $HTML_HEADER = <<HTML
 body {
    background: #e5eef3;
 }
-
 .highlight {
    background-color: #8888FF;
 }
-
 .unhighlight {
    background: #e5eef3;
 }
-
 .td_header_master {
    white-space: nowrap;
    background: #b6dde8;
@@ -61,7 +58,6 @@ body {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_header_sub {
    white-space: nowrap;
    background: #b6dde8;
@@ -73,7 +69,6 @@ body {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_header_skipped {
    white-space: nowrap;
    background: #b6dde8;
@@ -85,7 +80,6 @@ body {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_header_watchdog {
    white-space: nowrap;
    background: #b6dde8;
@@ -97,7 +91,6 @@ body {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 table {
    width: 100%;
    border: 2px solid black;
@@ -105,7 +98,6 @@ table {
    padding: 0px;
    background: #FFFFFF;
 }
-
 .td_file_data {
    white-space: nowrap;
    text-align: left;
@@ -116,7 +108,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_run_data {
    white-space: nowrap;
    text-align: center;
@@ -127,7 +118,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_run_data_error {
    white-space: nowrap;
    text-align: center;
@@ -139,7 +129,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_passed_data {
    white-space: nowrap;
    text-align: center;
@@ -151,7 +140,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_failed_data {
    white-space: nowrap;
    text-align: center;
@@ -163,8 +151,18 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
-.td_blocked_data {
+.td_failed_data_zero {
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   color: #000000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 0px solid black;
+}
+._data {
    white-space: nowrap;
    text-align: center;
    font-family: Arial;
@@ -175,8 +173,7 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
-.td_skipped_data {
+.td_blocked_data {
    white-space: nowrap;
    text-align: center;
    font-family: Arial;
@@ -187,7 +184,17 @@ table {
    border-right: 2px solid black;
    border-bottom: 0px solid black;
 }
-
+.td_blocked_data_zero {
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   color: #000000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
+}
 .td_watchdog_data {
    white-space: nowrap;
    text-align: center;
@@ -198,7 +205,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_watchdog_error_data {
    white-space: nowrap;
    color: #FF0000;
@@ -210,7 +216,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_exceptions_data {
    white-space: nowrap;
    text-align: center;
@@ -221,7 +226,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_exceptions_error_data {
    white-space: nowrap;
    text-align: center;
@@ -233,7 +237,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_javascript_data {
    white-space: nowrap;
    text-align: center;
@@ -244,7 +247,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_javascript_error_data {
    white-space: nowrap;
    text-align: center;
@@ -256,7 +258,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_assert_data {
    white-space: nowrap;
    text-align: center;
@@ -267,7 +268,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_assert_error_data {
    white-space: nowrap;
    text-align: center;
@@ -279,7 +279,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_other_data {
    white-space: nowrap;
    text-align: center;
@@ -290,7 +289,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_other_error_data {
    white-space: nowrap;
    text-align: center;
@@ -313,7 +311,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_total_data {
    white-space: nowrap;
    text-align: center;
@@ -324,7 +321,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_total_error_data {
    white-space: nowrap;
    text-align: center;
@@ -336,7 +332,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_css_data {
    white-space: nowrap;
    text-align: center;
@@ -347,8 +342,18 @@ table {
    border-right: 0px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_sodawarnings_data {
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 12px;
+   color: #FF8200;
+   border-left: 0px solid black;
+   border-right: 2px solid black;
+   border-bottom: 0px solid black;
+}
+.td_sodawarnings_data_zero {
    white-space: nowrap;
    text-align: center;
    font-family: Arial;
@@ -358,7 +363,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_time_data {
    white-space: nowrap;
    text-align: center;
@@ -369,7 +373,6 @@ table {
    border-right: 1px solid black;
    border-bottom: 0px solid black;
 }
-
 .td_footer_run {
    white-space: nowrap;
    background: #b6dde8;
@@ -383,7 +386,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_passed {
    white-space: nowrap;
    background: #b6dde8;
@@ -397,7 +399,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_failed {
    white-space: nowrap;
    background: #b6dde8;
@@ -411,21 +412,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
-.td_footer_blocked {
-   white-space: nowrap;
-   background: #b6dde8;
-   text-align: center;
-   font-family: Arial;
-   font-weight: bold;
-   font-size: 12px;
-   color: #FFCF10;
-   border-top: 2px solid black;
-   border-left: 0px solid black;
-   border-right: 0px solid black;
-   border-bottom: 2px solid black;
-}
-
 .td_footer_skipped {
    white-space: nowrap;
    background: #b6dde8;
@@ -439,7 +425,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_watchdog {
    white-space: nowrap;
    background: #b6dde8;
@@ -453,7 +438,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_exceptions {
    white-space: nowrap;
    background: #b6dde8;
@@ -467,7 +451,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_javascript {
    white-space: nowrap;
    background: #b6dde8;
@@ -481,7 +464,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_assert {
    white-space: nowrap;
    background: #b6dde8;
@@ -495,7 +477,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_other {
    white-space: nowrap;
    background: #b6dde8;
@@ -509,7 +490,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_total {
    white-space: nowrap;
    background: #b6dde8;
@@ -523,7 +503,6 @@ table {
    border-right: 2px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_css {
    white-space: nowrap;
    background: #b6dde8;
@@ -537,7 +516,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_sodawarnings {
    white-space: nowrap;
    background: #b6dde8;
@@ -551,7 +529,6 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-
 .td_footer_times {
    white-space: nowrap;
    background: #b6dde8;
@@ -973,8 +950,25 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          test_run_class = "td_run_data_error"
       end
 
+      td_failed = "td_failed_data_zero"
+      if (suite_data['Test Failed Count'].to_i > 0)
+         td_failed = "td_failed_data"
+      end
+
+      td_blocked = "td_blocked_data_zero"
+      if (suite_data['Test Blocked Count'].to_i > 0)
+         td_blocked = "td_blocked_data"
+      end
+
+      td_warnings = "td_sodawarnings_data_zero"
+      if (suite_data['Test Warning Count'].to_i > 0)
+         td_warnings = "td_sodawarnings_data"
+      end
+
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
+
+
 
       str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
@@ -986,9 +980,9 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          "#{suite_data['Total Test Count']}</td>\n"+
          "\t<td class=\"td_passed_data\">"+
             "#{suite_data['Test Pass Count']}</td>\n"+
-         "\t<td class=\"td_failed_data\">"+
+         "\t<td class=\"#{td_failed}\">"+
             "#{suite_data['Test Failed Count']}</td>\n"+
-         "\t<td class=\"td_skipped_data\">"+
+         "\t<td class=\"#{td_blocked}\">"+
             "#{suite_data['Test Blocked Count']}</td>\n"+
          "\t<td class=\"#{watchdog_td}\">"+
             "#{suite_data['Test WatchDog Count']}</td>\n"+
@@ -1003,7 +997,7 @@ def GenHtmlReport2(data, reportfile, create_links = false)
          "\t<td class=\"#{total_failures_td}\">#{total_failures}</td>\n"+
          "\t<td class=\"td_css_data\">"+
             "#{suite_data['Test CSS Error Count']}</td>\n"+
-         "\t<td class=\"td_sodawarnings_data\">"+
+         "\t<td class=\"#{td_warnings}\">"+
             "#{suite_data['Test Warning Count']}</td>\n"+
          "\t<td class=\"td_time_data\">"+
             "#{hours}:#{minutes}:#{seconds}</td>\n</tr>\n"
@@ -1130,7 +1124,7 @@ table {
    border-right: 0px solid black;
    border-bottom: 2px solid black;
 }
-.td_blocked_data {
+._data {
    white-space: nowrap;
    text-align: center;
    font-family: Arial;
@@ -1147,6 +1141,17 @@ table {
    font-family: Arial;
    font-weight: bold;
    color: #FF0000;
+   font-size: 12px;
+   border-left: 0px solid black;
+   border-right: 0px solid black;
+   border-bottom: 2px solid black;
+}
+.td_failed_data_zero {
+   white-space: nowrap;
+   text-align: center;
+   font-family: Arial;
+   font-weight: normal;
+   color: #FFFFFF;
    font-size: 12px;
    border-left: 0px solid black;
    border-right: 0px solid black;
@@ -1210,7 +1215,7 @@ HTML
 
       # hack #
       if (test['Test Blocked Count'].to_i > 0)
-         result_str = "\t<td class=\"td_blocked_data\">Blocked</td>\n"
+         result_str = "\t<td class=\"_data\">Blocked</td>\n"
       end
 
       str << "#{result_str}"
