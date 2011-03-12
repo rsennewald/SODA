@@ -819,10 +819,10 @@ def SumSuiteTests(tests, suitename)
 
    # need to do away with tests that did not run for a good reason #
    report['Test Ran Count'] -= report['Test Blocked Count']
-   report['Test Ran Count'] -= report['Test Skip Count']
+#   report['Test Ran Count'] -= report['Test Skip Count']
    report['Test Pass Count'] -= report['Test Blocked Count']
-
    report['Total Test Count'] = tests.length()
+
    if (lib_file_count > 0)
       report['Total Test Count'] -= lib_file_count
    end 
@@ -967,8 +967,6 @@ def GenHtmlReport2(data, reportfile, create_links = false)
 
       reportdir = File.dirname(reportfile)
       suite_mini_file = GenSuiteMiniSummary(data[suite_name], reportdir)
-
-
 
       str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
          "onMouseOver=\"this.className='highlight'\" "+
