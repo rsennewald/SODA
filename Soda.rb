@@ -2809,10 +2809,7 @@ JSCode
       suites.each do |s|
          base_suite_name = File.basename(s)
          RestartGlobalTime()
-         tmp = RunSuite(s)
-         if (tmp != nil)
-            results[base_suite_name] = Marshal.load(Marshal.dump(tmp))
-         end
+         results[base_suite_name] = RunSuite(s)
          RestartGlobalTime()
       end
 
@@ -2831,21 +2828,31 @@ JSCode
       results.each do |k,v|
          fd.write("\t<suite>\n")
          fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
-         v.each do |testname, testhash|
-            fd.write("\t#{indent2}<test>\n")
-            fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
-            testhash.each do |tname, tvalue|
-               if (tname == "result")
-                  err = -1 if (tvalue.to_i != 0)
+
+         if (v.key?("Suite Failure"))
+            v.each do |sek, sev|
+               name = sek
+               name = name.gsub(" ", "_")
+               fd.write("\t#{indent2}<#{name}>#{sev}</#{name}>\n")
+            end 
+         else
+            v.each do |testname, testhash|
+               fd.write("\t#{indent2}<test>\n")
+               fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
+               testhash.each do |tname, tvalue|
+                  if (tname == "result")
+                     err = -1 if (tvalue.to_i != 0)
+                  end
+                  new_name = "#{tname}"
+                  new_name = new_name.gsub(" ", "_")
+                  fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
                end
-               new_name = "#{tname}"
-               new_name = new_name.gsub(" ", "_")
-               fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
+               fd.write("\t#{indent2}</test>\n")
             end
-            fd.write("\t#{indent2}</test>\n")
          end
          fd.write("\t</suite>\n")
       end
+
       fd.write("</data>\n")
       fd.close()
 
@@ -2896,7 +2903,12 @@ JSCode
          end
       rescue Exception => e
          SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
-         return nil
+         err_hash = {
+            'result' => -1,
+            'Suite Failure' => true,
+            'Suite Error' => "#{e.message}"
+         }
+         return err_hash
       ensure
       end   
 

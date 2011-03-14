@@ -98,6 +98,18 @@ table {
    padding: 0px;
    background: #FFFFFF;
 }
+.td_failed_suite {
+   white-space: nowrap;
+   text-align: left;
+   font-family: Arial;
+   font-weight: bold;
+   color: #FF0000;
+   font-size: 12px;
+   border-left: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
+   background-color: #fde9d9;
+}
 .td_file_data {
    white-space: nowrap;
    text-align: left;
@@ -727,6 +739,8 @@ def GenerateReportData(files)
                when "test"
                   tmp_test_data = GetTestInfo(kid.children)
                   tmp_hash['tests'].push(tmp_test_data)
+               else
+                  tmp_hash[kid.name] = kid.content()
             end # end case #
          end
          
@@ -839,15 +853,22 @@ end
 def GenHtmlReport2(data, reportfile, create_links = false)
    suites_totals = {}
    summary_totals = {}
+   suite_errors = []
+   row_id = 0
 
    print "(*)Processing data...\n"
 
    # first sum up all of the test results for each suite #
    suites = data.keys.sort()
    suites.each do |suite_name|
-      suites_totals[suite_name] = {} # new suite name for the totals #
-      suite_data = data[suite_name]
-      suites_totals[suite_name] = SumSuiteTests(suite_data['tests'], suite_name)
+      if (!data[suite_name].key?("Suite_Failure"))
+         suites_totals[suite_name] = {} # new suite name for the totals #
+         suite_data = data[suite_name]
+         suites_totals[suite_name] = SumSuiteTests(suite_data['tests'], 
+            suite_name)
+      else
+         suite_errors.push(data[suite_name])
+      end
    end 
 
    # second sum up all of the suite sums for the totals for the summary #
@@ -874,7 +895,22 @@ def GenHtmlReport2(data, reportfile, create_links = false)
    fd = File.new(reportfile, "w+")
    fd.write($HTML_HEADER)
 
-   row_id = 0
+   print "(*)Processing suite errors...\n"
+   suite_errors.sort().each do |e_suite|
+      row_id += 1
+
+      str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
+         "onMouseOver=\"this.className='highlight'\" "+
+         "onMouseOut=\"this.className='unhighlight'\">\n"+
+         "\t<td class=\"td_file_data\">"+
+         "#{e_suite['suitefile']}</td>\n"+
+         "\t<td colspan=\"13\" class=\"td_failed_suite\">"+
+         "#{e_suite['Suite_Error']}</td>\n"+
+        "</tr>\n"
+      fd.write(str)
+   end
+   print "(*)Finished.\n"
+ 
    suites_totals.sort.each do |suite_name, suite_data|
       row_id += 1
       report_file = "#{suite_name}"

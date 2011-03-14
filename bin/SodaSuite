@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#SodaUtils.PrintSoda(!/usr/bin/env ruby
 
 ###############################################################################
 # Copyright (c) 2010, SugarCRM, Inc.
@@ -70,17 +70,18 @@ class SodaSuite
       @soda = nil
 
 	   if (NEEDED_SODA_VERSION != Soda::SODA_VERSION)
-         print "(!)Failed matching Soda Class Versions!\n" +
-            "--)Required Version: #{NEEDED_SODA_VERSION}\n" +
-            "--)Found Version   : #{Soda::SODA_VERSION}\n\n"
+         SodaUtils.PrintSoda("Failed matching Soda Class Versions!\n")
+         SodaUtils.PrintSoda("Required Version: #{NEEDED_SODA_VERSION}\n")
+         SodaUtils.PrintSoda("Found Version   : #{Soda::SODA_VERSION}\n")
          exit(-1)
       end
 
       if ("#{Watir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
-         print "(!)Failed matching installed Watir version to Soda's" +
-            " required version!\n" +
-            "--)Required Version: #{Soda::SODA_WATIR_VERSION}\n" +
-            "--)Found Version   : #{Watir::VERSION}\n\n"
+         SodaUtils.PrintSoda("Failed matching installed Watir version to"+
+            " Soda's required version!\n", SodaUtils::ERROR)
+         SodaUtils.PrintSoda("--)Required Version: "+
+            "#{Soda::SODA_WATIR_VERSION}\n")
+         SodaUtils.PrintSoda("--)Found Version   : #{Watir::VERSION}\n")
          exit(-1)
       end
 	end
@@ -322,8 +323,9 @@ def CreateResultsDir(dir)
       FileUtils::mkdir_p(dir)
       result = 0
    rescue Exception => e
-      print "(!)Failed to create results directory: #{dir}!\n"
-      print "--)Reason: #{e.message}\n\n"
+      SodaUtils.PrintSoda("Failed to create results directory: #{dir}!\n",
+         SodaUtils::ERROR)
+      SodaUtils.PrintSoda("--)Reason: #{e.message}\n")
       result = -1
    end
    
@@ -542,7 +544,7 @@ def Main
             when "--nonzippytext"
                params['nonzippytext'] = true
             when "--version"
-               print "(*)SODA Version: #{SODA_GEM_VERSION}\n\n"
+               SodaUtils.PrintSoda("(*)SODA Version: #{SODA_GEM_VERSION}\n")
                return 0
          end
       end
@@ -589,7 +591,6 @@ def Main
 
    if (params['resultsdir'] != nil)
       err = CreateResultsDir(params['resultsdir'])
-      print "Result: #{err}\n"
       if (err != 0)
          exit(-1)
       end
