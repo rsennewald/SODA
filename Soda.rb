@@ -783,7 +783,6 @@ class Soda
          begin
             checker = SodaTestCheck.new(file, @rep)
             script_check = checker.Check()
-
             if (!script_check)
                script = nil
                @rep.IncSkippedTest()
@@ -2793,6 +2792,7 @@ JSCode
    def RunAllSuites(suites)
       results = {}
       err = 0
+      global_err = 0
       indent = " " * 2
       indent2 = "#{indent}" * 2
       indent3 = "#{indent}" * 4
@@ -2802,8 +2802,15 @@ JSCode
       suites.each do |s|
          base_suite_name = File.basename(s)
          RestartGlobalTime()
-         results[base_suite_name] = RunSuite(s)
+         tmp = RunSuite(s)
+         if (tmp != nil)
+            results[base_suite_name] = Marshal.load(Marshal.dump(tmp))
+         end
          RestartGlobalTime()
+      end
+
+      if (results.empty?)
+         return results
       end
 
       time = Time.now()
@@ -2853,12 +2860,20 @@ JSCode
       suite_name = File.basename(suitefile, ".xml")
       
       begin
+         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
          parser = LibXML::XML::Parser.file(suitefile)
          doc = parser.parse()
          doc = doc.root()
 
          doc.each do |node|
-            next if (node.name !~ /script/)
+            next if (node.name =~ /text/i)
+            next if (node.name =~ /comment/i)
+            
+            if (node.name !~ /script/i)
+               raise "Using unsupported Soda suite element: '#{node.name}'"+
+                  " in suite file: '#{suitefile}'!"
+            end
+
             attrs = node.attributes()
             attrs = attrs.to_h()
 
@@ -2873,9 +2888,8 @@ JSCode
             end
          end
       rescue Exception => e
-         print "ERROR: #{e.message}!\n"
-         print e.backtrace.join("\n")
-         result = nil
+         SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
+         return nil
       ensure
       end   
 

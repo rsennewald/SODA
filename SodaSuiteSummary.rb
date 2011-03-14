@@ -612,17 +612,9 @@ def initialize(dir ="", outfile = "", create_links = false)
       sleep(1)
    end
 
-#  This should go back into production after moving away from our
-#  internal nfs sever we are using for reporting...
-#
-#   if (timeout != false)
-#      raise "Timed out waiting for lock to be released on file:"+
-#         " \"#{html_tmp_file}\"!\n"
-#   end
-
    log_files = GetLogFiles(dir)
    if ( (log_files == nil) || (log_files.length < 1) )
-      raise "Failed calling: GetLogFiles(#{dir})!"
+      raise "Error: No log files found in directory: '#{dir}'!"
    end
    
    report_data = GenerateReportData(log_files)

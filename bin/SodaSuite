@@ -354,50 +354,6 @@ def GetFileSetFiles(dir)
 end
 
 ###############################################################################
-# GetSuiteTestFiles - function
-#     This function reads a sode suite file and creates a list of tests from
-#     the file, by expanding on filesets and files.
-#
-# Params:
-#     suite_file: This is the suite xml file.
-#
-# Results:
-#     returns an array of files.
-#
-###############################################################################
-def GetSuiteTestFiles(suite_file)
-   test_files = []  
-   parser = nil
-   doc = nil
-
-   parser = LibXML::XML::Parser.file(suite_file)
-   doc = parser.parse()
-   
-   doc.root.each do |node|
-      if (node.name != 'script')
-         next
-      end
-
-      attrs = node.attributes()
-      attrs.each do |a|
-         h = attrs.to_h()
-         if (h.key?("file"))
-            test_files.push(h['file'])
-         elsif (h.key?('fileset'))
-            fs = h['fileset']
-            if (File.directory?(fs))
-               fs_set = GetFileSetFiles(fs)
-               test_files.concat(fs_set)
-               fs_set = nil
-            end
-         end
-      end
-   end
-
-   return test_files
-end
-
-###############################################################################
 # ReadConfigFile - function
 #     This functions reads the soda config file into a hash.
 #
@@ -646,7 +602,7 @@ def Main
 
    if (params['suites'].length > 0)
       sweet = SodaSuite.new(params)
-      result = sweet.ExecuteTestSuites(params['suites'])
+      suites_result = sweet.ExecuteTestSuites(params['suites'])
    end
 
    if (params['test_files'].length > 0)
@@ -674,9 +630,8 @@ def Main
                params['summaryfile'], true)
          end
       rescue Exception => e
-         print "Error: calling: SodaReportSummery: #{e.message}\n"
-         print e.backtrace.join("\n")
-         print "\n\n"
+         SodaUtils.PrintSoda("SodaReportSummery: #{e.message}\n", 
+            SodaUtils::ERROR)
          exit(-1)
       ensure
       end
