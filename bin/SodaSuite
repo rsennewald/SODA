@@ -1,4 +1,4 @@
-#SodaUtils.PrintSoda(!/usr/bin/env ruby
+#!/usr/bin/env ruby
 
 ###############################################################################
 # Copyright (c) 2010, SugarCRM, Inc.
