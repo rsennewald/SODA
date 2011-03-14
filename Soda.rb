@@ -791,6 +791,7 @@ class Soda
             end
          rescue Exception => e
             @rep.ReportException(e, file)
+            script = nil
          ensure
          end
       end
@@ -2710,9 +2711,15 @@ JSCode
       @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
       blocked = remBlockScript(file)
-      
+ 
       if (!blocked)
-         script = getScript(file)
+         checker = SodaTestCheck.new(file, @rep)
+         script_check = checker.Check()
+         if (!script_check)
+            script = nil
+         else
+            script = getScript(file)
+         end
       else 
          script = nil
       end
