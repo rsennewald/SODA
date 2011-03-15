@@ -88,6 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">url</accessor>
          <accessor type="string">send_keys</accessor>
          <accessor type="boolean">assertPage</accessor>
+         <accessor type="boolean">exist</accessor>
       </soda_attributes>
    </browser>
 
