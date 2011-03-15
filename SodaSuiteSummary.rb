@@ -896,7 +896,7 @@ def GenHtmlReport2(data, reportfile, create_links = false)
    fd.write($HTML_HEADER)
 
    print "(*)Processing suite errors...\n"
-   suite_errors.sort().each do |e_suite|
+   suite_errors.sort_by{|hash| hash['suitefile']}.each do |e_suite|
       row_id += 1
 
       str = "<tr id=\"#{row_id}\" class=\"unhighlight\" "+
@@ -1103,8 +1103,20 @@ end
 
 def GenSuiteMiniSummary(suite_hash, reportdir)
    suite_file = suite_hash['suitefile']
+   suite_dup_id = nil
+
+   if (suite_file =~ /\.xml(-\d+)/i)
+      suite_dup_id = "#{$1}"
+      suite_file = suite_file.gsub(/\.xml#{$1}/, ".xml")
+   end
+
    suite_file = File.basename(suite_file, ".xml")
    suite_name = "#{suite_file}"
+
+   if (suite_dup_id != nil)
+      suite_file << "#{suite_dup_id}"
+   end
+
    suite_file << ".html"
    href = "#{suite_name}/#{suite_file}"
    suite_file = "#{reportdir}/#{suite_name}/#{suite_file}"

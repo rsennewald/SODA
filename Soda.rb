@@ -2808,6 +2808,14 @@ JSCode
 
       suites.each do |s|
          base_suite_name = File.basename(s)
+         if (results.key?(base_suite_name))
+            suite_dup_id = 1
+            while (results.key?("#{base_suite_name}-#{suite_dup_id}"))
+               suite_dup_id += 1
+            end
+            base_suite_name = "#{base_suite_name}-#{suite_dup_id}"
+         end
+
          RestartGlobalTime()
          results[base_suite_name] = RunSuite(s)
          RestartGlobalTime()
