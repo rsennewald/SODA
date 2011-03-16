@@ -2252,8 +2252,6 @@ JSCode
          when "disabled"
             event['disabled'] = getStringBool(event['disabled'])
             FieldUtils.CheckDisabled(@curEl, event['disabled'], @rep)
-         when "exists"
-            # do nothing #
          else
             msg = "Failed to find supported field action.\n"
             @rep.log(msg, SodaUtils::WARN)
