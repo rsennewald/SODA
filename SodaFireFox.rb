@@ -152,16 +152,16 @@ def SodaFireFox.KillProcessWindows()
    end
 
    if (firefox.length < 1)
-      $curSoda.rep.log("No firefox processes to kill, browser closed clean.\n")
+      print "(*)No firefox processes to kill, browser closed clean.\n"
    end
 
    firefox.each do |hash|
       begin
-         $curSoda.rep.log("Killing Process ID: #{hash['pid']}, Name:"+
-            "#{hash['name']}\n")
+         print "Killing Process ID: #{hash['pid']}, Name:"+
+            "#{hash['name']}\n"
          Process.kill("KILL", hash['pid'])
       rescue Exception => e
-         $curSoda.rep.ReportException(e, true, false)
+         print "(!)Exception : #{e.message}\n"
          result = -1
       end
    end
@@ -210,16 +210,16 @@ def SodaFireFox.KillProcessUnix()
    end
 
    if (firefox.length < 1)
-      $curSoda.rep.log("No firefox processes to kill, browser closed clean.\n")
+      print "No firefox processes to kill, browser closed clean.\n"
    end
 
    firefox.each do |hash|
       begin
-         $curSoda.rep.log("Killing Process ID: #{hash['pid']}, Name:"+
-            "#{hash['name']}\n")
+         print "Killing Process ID: #{hash['pid']}, Name:"+
+            "#{hash['name']}\n"
          Process.kill("KILL", hash['pid'])
       rescue Exception => e
-         $curSoda.rep.ReportException(e, true, false)
+         print "(!)Exception: #{e.message}!\n"
          result = -1
       end
    end

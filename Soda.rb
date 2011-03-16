@@ -104,13 +104,14 @@ class Soda
       $mutex = Mutex.new()
       @whiteList = []
       @white_list_file = ""
-      @restart_test = ""
+      @restart_test = nil
       @restart_count = 0
       @non_lib_test_count = 0
       @last_test = ""
       @SugarWait = false
       @restart_test_running = false
       @FAILEDTESTS = []
+      @GotWatchDog = false
       @vars = Hash.new
       blocked_file_list = "tests/modules/blockScriptList.xml"
       whitelist_file = "tests/modules/whitelist.xml"
@@ -776,18 +777,12 @@ class Soda
          valid_xml = false
       end
 
-      if (valid_xml && !@restart_test_running && file != @last_file &&
-            @non_lib_test_count >= @restart_count)
-         RestartBrowserTest()
-      end
-
       if (valid_xml)
          $run_script = file
          PrintDebug("Parsing Soda test file: \"#{file}\".\n")
          begin
             checker = SodaTestCheck.new(file, @rep)
             script_check = checker.Check()
-
             if (!script_check)
                script = nil
                @rep.IncSkippedTest()
@@ -796,16 +791,8 @@ class Soda
             end
          rescue Exception => e
             @rep.ReportException(e, file)
+            script = nil
          ensure
-         end
-      end
-
-      dir = File.dirname(file)
-      if (dir !~ /lib/)
-         if(!is_restart && !@restart_test_running && file != @last_test)
-            @non_lib_test_count += 1
-            @rep.IncTestCount()
-            PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
          end
       end
 
@@ -823,45 +810,40 @@ class Soda
 #     None.
 #
 ###############################################################################
-   def RestartBrowserTest()
-      return 0 if (@restart_count < 1)
+   def RestartBrowserTest(suitename)
 
-      if (@non_lib_test_count >= @restart_count)
-         @rep.log("Restarting browser.\n")
-        
+      if (!@GotWatchDog)   
          begin 
             @browser.close()
             sleep(1)
          rescue Exception => e
          end
-
-         RestartGlobalTime()
-
-         if (@params['browser'] =~ /firefox/i)
-            SodaFireFox.KillProcesses()
-         end
-
-         err = NewBrowser()
-         if (err != 0)
-            @rep.ReportFailure("Failed to restart browser!\n")
-         end
-         @rep.log("Finished: Browser restart.\n")
-         @non_lib_test_count = 0
-
-         if (!@restart_test.empty?)
-            parent_test = @currentTestFile
-            restart_data = getScript(@restart_test, true)
-            if (restart_data != nil)
-               @currentTestFile = @restart_test
-               @restart_test_running = true
-               @rep.log("Executing restart test: '#{@restart_test}'\n")
-               handleEvents(restart_data)
-               @restart_test_running = false
-               @currentTestFile = parent_test
-               @rep.log("Finished restart test: '#{@restart_test}'\n")
-            end 
-         end
+         @GotWatchDog = false
       end
+
+      RestartGlobalTime()
+
+      if (@params['browser'] =~ /firefox/i)
+         SodaFireFox.KillProcesses()
+      end
+      
+      err = NewBrowser()
+      if (err != 0)
+         print "(!)Failed to restart browser!\n"
+      end
+
+      if (!@restart_test.empty?)
+         resultdir = "#{@resultsDir}/#{suitename}"
+         @rep = SodaReporter.new(@restart_test, @saveHtml, resultdir,
+            0, nil, false);
+         @rep.log("Restarting browser.\n")
+         restart_script = getScript(@restart_test)
+         handleEvents(restart_script)
+         @rep.log("Finished: Browser restart.\n")
+         @rep.EndTestReport()
+      end
+
+      RestartGlobalTime()
    end
 
 ###############################################################################
@@ -889,7 +871,6 @@ class Soda
          fd = Dir.open(file)
          fd.each do |f|
             files.push("#{file}/#{f}") if (f =~ /\.xml$/i)
-#           @rep.IncTestTotalCount() if (f !~ /lib/i)
          end
          fd.close()
 
@@ -911,22 +892,11 @@ class Soda
             ((file !~ /^setup/) || (file !~ /^cleanup/) ) )
             @rep.log("Starting new soda test file: \"#{file}\".\n")
 
-            if (file !~ /lib/i)
-               if (@non_lib_test_count >= @restart_count && file != @last_test)
-                  RestartBrowserTest()
-               end
-
-               @rep.IncTestCount()
-               @non_lib_test_count += 1
-               @last_test = file
-            end
-
             script = getScript(file)
             if (script != nil)
                parent_test_file = @currentTestFile
                @currentTestFile = file
                results = handleEvents(script)
-               PrintDebug("Test since last restart: #{@non_lib_test_count +1}.\n")
                if (results != 0)
                   @FAILEDTESTS.push(@currentTestFile)
                   @rep.IncFailedTest()
@@ -2282,8 +2252,6 @@ JSCode
          when "disabled"
             event['disabled'] = getStringBool(event['disabled'])
             FieldUtils.CheckDisabled(@curEl, event['disabled'], @rep)
-         when "exists"
-            # do nothing #
          else
             msg = "Failed to find supported field action.\n"
             @rep.log(msg, SodaUtils::WARN)
@@ -2719,7 +2687,7 @@ JSCode
       result = 0
       master_result = 0
       thread_soda = nil
-      thread_timeout = (60 * 10) # 10 minutes #
+      thread_timeout = (60 * 6) # 6 minutes #
       time_check = nil
       resultsdir = nil
       blocked = false
@@ -2741,9 +2709,15 @@ JSCode
       @rep = SodaReporter.new(file, @saveHtml, resultsdir, 0, nil, rerun);
       SetGlobalVars()
       blocked = remBlockScript(file)
-      
+ 
       if (!blocked)
-         script = getScript(file)
+         checker = SodaTestCheck.new(file, @rep)
+         script_check = checker.Check()
+         if (!script_check)
+            script = nil
+         else
+            script = getScript(file)
+         end
       else 
          script = nil
       end
@@ -2762,6 +2736,7 @@ JSCode
 
                if (time_diff >= thread_timeout)
                   msg = "Soda watchdog timed out after #{time_diff} seconds!\n"
+                  @GotWatchDog = true
                   @rep.ReportFailure(msg)
                   PrintDebug("Global Time was: #{$global_time}\n")
                   PrintDebug("Timeout Time was: #{time_check}\n")
@@ -2822,6 +2797,7 @@ JSCode
    def RunAllSuites(suites)
       results = {}
       err = 0
+      global_err = 0
       indent = " " * 2
       indent2 = "#{indent}" * 2
       indent3 = "#{indent}" * 4
@@ -2830,9 +2806,21 @@ JSCode
 
       suites.each do |s|
          base_suite_name = File.basename(s)
+         if (results.key?(base_suite_name))
+            suite_dup_id = 1
+            while (results.key?("#{base_suite_name}-#{suite_dup_id}"))
+               suite_dup_id += 1
+            end
+            base_suite_name = "#{base_suite_name}-#{suite_dup_id}"
+         end
+
          RestartGlobalTime()
          results[base_suite_name] = RunSuite(s)
          RestartGlobalTime()
+      end
+
+      if (results.empty?)
+         return results
       end
 
       time = Time.now()
@@ -2846,21 +2834,31 @@ JSCode
       results.each do |k,v|
          fd.write("\t<suite>\n")
          fd.write("\t#{indent}<suitefile>#{k}</suitefile>\n")
-         v.each do |testname, testhash|
-            fd.write("\t#{indent2}<test>\n")
-            fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
-            testhash.each do |tname, tvalue|
-               if (tname == "result")
-                  err = -1 if (tvalue.to_i != 0)
+
+         if (v.key?("Suite Failure"))
+            v.each do |sek, sev|
+               name = sek
+               name = name.gsub(" ", "_")
+               fd.write("\t#{indent2}<#{name}>#{sev}</#{name}>\n")
+            end 
+         else
+            v.each do |testname, testhash|
+               fd.write("\t#{indent2}<test>\n")
+               fd.write("\t#{indent3}<testfile>#{testname}</testfile>\n")
+               testhash.each do |tname, tvalue|
+                  if (tname == "result")
+                     err = -1 if (tvalue.to_i != 0)
+                  end
+                  new_name = "#{tname}"
+                  new_name = new_name.gsub(" ", "_")
+                  fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
                end
-               new_name = "#{tname}"
-               new_name = new_name.gsub(" ", "_")
-               fd.write("\t#{indent3}<#{new_name}>#{tvalue}</#{new_name}>\n")
+               fd.write("\t#{indent2}</test>\n")
             end
-            fd.write("\t#{indent2}</test>\n")
          end
          fd.write("\t</suite>\n")
       end
+
       fd.write("</data>\n")
       fd.close()
 
@@ -2876,17 +2874,26 @@ JSCode
       parser = nil
       doc = nil
       test_order = 0
+      test_since_restart = 0
       result = {}
       tests = []
       suite_name = File.basename(suitefile, ".xml")
       
       begin
+         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
          parser = LibXML::XML::Parser.file(suitefile)
          doc = parser.parse()
          doc = doc.root()
 
          doc.each do |node|
-            next if (node.name !~ /script/)
+            next if (node.name =~ /text/i)
+            next if (node.name =~ /comment/i)
+            
+            if (node.name !~ /script/i)
+               raise "Using unsupported Soda suite element: '#{node.name}'"+
+                  " in suite file: '#{suitefile}'!"
+            end
+
             attrs = node.attributes()
             attrs = attrs.to_h()
 
@@ -2901,14 +2908,24 @@ JSCode
             end
          end
       rescue Exception => e
-         print "ERROR: #{e.message}!\n"
-         print e.backtrace.join("\n")
-         result = nil
+         SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
+         err_hash = {
+            'result' => -1,
+            'Suite Failure' => true,
+            'Suite Error' => "#{e.message}"
+         }
+         return err_hash
       ensure
       end   
 
       tests.each do |test|
-#         next if (remBlockScript(test))
+         if ((@restart_count > 0) && (test_since_restart >= @restart_count))
+            SodaUtils.PrintSoda("Restarting browser...\n")
+            RestartBrowserTest(suite_name)
+            test_since_restart = 0
+            SodaUtils.PrintSoda("(*)Browser restart finished.\n")
+         end
+
          test_order += 1
          tmp_result = {}
          tmp_result['result'] = run(test, false, true, suite_name)
@@ -2928,10 +2945,10 @@ JSCode
          tmp_result['Real_Test_Name'] = test
          test_basename = File.basename(test, ".xml")
          logfile = tmp_result['Test Log File']
+
          if (logfile =~ /#{test_basename}-\d+/)
-            test =~ /(.*\/)#{test_basename}/
-            ran_test_name = $1
-            ran_test_name << File.basename(logfile, ".log")
+            logfile =~ /#{test_basename}(-\d+)/
+            ran_test_name = "#{test_basename}#{$1}"
             ran_test_name << ".xml"
          else
             ran_test_name = test
@@ -2939,6 +2956,11 @@ JSCode
 
          result[ran_test_name] = tmp_result
          @rep.ZeroTestResults()
+
+         test_dir = File.dirname(test)
+         if (test_dir !~ /lib/i)
+            test_since_restart += 1
+         end
       end
 
       return result

@@ -87,7 +87,12 @@ class SodaTestCheck
          return false
       end
 
-      return true
+      CheckTest(sodadata, elements_data)
+      if ($ERROR_COUNT > 0) 
+         return false
+      else
+         return true
+      end
    end
    public :Check
 
@@ -307,6 +312,9 @@ class SodaTestCheck
             
          end
       end
+
+      return $ERROR_COUNT
+
    end
    private :CheckTest
 

@@ -67,6 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    <filefield>
       <accessor_attributes>
          <accessor type="string">set</accessor>
+			<accessor type="boolean">assertPage</accessor>
       </accessor_attributes>
    </filefield>
 
@@ -87,6 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">url</accessor>
          <accessor type="string">send_keys</accessor>
          <accessor type="boolean">assertPage</accessor>
+         <accessor type="boolean">exist</accessor>
       </soda_attributes>
    </browser>
 
@@ -462,6 +464,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor type="integer">timeout</accessor>
 			<accessor type="boolean">required</accessor>
          <accessor type="boolean">disabled</accessor>
+			<accessor type="boolean">assertPage</accessor>
 		</soda_attributes>
 	</checkbox>
 

@@ -70,17 +70,18 @@ class SodaSuite
       @soda = nil
 
 	   if (NEEDED_SODA_VERSION != Soda::SODA_VERSION)
-         print "(!)Failed matching Soda Class Versions!\n" +
-            "--)Required Version: #{NEEDED_SODA_VERSION}\n" +
-            "--)Found Version   : #{Soda::SODA_VERSION}\n\n"
+         SodaUtils.PrintSoda("Failed matching Soda Class Versions!\n")
+         SodaUtils.PrintSoda("Required Version: #{NEEDED_SODA_VERSION}\n")
+         SodaUtils.PrintSoda("Found Version   : #{Soda::SODA_VERSION}\n")
          exit(-1)
       end
 
       if ("#{Watir::VERSION}" != "#{Soda::SODA_WATIR_VERSION}")
-         print "(!)Failed matching installed Watir version to Soda's" +
-            " required version!\n" +
-            "--)Required Version: #{Soda::SODA_WATIR_VERSION}\n" +
-            "--)Found Version   : #{Watir::VERSION}\n\n"
+         SodaUtils.PrintSoda("Failed matching installed Watir version to"+
+            " Soda's required version!\n", SodaUtils::ERROR)
+         SodaUtils.PrintSoda("--)Required Version: "+
+            "#{Soda::SODA_WATIR_VERSION}\n")
+         SodaUtils.PrintSoda("--)Found Version   : #{Watir::VERSION}\n")
          exit(-1)
       end
 	end
@@ -238,7 +239,7 @@ Optional Flags:
    --sugarwait: This enables the auto sugarwait functionality for every click.
 
    --restartcount: This tells soda to restart the web browser after so many
-      tests have been ran.
+      tests have been ran.  This flag can only be using when running suites!
 
    --restarttest: This is a soda test that will be ran right after the browser
       is restarted.
@@ -322,8 +323,9 @@ def CreateResultsDir(dir)
       FileUtils::mkdir_p(dir)
       result = 0
    rescue Exception => e
-      print "(!)Failed to create results directory: #{dir}!\n"
-      print "--)Reason: #{e.message}\n\n"
+      SodaUtils.PrintSoda("Failed to create results directory: #{dir}!\n",
+         SodaUtils::ERROR)
+      SodaUtils.PrintSoda("--)Reason: #{e.message}\n")
       result = -1
    end
    
@@ -349,50 +351,6 @@ def GetFileSetFiles(dir)
    files = File.join("#{dir}", "*.xml")
    test_files = Dir.glob(files)
    test_files = test_files.sort()
-
-   return test_files
-end
-
-###############################################################################
-# GetSuiteTestFiles - function
-#     This function reads a sode suite file and creates a list of tests from
-#     the file, by expanding on filesets and files.
-#
-# Params:
-#     suite_file: This is the suite xml file.
-#
-# Results:
-#     returns an array of files.
-#
-###############################################################################
-def GetSuiteTestFiles(suite_file)
-   test_files = []  
-   parser = nil
-   doc = nil
-
-   parser = LibXML::XML::Parser.file(suite_file)
-   doc = parser.parse()
-   
-   doc.root.each do |node|
-      if (node.name != 'script')
-         next
-      end
-
-      attrs = node.attributes()
-      attrs.each do |a|
-         h = attrs.to_h()
-         if (h.key?("file"))
-            test_files.push(h['file'])
-         elsif (h.key?('fileset'))
-            fs = h['fileset']
-            if (File.directory?(fs))
-               fs_set = GetFileSetFiles(fs)
-               test_files.concat(fs_set)
-               fs_set = nil
-            end
-         end
-      end
-   end
 
    return test_files
 end
@@ -586,7 +544,7 @@ def Main
             when "--nonzippytext"
                params['nonzippytext'] = true
             when "--version"
-               print "(*)SODA Version: #{SODA_GEM_VERSION}\n\n"
+               SodaUtils.PrintSoda("(*)SODA Version: #{SODA_GEM_VERSION}\n")
                return 0
          end
       end
@@ -611,6 +569,12 @@ def Main
 		PrintHelp()
 	end
 
+	if (params['suites'].length < 1 && params['restart_count'] > 0)
+		SodaUtils.PrintSoda("Error: --restartcount can only be used with"+
+         " --suite!\n\n")
+		PrintHelp()
+	end
+
    if (params['debug'])
       SodaUtils.PrintSoda("SodaSuite Params:\n")
       params.each do |k, v|
@@ -627,7 +591,6 @@ def Main
 
    if (params['resultsdir'] != nil)
       err = CreateResultsDir(params['resultsdir'])
-      print "Result: #{err}\n"
       if (err != 0)
          exit(-1)
       end
@@ -640,7 +603,7 @@ def Main
 
    if (params['suites'].length > 0)
       sweet = SodaSuite.new(params)
-      result = sweet.ExecuteTestSuites(params['suites'])
+      suites_result = sweet.ExecuteTestSuites(params['suites'])
    end
 
    if (params['test_files'].length > 0)
@@ -668,9 +631,8 @@ def Main
                params['summaryfile'], true)
          end
       rescue Exception => e
-         print "Error: calling: SodaReportSummery: #{e.message}\n"
-         print e.backtrace.join("\n")
-         print "\n\n"
+         SodaUtils.PrintSoda("SodaReportSummery: #{e.message}\n", 
+            SodaUtils::ERROR)
          exit(-1)
       ensure
       end
