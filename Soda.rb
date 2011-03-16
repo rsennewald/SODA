@@ -159,6 +159,7 @@ class Soda
          @SugarWait = params['sugarwait']
       end
 
+
       # stack of elements allowing for parent child hierchy
       # <form id='myform'><textfield name='myfield'/></form> 
       @parentEl = [] 
