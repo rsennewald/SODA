@@ -68,6 +68,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <accessor_attributes>
          <accessor type="string">set</accessor>
 			<accessor type="boolean">assertPage</accessor>
+         <accessor type="string">jscriptevent</accessor>
       </accessor_attributes>
    </filefield>
 
@@ -89,6 +90,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">send_keys</accessor>
          <accessor type="boolean">assertPage</accessor>
          <accessor type="boolean">exist</accessor>
+         <accessor type="string">jscriptevent</accessor>
       </soda_attributes>
    </browser>
 
@@ -136,6 +138,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">timeout</accessor>
          <accessor type="boolean">required</accessor>
          <accessor type="boolean">disabled</accessor>
+         <accessor type="string">jscriptevent</accessor>
       </soda_attributes>
    </textarea>
 
@@ -235,6 +238,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
 			<accessor type="string">set</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</filefield>
 
@@ -250,6 +254,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</file_field>
 
@@ -282,6 +287,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
          <accessor type="string">assert</accessor>
          <accessor type="string">assertnot</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</cell>
 
@@ -298,6 +304,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
          <accessor type="string">assert</accessor>
          <accessor type="string">assertnot</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</td>
 
@@ -334,6 +341,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">include</accessor>
          <accessor type="string">noninclude</accessor>
          <accessor type="boolean">disabled</accessor>
+         <accessor type="string">jscriptevent</accessor>
       </soda_attributes>
 	</select>
 
@@ -352,6 +360,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
          <accessor type="string">set</accessor>
          <accessor type="boolean">disabled</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</select_list>
 
@@ -380,6 +389,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</row>
 
@@ -394,6 +404,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</tr>
 
@@ -410,6 +421,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<soda_attributes>
          <accessor type="boolean">required</accessor>
          <accessor type="boolean">exist</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</table>
 
@@ -428,6 +440,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">set</accessor>
          <accessor type="boolean">click</accessor>
          <accessor type="boolean">disabled</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</radio>
 
@@ -465,6 +478,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor type="boolean">required</accessor>
          <accessor type="boolean">disabled</accessor>
 			<accessor type="boolean">assertPage</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</checkbox>
 
@@ -480,6 +494,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</map>
 
@@ -494,6 +509,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</frame>
 
@@ -510,6 +526,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
 			<accessor type="boolean">exist</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</form>
 
@@ -528,6 +545,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">click</accessor>
          <accessor type="string">assert</accessor>
          <accessor type="string">assertnot</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</div>
 
@@ -542,6 +560,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		</accessor_attributes>
 
 		<soda_attributes>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</area>
 
@@ -557,6 +576,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
 			<accessor type="boolean">click</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</li>
 
@@ -614,6 +634,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
          <accessor type="boolean">click</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</image>
 
@@ -645,6 +666,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
          <accessor type="boolean">disabled</accessor>
+         <accessor type="string">jscriptevent</accessor>
 		</soda_attributes>
 	</text_field>
 
