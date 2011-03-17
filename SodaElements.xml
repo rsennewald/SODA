@@ -390,6 +390,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 		<soda_attributes>
          <accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</row>
 
@@ -422,6 +423,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">required</accessor>
          <accessor type="boolean">exist</accessor>
          <accessor type="string">jscriptevent</accessor>
+         <accessor type="boolean">click</accessor>
 		</soda_attributes>
 	</table>
 
@@ -732,5 +734,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">assert</accessor>
       </soda_attributes>
    </assert>
+
+   <javascript>
+   </javascript>
+
+   <ruby>
+   </ruby>
 </soda>
 
