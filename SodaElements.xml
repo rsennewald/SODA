@@ -736,9 +736,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    </assert>
 
    <javascript>
+      <soda_attributes>
+         <accessor type="string">content</accessor>
+      </soda_attributes>
    </javascript>
 
    <ruby>
+      <soda_attributes>
+         <accessor type="string">content</accessor>
+      </soda_attributes>
    </ruby>
+
 </soda>
 
