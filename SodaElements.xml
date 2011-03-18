@@ -738,6 +738,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">add</accessor>
          <accessor type="string">delete</accessor>
          <accessor type="string">name</accessor>
+         <accessor type="string">content</accessor>
+         <accessor type="string">action</accessor>
       </soda_attributes>
    </whitelist>
 
