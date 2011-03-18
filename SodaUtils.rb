@@ -874,6 +874,83 @@ JAVA
    return result
 end
 
+###############################################################################
+# GetJsshVar -- function
+#     This function is a total hack to get an the watirobj's instance var
+#     @element_name which holds the internal jssh var names for accessing
+#     the wair object in jssh.  This is needed bcause the firewatir style
+#     merhod isn't working.  So I cause an internal class error which I
+#     then parse to get the needed var name.
+#
+# Input:
+#     watirobj: This is the watir object which you want to get the jssh var of.
+#
+# Output:
+#     Returns a string with the jssh var name.
+#
+###############################################################################
+def SodaUtils.GetJsshVar(watirobj)
+   err = ""
+   
+   err = watirobj.class_eval(%q{@element_name})
+   err = err.gsub(/^typeerror:\s+/i, "")
+   err = err.gsub(/\.\D+/, "")
+
+   return err
+end
+
+###############################################################################
+# GetJsshStyle -- function
+#     This function gets the style information from from a watir object using
+#     jssh.
+#
+# Input:
+#     jssh_var: This is the internal firewatir jssh var used to access the
+#     watir object.  This is returned from calling the GetJsshVar function.
+#
+# Output:
+#     Returns a hash with all of the style info, or an empty hash if there is
+#     no information to get.
+#
+###############################################################################
+def GetJsshStyle(jssh_var, browser)
+   hash = {}
+
+   java = <<JS
+   var style = #{jssh_var}.style;
+   var data = "";
+   var len = style.length -1;
+
+   for (var i = 0; i <= len; i++) {
+      var name = style[i];
+      var value = style.getPropertyValue(name);
+      var splitter = "---";
+      
+      if (i == 0) {
+         splitter = ""
+      }
+
+      data = data + splitter + name + "=>" + value;
+   }
+
+   if (data.length < 1) {
+      data = "null";
+   }
+
+   print(data)
+JS
+
+   out = browser.execute_script(java)
+   if (out != "null")
+      data = out.split("---")
+      data.each do |item|
+         tmp = item.split("=>")
+         hash[tmp[0]] = tmp[1]
+      end
+   end
+
+   return hash
+end
 
 ###############################################################################
 ###############################################################################
