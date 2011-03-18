@@ -2106,7 +2106,9 @@ JSCode
          'link',
          'append',
          'disabled',
-         'jscriptevent'
+         'jscriptevent',
+         'cssprop',
+         'cssvalue'
          ]
    
       if (@SIGNAL_STOP != false)
@@ -2141,6 +2143,8 @@ JSCode
       end
 
       case (foundaction)
+         when /cssprop|cssvalue/i
+            cssInfoEvent(event)
          when "jscriptevent"
             fieldType.jsevent(@curEl, js, true)
             js_fired = true
@@ -2315,6 +2319,86 @@ JSCode
          @FAILEDTESTS.push(@currentTestFile)
       end
 
+   end
+
+###############################################################################
+# cssInfoEvent -- method
+#     This method checks that css values for a given soda element.
+#
+# Input:
+#     event: A soda event.
+#
+# Output:
+#     returns 0 on success or -1 on error.
+#
+###############################################################################
+   def cssInfoEvent(event)
+      jssh_var = ""
+      jssh_data = nil
+
+      if (!event.key?('cssprop'))
+         @rep.ReportFailure("Missing attribte: 'cssprop' on line: "+
+         "#{event[line_number]}!\n")
+         return -1  
+      elsif (!event.key?('cssvalue'))
+         @rep.ReportFailure("Missing attribte: 'cssvalue' on line: "+
+            "#{event['line_number']}!\n")  
+         return -1
+      end
+
+      if (@params['browser'] !~ /firefox/i)
+         @rep.log("Currently this function is only supported on firefox!",
+            SodaUtils::WARN)
+         return -1
+      end
+     
+      event['cssprop'] = replaceVars(event['cssprop'])
+      event['cssvalue'] = replaceVars(event['cssvalue'])
+
+      jssh_var = SodaUtils.GetJsshVar(@curEl)
+      if (jssh_var.empty?)
+         @rep.ReportFailure("Failed to find needed jssh var!\n")
+         e_dump = SodaUtils.DumpEvent(event)
+         @rep.log("Event Dump for empty jssh var: #{e_dump}!\n",
+            SodaUtils::EVENT)
+         return -1
+      else
+         @rep.log("Found internal jssh var: '#{jssh_var}'.\n")
+      end
+
+      jssh_data = SodaUtils.GetJsshStyle(jssh_var, @browser)
+      
+      if (jssh_data.empty?)
+         @rep.ReportFailure("Failed to find any CSS data for #{event['do']}!\n")
+         e_dump = SodaUtils.DumpEvent(event)
+         @rep.log("Event Dump for empty CSS data: #{e_dump}!\n",
+            SodaUtils::EVENT)
+         return -1
+      end
+     
+      if (!jssh_data.key?("#{event['cssprop']}"))
+         @rep.ReportFailure("Failed to find CSS key: '#{event['cssprop']}'"+
+            " for element: #{event['do']}!\n")
+         e_dump = SodaUtils.DumpEvent(event)
+         @rep.log("Event Dump for missing CSS key: #{e_dump}!\n",
+            SodaUtils::EVENT)
+         return -1
+      end
+
+      if (event['cssvalue'] == "#{jssh_data[event['cssprop']]}")
+         msg = "CSS property '#{event['cssprop']}' => "+
+            "'#{jssh_data[event['cssprop']]}'"
+        @rep.Assert(true, msg) 
+      else
+         msg = "CSS propery '#{event['cssprop']}' => "+
+            "'#{jssh_data[event['cssprop']]}' was expecting value: "+
+            "'#{event['cssvalue']}'!"
+         @rep.Assert(false, msg, @currentTestFile, 
+               "#{event['line_number']}")
+         return -1
+      end
+   
+      return 0
    end
 
 ###############################################################################

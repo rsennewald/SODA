@@ -913,7 +913,7 @@ end
 #     no information to get.
 #
 ###############################################################################
-def GetJsshStyle(jssh_var, browser)
+def SodaUtils.GetJsshStyle(jssh_var, browser)
    hash = {}
 
    java = <<JS
