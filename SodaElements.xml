@@ -70,9 +70,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<accessor type="boolean">assertPage</accessor>
          <accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">exists</accessor>
+      </accessor_attributes>
+
+      <soda_attributes>
          <accessor type="string">cssprop</accessor>
          <accessor type="string">cssvalue</accessor>
-      </accessor_attributes>
+      </soda_attributes>
    </filefield>
 
    <browser>
@@ -86,7 +89,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <name>refresh</name>
             <name>forward</name>
          </action>
-
+         <accessor type="string">cssprop</accessor>
+         <accessor type="string">cssvalue</accessor>
          <accessor type="string">assertnot</accessor>
          <accessor type="string">assert</accessor>
          <accessor type="string">url</accessor>
@@ -810,6 +814,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">add</accessor>
          <accessor type="string">delete</accessor>
          <accessor type="string">name</accessor>
+         <accessor type="string">content</accessor>
+         <accessor type="string">action</accessor>
       </soda_attributes>
    </whitelist>
 
