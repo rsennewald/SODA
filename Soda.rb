@@ -2335,6 +2335,7 @@ JSCode
    def cssInfoEvent(event)
       jssh_var = ""
       jssh_data = nil
+      css_data = nil
 
       if (!event.key?('cssprop'))
          @rep.ReportFailure("Missing attribte: 'cssprop' on line: "+
@@ -2345,57 +2346,29 @@ JSCode
             "#{event['line_number']}!\n")  
          return -1
       end
-
-      if (@params['browser'] !~ /firefox/i)
-         @rep.log("Currently this function is only supported on firefox!",
-            SodaUtils::WARN)
-         return -1
-      end
      
       event['cssprop'] = replaceVars(event['cssprop'])
       event['cssvalue'] = replaceVars(event['cssvalue'])
 
-      jssh_var = SodaUtils.GetJsshVar(@curEl)
-      if (jssh_var.empty?)
-         @rep.ReportFailure("Failed to find needed jssh var!\n")
-         e_dump = SodaUtils.DumpEvent(event)
-         @rep.log("Event Dump for empty jssh var: #{e_dump}!\n",
-            SodaUtils::EVENT)
-         return -1
-      else
-         @rep.log("Found internal jssh var: '#{jssh_var}'.\n")
+      if (@params['browser'] =~ /firefox/i)
+         css_data = SodaUtils.GetFireFoxStyle(@curEl, event['cssprop'], 
+               @rep, @browser)
+      elsif (@params['browser'] =~ /ie/i)
+         css_data = SodaUtils.GetIEStyle(@curEl, event['cssprop'], @rep)
       end
-
-      jssh_data = SodaUtils.GetJsshStyle(jssh_var, @browser)
       
-      if (jssh_data.empty?)
-         @rep.ReportFailure("Failed to find any CSS data for #{event['do']}!\n")
-         e_dump = SodaUtils.DumpEvent(event)
-         @rep.log("Event Dump for empty CSS data: #{e_dump}!\n",
-            SodaUtils::EVENT)
-         return -1
-      end
-     
-      if (!jssh_data.key?("#{event['cssprop']}"))
-         @rep.ReportFailure("Failed to find CSS key: '#{event['cssprop']}'"+
-            " for element: #{event['do']}!\n")
-         e_dump = SodaUtils.DumpEvent(event)
-         @rep.log("Event Dump for missing CSS key: #{e_dump}!\n",
-            SodaUtils::EVENT)
-         return -1
-      end
+      return -1 if (css_data == nil)
 
-      if (event['cssvalue'] == "#{jssh_data[event['cssprop']]}")
+      if (event['cssvalue'] == "#{css_data}")
          msg = "CSS property '#{event['cssprop']}' => "+
-            "'#{jssh_data[event['cssprop']]}'"
+            "'#{css_data}'"
         @rep.Assert(true, msg) 
       else
          msg = "CSS propery '#{event['cssprop']}' => "+
-            "'#{jssh_data[event['cssprop']]}' was expecting value: "+
+            "'#{css_data}' was expecting value: "+
             "'#{event['cssvalue']}'!"
-         @rep.Assert(false, msg, @currentTestFile, 
-               "#{event['line_number']}")
-         return -1
+         @rep.Assert(false, msg, @currentTestFile,
+            "#{event['line_number']}")
       end
    
       return 0
