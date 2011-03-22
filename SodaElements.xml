@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <accessor_attributes>
          <accessor type="string">file</accessor>
          <accessor type="string">fileset</accessor>
+         <accessor type="string">csv</accessor>
       </accessor_attributes> 
    </script>
 
