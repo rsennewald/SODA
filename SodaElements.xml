@@ -659,6 +659,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">click</accessor>
          <accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">exists</accessor>
+         <accessor type="boolean">alert</accessor>
 		</soda_attributes>
 	</image>
 
