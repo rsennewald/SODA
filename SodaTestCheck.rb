@@ -211,7 +211,7 @@ class SodaTestCheck
       begin
          data = SodaXML.new.parse(file)
       rescue Exception => e
-         @report.ReportException(e, false, @sodatest)
+         @report.ReportException(e, @sodatest)
          data = nil
       ensure
       end
