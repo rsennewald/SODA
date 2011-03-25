@@ -2567,7 +2567,6 @@ JSCode
                      e_dump = SodaUtils.DumpEvent(event)
                      @rep.log("No Element found for event!\n", 
                         SodaUtils::ERROR)
-                     @rep.rep
                      @rep.log("Event Dump for unfound element: #{e_dump}!\n", 
                         SodaUtils::EVENT)
                   end
