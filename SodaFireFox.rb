@@ -70,7 +70,6 @@ def SodaFireFox.CreateFireFoxBrowser(options = nil)
       result['exception'] = e
       result['browser'] = nil
    ensure
-
    end
 
    return result
@@ -157,9 +156,16 @@ def SodaFireFox.KillProcessWindows()
 
    firefox.each do |hash|
       begin
+         res = false
          print "Killing Process ID: #{hash['pid']}, Name:"+
             "#{hash['name']}\n"
-         Process.kill("KILL", hash['pid'])
+         cmd = "taskkill /F /T /PID #{hash['pid']}"
+         res = Kernel.system(cmd)
+
+         if (res =! true)
+            print "Failed calling command: #{cmd}!\n"
+            result = -1
+         end
       rescue Exception => e
          print "(!)Exception : #{e.message}\n"
          result = -1

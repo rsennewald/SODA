@@ -234,7 +234,7 @@ class Soda
       end
 
       if (@params['browser'] =~ /firefox/i)
-         for i in 0..2 do
+         for i in 0..9 do
             if (@params['profile'] != nil)
                result = SodaFireFox.CreateFireFoxBrowser(
                   {:profile => "#{@params['profile']}"})
