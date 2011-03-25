@@ -159,7 +159,8 @@ def SodaFireFox.KillProcessWindows()
       begin
          print "Killing Process ID: #{hash['pid']}, Name:"+
             "#{hash['name']}\n"
-         Process.kill("KILL", hash['pid'])
+         cmd = "taskkill /F /T /PID #{hash['pid']}"
+         res = Kernel.system(cmd)
       rescue Exception => e
          print "(!)Exception : #{e.message}\n"
          result = -1
