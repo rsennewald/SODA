@@ -151,6 +151,7 @@ def SodaFireFox.KillProcessWindows()
       end
    end
 
+   len = firefox.length()
    if (firefox.length < 1)
       print "(*)No firefox processes to kill, browser closed clean.\n"
    end
@@ -244,10 +245,12 @@ def SodaFireFox.KillProcesses()
    err = 0
 
    os = SodaUtils.GetOsType()
+   print "Kill Process OS: #{os}\n"
    case (os)
       when /linux/i
          err = KillProcessUnix()
       when /windows/i
+         print "Calling KillProcessWindows().\n"
          err = KillProcessWindows()
    end
 

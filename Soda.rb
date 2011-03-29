@@ -233,6 +233,8 @@ class Soda
          Watir::Browser.default = @params['browser']
       end
 
+      sleep(10)
+
       if (@params['browser'] =~ /firefox/i)
          for i in 0..10 do
             if (@params['profile'] != nil)
@@ -812,15 +814,6 @@ class Soda
 #
 ###############################################################################
    def RestartBrowserTest(suitename)
-
-      if (!@GotWatchDog)   
-         begin 
-            @browser.close()
-            sleep(1)
-         rescue Exception => e
-         end
-         @GotWatchDog = false
-      end
 
       RestartGlobalTime()
 
@@ -2920,7 +2913,6 @@ JSCode
 
       tests.each do |test|
          if ((@restart_count > 0) && (test_since_restart >= @restart_count))
-            SodaUtils.PrintSoda("Restarting browser...\n")
             RestartBrowserTest(suite_name)
             test_since_restart = 0
             SodaUtils.PrintSoda("(*)Browser restart finished.\n")
