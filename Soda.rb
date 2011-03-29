@@ -233,6 +233,10 @@ class Soda
          Watir::Browser.default = @params['browser']
       end
 
+      # sleeping here because watir has issues if a new browsers comes up
+      # after a firefox process is killed. 
+      sleep(10)
+
       if (@params['browser'] =~ /firefox/i)
          for i in 0..9 do
             if (@params['profile'] != nil)
@@ -812,15 +816,6 @@ class Soda
 #
 ###############################################################################
    def RestartBrowserTest(suitename)
-
-      if (!@GotWatchDog)   
-         begin 
-            @browser.close()
-            sleep(1)
-         rescue Exception => e
-         end
-         @GotWatchDog = false
-      end
 
       RestartGlobalTime()
 
