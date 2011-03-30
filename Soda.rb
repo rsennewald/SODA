@@ -1820,20 +1820,35 @@ class Soda
    def CheckJavaScriptErrors()
       result = nil
       data = nil
+      error_hash = {}
 
       if (Watir::Browser.default == "firefox")
          result = @browser.execute_script(
             "#{SodaUtils::FIREFOX_JS_ERROR_CHECK_SRC}")
          data = result.split(/######/)
          data.each do |line|
+            line = line.chomp()
+
             if ( (line != "") && 
                (line !~ /chrome:\/\/browser\/content\/tabbrowser\.xm/) &&
                (line !~ /SShStarter.js/i ))
-               @rep.ReportJavaScriptError("Javascript Error:#{line}\n", 
-                  $skip_css_errors)
-               
+               if (error_hash.key?(line))
+                  error_hash[line] += 1
+               else
+                  error_hash[line] = 1
+              end 
             end
          end
+      end
+
+      error_hash.each do |error, count|
+         if (count > 1)
+            msg = "Javascript Error (repeated #{count} times):#{error}\n"
+         else
+            msg = "Javascript Error:#{error}\n"
+         end
+
+         @rep.ReportJavaScriptError(msg, $skip_css_errors)
       end
 
       return 0
