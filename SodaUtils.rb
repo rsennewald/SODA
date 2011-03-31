@@ -874,6 +874,225 @@ JAVA
    return result
 end
 
+###############################################################################
+# GetJsshVar -- function
+#     This function is a total hack to get an the watirobj's instance var
+#     @element_name which holds the internal jssh var names for accessing
+#     the wair object in jssh.  This is needed bcause the firewatir style
+#     merhod isn't working.  So I cause an internal class error which I
+#     then parse to get the needed var name.
+#
+# Input:
+#     watirobj: This is the watir object which you want to get the jssh var of.
+#
+# Output:
+#     Returns a string with the jssh var name.
+#
+###############################################################################
+def SodaUtils.GetJsshVar(watirobj)
+   err = ""
+   
+   err = watirobj.class_eval(%q{@element_name})
+   err = err.gsub(/^typeerror:\s+/i, "")
+   err = err.gsub(/\.\D+/, "")
+
+   return err
+end
+
+###############################################################################
+# GetJsshStyle -- function
+#     This function gets the style information from from a watir object using
+#     jssh.
+#
+# Input:
+#     jssh_var: This is the internal firewatir jssh var used to access the
+#     watir object.  This is returned from calling the GetJsshVar function.
+#
+# Output:
+#     Returns a hash with all of the style info, or an empty hash if there is
+#     no information to get.
+#
+###############################################################################
+def SodaUtils.GetJsshStyle(jssh_var, browser)
+   hash = {}
+
+   java = <<JS
+   var style = #{jssh_var}.style;
+   var data = "";
+   var len = style.length -1;
+
+   for (var i = 0; i <= len; i++) {
+      var name = style[i];
+      var value = style.getPropertyValue(name);
+      var splitter = "---";
+      
+      if (i == 0) {
+         splitter = ""
+      }
+
+      data = data + splitter + name + "=>" + value;
+   }
+
+   if (data.length < 1) {
+      data = "null";
+   }
+
+   print(data)
+JS
+
+   out = browser.execute_script(java)
+   if (out != "null")
+      data = out.split("---")
+      data.each do |item|
+         tmp = item.split("=>")
+         hash[tmp[0]] = tmp[1]
+      end
+   end
+
+   return hash
+end
+
+
+###############################################################################
+# GetIEStyle -- function
+#     This function get a style property from a watir object in IE.
+#
+# Intput:
+#     watirobj: The IE watir object.
+#     css_prop: The property name to get the info for.
+#     reportobj: The soda reporter object.
+#
+# Output:
+#     returns nil on error or a string on success.
+#
+###############################################################################
+def SodaUtils.GetIEStyle(watirobj, css_prop, reportobj)
+   err = nil
+   prop_data = nil
+   new_prop = ""
+   len = 0
+
+   # because the IE access functions do not use the same names as the
+   # standard css property names, we need con convert the names into
+   # IE's ole friendly method name.
+   prop_data = css_prop.split("-")
+   len = prop_data.length() -1
+   if (len > 0)
+      i = 1
+      for i in i..len do
+         prop_data[i].capitalize!
+      end
+
+      prop_data.each do |d|
+         new_prop << "#{d}"
+      end
+   else
+      new_prop = css_prop
+   end
+   
+   begin
+      err = eval("watirobj.style.#{new_prop}")
+   rescue Exception => e
+      err = nil
+      reportobj.ReportFailure("Failed to find any CSS data for"+
+         " property: '#{new_prop}'!\n")
+   end
+
+   return err
+end
+
+###############################################################################
+# GetFireFoxStyle -- function
+#     This function get a style property from a watir object in firefox.
+#
+# Intput:
+#     watirobj: The IE watir object.
+#     css_prop: The property name to get the info for.
+#     reportobj: The soda reporter object.
+#     browser: The currenlt Watir::Browser object.
+#
+# Output:
+#     returns nil on error or a string on success.
+#
+###############################################################################
+def SodaUtils.GetFireFoxStyle(watirobj, css_prop, reportobj, browser)
+   jssh_var = ""
+   jssh_data = nil
+   result = nil
+
+   jssh_var = SodaUtils.GetJsshVar(watirobj)
+   if (jssh_var.empty?)
+      reportobj.ReportFailure("Failed to find needed jssh var!\n")
+      e_dump = SodaUtils.DumpEvent(event)
+      reportobj.log("Event Dump for empty jssh var: #{e_dump}!\n",
+         SodaUtils::EVENT)
+      return nil
+   else
+      reportobj.log("Found internal jssh var: '#{jssh_var}'.\n")
+   end
+
+   jssh_data = SodaUtils.GetJsshStyle(jssh_var, browser)
+   
+   if (jssh_data.empty?)
+      reportobj.ReportFailure("Failed to find any CSS data for"+
+         " property: '#{css_prop}'!\n")
+      e_dump = SodaUtils.DumpEvent(event)
+      reportobj.log("Event Dump for empty CSS data: #{e_dump}!\n",
+         SodaUtils::EVENT)
+      return nil
+   end
+  
+   if (!jssh_data.key?("#{css_prop}"))
+      reportobj.ReportFailure("Failed to find CSS key: '#{css_prop}'"+
+         " for element!\n")
+      e_dump = SodaUtils.DumpEvent(event)
+      reportobj.log("Event Dump for missing CSS key: #{e_dump}!\n",
+         SodaUtils::EVENT)
+      return nil
+   else
+      result = jssh_data[css_prop]
+   end
+
+   return result
+end
+
+###############################################################################
+# cssInfoEvent -- method
+#     This method checks that css values for a given soda element.
+#
+# Input:
+#     event: A soda event.
+#     watirobj: The watir element object.
+#     browser: The watir browser object.
+#     reportobj: The current sodareporter object.
+#
+# Output:
+#     returns 0 on success or -1 on error.
+#
+###############################################################################
+def SodaUtils.GetStyleInfo(event, watirobj, browser, reportobj)
+
+   if (!event.key?('cssprop'))
+      reportobj.ReportFailure("Missing attribte: 'cssprop' on line: "+
+      "#{event[line_number]}!\n")
+      return -1  
+   elsif (!event.key?('cssvalue'))
+      reportobj.ReportFailure("Missing attribte: 'cssvalue' on line: "+
+         "#{event['line_number']}!\n")  
+      return -1
+   end
+
+   if (@params['browser'] !~ /firefox/i)
+      @reportobj.log("Currently this function is only supported on firefox!",
+         SodaUtils::WARN)
+      return -1
+   end
+  
+   event['cssprop'] = replaceVars(event['cssprop'])
+   event['cssvalue'] = replaceVars(event['cssvalue'])
+
+   return 0
+end
 
 ###############################################################################
 ###############################################################################

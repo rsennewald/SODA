@@ -737,7 +737,7 @@ HTML
             row_data = FormatEventDump(line)
          when /major\sexception/i
             row_data = FormatMajorException(line)
-         when /javascript\s+error:/i
+         when /javascript\s+error:|javascript\s+error\s+\(repeated/i
             row_data = FormatJSError(line)
          when /css\s+error:/i
             row_data = FormatJSError(line)

@@ -233,10 +233,19 @@ class Soda
          Watir::Browser.default = @params['browser']
       end
 
+<<<<<<< HEAD
       sleep(10)
 
       if (@params['browser'] =~ /firefox/i)
          for i in 0..10 do
+=======
+      # sleeping here because watir has issues if a new browsers comes up
+      # after a firefox process is killed. 
+      sleep(10)
+
+      if (@params['browser'] =~ /firefox/i)
+         for i in 0..9 do
+>>>>>>> dev
             if (@params['profile'] != nil)
                result = SodaFireFox.CreateFireFoxBrowser(
                   {:profile => "#{@params['profile']}"})
@@ -1818,20 +1827,35 @@ class Soda
    def CheckJavaScriptErrors()
       result = nil
       data = nil
+      error_hash = {}
 
       if (Watir::Browser.default == "firefox")
          result = @browser.execute_script(
             "#{SodaUtils::FIREFOX_JS_ERROR_CHECK_SRC}")
          data = result.split(/######/)
          data.each do |line|
+            line = line.chomp()
+
             if ( (line != "") && 
                (line !~ /chrome:\/\/browser\/content\/tabbrowser\.xm/) &&
                (line !~ /SShStarter.js/i ))
-               @rep.ReportJavaScriptError("Javascript Error:#{line}\n", 
-                  $skip_css_errors)
-               
+               if (error_hash.key?(line))
+                  error_hash[line] += 1
+               else
+                  error_hash[line] = 1
+              end 
             end
          end
+      end
+
+      error_hash.each do |error, count|
+         if (count > 1)
+            msg = "Javascript Error (repeated #{count} times):#{error}\n"
+         else
+            msg = "Javascript Error:#{error}\n"
+         end
+
+         @rep.ReportJavaScriptError(msg, $skip_css_errors)
       end
 
       return 0
@@ -2099,7 +2123,9 @@ JSCode
          'link',
          'append',
          'disabled',
-         'jscriptevent'
+         'jscriptevent',
+         'cssprop',
+         'cssvalue'
          ]
    
       if (@SIGNAL_STOP != false)
@@ -2134,6 +2160,8 @@ JSCode
       end
 
       case (foundaction)
+         when /cssprop|cssvalue/i
+            cssInfoEvent(event)
          when "jscriptevent"
             fieldType.jsevent(@curEl, js, true)
             js_fired = true
@@ -2308,6 +2336,59 @@ JSCode
          @FAILEDTESTS.push(@currentTestFile)
       end
 
+   end
+
+###############################################################################
+# cssInfoEvent -- method
+#     This method checks that css values for a given soda element.
+#
+# Input:
+#     event: A soda event.
+#
+# Output:
+#     returns 0 on success or -1 on error.
+#
+###############################################################################
+   def cssInfoEvent(event)
+      jssh_var = ""
+      jssh_data = nil
+      css_data = nil
+
+      if (!event.key?('cssprop'))
+         @rep.ReportFailure("Missing attribte: 'cssprop' on line: "+
+         "#{event[line_number]}!\n")
+         return -1  
+      elsif (!event.key?('cssvalue'))
+         @rep.ReportFailure("Missing attribte: 'cssvalue' on line: "+
+            "#{event['line_number']}!\n")  
+         return -1
+      end
+     
+      event['cssprop'] = replaceVars(event['cssprop'])
+      event['cssvalue'] = replaceVars(event['cssvalue'])
+
+      if (@params['browser'] =~ /firefox/i)
+         css_data = SodaUtils.GetFireFoxStyle(@curEl, event['cssprop'], 
+               @rep, @browser)
+      elsif (@params['browser'] =~ /ie/i)
+         css_data = SodaUtils.GetIEStyle(@curEl, event['cssprop'], @rep)
+      end
+      
+      return -1 if (css_data == nil)
+
+      if (event['cssvalue'] == "#{css_data}")
+         msg = "CSS property '#{event['cssprop']}' => "+
+            "'#{css_data}'"
+        @rep.Assert(true, msg) 
+      else
+         msg = "CSS propery '#{event['cssprop']}' => "+
+            "'#{css_data}' was expecting value: "+
+            "'#{event['cssvalue']}'!"
+         @rep.Assert(false, msg, @currentTestFile,
+            "#{event['line_number']}")
+      end
+   
+      return 0
    end
 
 ###############################################################################
