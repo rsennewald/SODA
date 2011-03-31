@@ -725,12 +725,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="boolean">click</accessor>
          <accessor type="string">jscriptevent</accessor>
          <accessor type="boolean">exists</accessor>
-<<<<<<< HEAD
          <accessor type="boolean">alert</accessor>
-=======
          <accessor type="string">cssprop</accessor>
          <accessor type="string">cssvalue</accessor>
->>>>>>> dev
 		</soda_attributes>
 	</image>
 

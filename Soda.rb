@@ -233,19 +233,12 @@ class Soda
          Watir::Browser.default = @params['browser']
       end
 
-<<<<<<< HEAD
+      # sleeping here because watir has issues if a new browsers comes up
+      # after a firefox process is killed.
       sleep(10)
 
       if (@params['browser'] =~ /firefox/i)
          for i in 0..10 do
-=======
-      # sleeping here because watir has issues if a new browsers comes up
-      # after a firefox process is killed. 
-      sleep(10)
-
-      if (@params['browser'] =~ /firefox/i)
-         for i in 0..9 do
->>>>>>> dev
             if (@params['profile'] != nil)
                result = SodaFireFox.CreateFireFoxBrowser(
                   {:profile => "#{@params['profile']}"})
