@@ -140,7 +140,6 @@ spec = Gem::Specification.new do |s|
       '*.rb']
    s.executables = ['SodaSuite', 'SodaSummaryCreator']
    s.require_path = 'lib'
-   s.has_rdoc = false
    s.extra_rdoc_files = nil
    s.rdoc_options = nil
    s.author = "Trampus Richmond"
