@@ -1052,8 +1052,8 @@ def GenHtmlReport2(data, reportfile, create_links = false)
    end
 
    test_totals = summary_totals['Total Test Count'] 
-   test_totals += summary_totals['Test Skip Count']
-   test_totals += summary_totals['Test Blocked Count']
+#   test_totals += summary_totals['Test Skip Count']
+#   test_totals += summary_totals['Test Blocked Count']
 
    total_failures = 0
    total_failures += summary_totals['Test Failure Count']
@@ -1061,9 +1061,13 @@ def GenHtmlReport2(data, reportfile, create_links = false)
    total_failures += summary_totals['Test Assert Failures']
    total_failures += summary_totals['Test JavaScript Error Count']
 
+   total_ran = summary_totals['Total Test Count']
+   total_ran -= summary_totals['Test Blocked Count']
+
+# "\t<td class=\"td_footer_run\">#{summary_totals['Total Test Count']}"+
    sub_totals = "<tr id=\"totals\">\n"+
       "\t<td class=\"td_header_master\">Totals:</td>\n"+
-      "\t<td class=\"td_footer_run\">#{summary_totals['Total Test Count']}"+
+      "\t<td class=\"td_footer_run\">#{total_ran}"+
          "/#{test_totals}</td>\n"+
       "\t<td class=\"td_footer_passed\">#{summary_totals['Test Pass Count']}"+
          "</td>\n"+
