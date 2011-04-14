@@ -28,9 +28,9 @@
 ###############################################################################
 # Needed Ruby libs:
 ###############################################################################
-require 'rubygems'
-require 'libxml'
+require 'rexml/document'
 require 'SodaUtils'
+include REXML
 
 ###############################################################################
 # SodaXML -- Class
@@ -57,32 +57,32 @@ class SodaXML
 ###############################################################################
 	def processChildren(node)
 		children = []
-	
-      for child in node.children()
+
+      node.elements.each do |child|
 			if (child.name == 'text')
 				next
 			end
 			
 			cur = Hash.new()
-         cur['line_number'] = "#{child.line_num}"
+         cur['line_number'] = 0
 			cur['do'] = "#{child.name}"
         
-         case child.name 
+         case (child.name)
             when /javascript/i
-               cur['content'] = child.content
+               cur['content'] = child.text
             when /ruby/i
-               cur['content'] = child.content
+               cur['content'] = child.text
             when /comment/i
-               cur['content'] = child.content
+               cur['content'] = child.text
             when /whitelist/i
-               cur['content'] = child.content
+               cur['content'] = child.text
          end
 
-			child.attributes.each do | attribute |
-				cur[attribute.name] = "#{attribute.value}"
+			child.attributes.each do |k,v|
+				cur[k] = "#{v}"
 			end
 
-			if child.children?()
+			if child.has_elements?()
 				cur['children'] = self.processChildren(child)
 			end
 
@@ -107,16 +107,17 @@ class SodaXML
       data = nil
       parser = nil
       doc = nil
-
+      fd = nil
+   
       begin
-         LibXML::XML.default_line_numbers = true
-         parser = LibXML::XML::Parser.file(file)
-         doc = parser.parse()
-         data = processChildren(doc.root) 
+         fd = File.new(file)
+         doc = REXML::Document.new(fd)
+         data = processChildren(doc.root)
+         fd.close() 
       rescue Exception => e
          $curSoda.rep.log("Failed to parse XML file: \"#{file}\"!\n",
             SodaUtils::ERROR)
-         $curSoda.rep.ReportException(e, true, file)
+         $curSoda.rep.ReportException(e, file)
 
          data = nil
       ensure
