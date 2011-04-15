@@ -31,7 +31,6 @@
 require 'rubygems'
 require 'getoptlong'
 require 'digest/md5'
-require 'libxml'
 require 'SodaXML'
 require 'SodaUtils'
 
@@ -111,19 +110,20 @@ class SodaTestCheck
       parser = nil
       doc = nil
       kids = nil
+      fd = nil
 
       begin
-         LibXML::XML.default_line_numbers = true
-         parser = LibXML::XML::Parser.file(@SODA_ELEMENTS_FILE)
-         doc = parser.parse()
+         fd = File.new(@SODA_ELEMENTS_FILE)
+         doc = REXML::Document.new(fd)
+         doc = doc.root
       rescue Exception => e
          doc = nil
-         @report.ReportException(e, false, @sodatest)
+         @report.ReportException(e, @sodatest)
       ensure
       end
 
       return nil if (doc == nil)
-      return doc.root
+      return doc
    end
 ###############################################################################
 # ElementsXMLToData -- method
@@ -140,49 +140,48 @@ class SodaTestCheck
       elements = {}
       kids = nil
 
-      if (!node.children?)
+      if (!node.has_elements?)
          return {}
       end
 
-      kids = node.children()
+      kids = node.elements()
       kids.each do |kid|
-         next if ( (kid.name == "text") || (!kid.children?) )
-
+         next if ( (kid.name == "text") )
          elements[kid.name] = Hash.new()
          elements[kid.name]['accessor_attributes'] = []
          elements[kid.name]['soda_attributes'] = []
          
-         elems = kid.children()
+         elems = kid.elements()
          elems.each do |e|
             case (e.name)
                when "accessor_attributes"
-                  access_kids = e.children()
+                  access_kids = e.elements()
                   access_kids.each do |access|
                      next if (access.name == "text")
-                  elements[kid.name]["accessor_attributes"].push(access.content)
+                  elements[kid.name]["accessor_attributes"].push(access.text)
                   end
                when "soda_attributes"
-                  access_kids = e.children()
+                  access_kids = e.elements()
                   access_kids.each do |access|
                      next if (access.name == "text")
 
                      if (access.name =~ /accessor/)
                         elements[kid.name]["soda_attributes"].push(
-                              access.content)
+                              access.text)
                      end
 
-                     if (access.children?)
-                        access_kids = access.children()
+                     if (access.has_elements?)
+                        access_kids = access.elements()
                         tmp_hash = {}
                         tmp_hash[access.name] = [] 
                         access_kids.each do |access_kid|
                            next if (access_kid.name == "text")
-                           tmp_hash[access.name].push(access_kid.content)
+                           tmp_hash[access.name].push(access_kid.text)
                         end
                         elements[kid.name]["soda_attributes"].push(tmp_hash)
                      else
                         elements[kid.name]["soda_attributes"].push(
-                              access.content)
+                              access.text)
                      end
                   end
             end
@@ -234,7 +233,7 @@ class SodaTestCheck
 #
 ###############################################################################
    def CheckTest(sodadata, supported)
-    
+   
       sodadata.each do |test_hash|
          if (!test_hash.key?('do'))
             @report.ReportFailure("Failed to find expected test do "+

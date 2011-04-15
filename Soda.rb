@@ -60,6 +60,8 @@ require "fields/LiField"
 require 'thread'
 require 'date'
 require 'pp'
+require 'rexml/document'
+include REXML
 
 ###############################################################################
 # Soda -- Class
@@ -765,7 +767,7 @@ class Soda
 #     is_restart: true/false, tells us that this is a restart test.
 #
 # Results:
-#     on success returns a LibXML::Parser Document, or nil on error.
+#     on success returns a XML DOM Document, or nil on error.
 #
 ###############################################################################
    def getScript(file, is_restart = false)
@@ -2873,6 +2875,7 @@ JSCode
       hostname = hostname.chomp()
 
       suites.each do |s|
+         print "SUITE: #{s}\n"
          base_suite_name = File.basename(s)
          if (results.key?(base_suite_name))
             suite_dup_id = 1
@@ -2946,14 +2949,16 @@ JSCode
       result = {}
       tests = []
       suite_name = File.basename(suitefile, ".xml")
-      
-      begin
-         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
-         parser = LibXML::XML::Parser.file(suitefile)
-         doc = parser.parse()
-         doc = doc.root()
+     
+      print "Running Suite: #{suitefile}\n"
 
-         doc.each do |node|
+      begin
+         fd = File.new(suitefile)
+         doc = REXML::Document.new(fd)
+         doc = doc.root
+
+         doc.elements.each do |node|
+            print "Name: #{node.name}\n"
             next if (node.name =~ /text/i)
             next if (node.name =~ /comment/i)
             
@@ -2962,8 +2967,10 @@ JSCode
                   " in suite file: '#{suitefile}'!"
             end
 
-            attrs = node.attributes()
-            attrs = attrs.to_h()
+            attrs = {}
+            node.attributes.each do |k,v|
+               attrs[k] = "#{v}"
+            end
 
             if (attrs.key?('file'))
                tests.push(attrs['file'])
@@ -2975,6 +2982,8 @@ JSCode
                end
             end
          end
+         
+         fd.close()
       rescue Exception => e
          SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
          err_hash = {

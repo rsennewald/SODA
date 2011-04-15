@@ -31,8 +31,9 @@
 require 'rbconfig'
 require 'time'
 require 'rubygems'
-require 'libxml'
 require 'uri'
+require 'rexml/document'
+include REXML
 
 ###############################################################################
 # SodaUtils -- Module
@@ -345,10 +346,12 @@ def SodaUtils.ParseBlockFile(block_file)
    error = false
    data = []
    doc = nil
+   fd = nil
 
    begin
-      parser = LibXML::XML::Parser.file(block_file)
-      doc = parser.parse()
+      fd = File.new(block_file)
+      doc = REXML::Document.new(fd)
+      doc = doc.root
    rescue Exception => e
       error = true
       data = []
@@ -360,16 +363,17 @@ def SodaUtils.ParseBlockFile(block_file)
       end
    end
 
-   doc.root.each do |node|
+   doc.elements.each do |node|
       hash = Hash.new
 
       if (node.name != "block")
          next
       end
 
-      for child in node.children()
-         hash[child.name] = "#{child.content}"
+      node.elements.each do |child|
+         hash[child.name] = child.text
       end
+
 
       if (hash['testfile'].empty?)
          next
@@ -377,6 +381,8 @@ def SodaUtils.ParseBlockFile(block_file)
 
       data.push(hash)
    end
+
+   fd.close() if (fd != nil)
 
    return data
 end
@@ -397,10 +403,12 @@ def SodaUtils.ParseWhiteFile(white_file)
    error = false
    data = []
    doc = nil
+   fd = nil
 
    begin
-      parser = LibXML::XML::Parser.file(white_file)
-      doc = parser.parse()
+      fd = File.new(white_file)
+      doc = REXML::Document.new(fd)
+      doc = doc.root
    rescue Exception => e
       error = true
       data = []
@@ -412,19 +420,21 @@ def SodaUtils.ParseWhiteFile(white_file)
       end
    end
 
-   doc.root.each do |node|
+   doc.elements.each do |node|
       hash = Hash.new
 
       if (node.name != "white")
          next
       end
 
-      for child in node.children()
-         hash[child.name] = "#{child.content}"
+      node.elements.each do |child|
+         hash[child.name] = child.text
       end
 
       data.push(hash)
    end
+
+   fd.close() if (fd != nil)
 
    return data
 end
@@ -663,21 +673,25 @@ end
 def SodaUtils.ReadSodaConfig(configfile)
    parser = nil
    doc = nil
+   fd = nil
    data = {
       "gvars" => {},
       "cmdopts" => [],
       "errorskip" => []
    }
 
-   parser = LibXML::XML::Parser.file(configfile)
-   doc = parser.parse()
+   fd = File.new(white_file)
+   doc = REXML::Document.new(fd)
+   doc = doc.root
+   doc.elements.each do |node|
+      attrs = {}
+      node.attributes.each do |k,v|
+         attrs[k] = "#{v}"
+      end
 
-   doc.root.each do |node|
-      attrs = node.attributes()
-      attrs = attrs.to_h()
       name = attrs['name']
-      content = node.content()
-      case node.name
+      content = node.text
+      case (node.name)
          when "errorskip"
             data['errorskip'].push("#{attrs['type']}")
          when "gvar"
