@@ -31,9 +31,10 @@
 require 'rubygems'
 require 'getoptlong'
 require 'date'
-require 'libxml'
 require 'pp'
 require 'SodaReportSummery'
+require 'rexml/document'
+include REXML
 
 $HTML_HEADER = <<HTML
 <html>
@@ -688,7 +689,7 @@ def GetTestInfo(kids)
       next if (kid.name =~ /text/i)
       name = kid.name
       name = name.gsub("_", " ")
-      test_info[name] = kid.content()
+      test_info[name] = kid.text
    end
 
    return test_info
@@ -708,14 +709,15 @@ end
 def GenerateReportData(files)
    test_info = {}
    test_info_list = []
+   fd = nil
 
    files.each do |f|
       print "(*)Reading XML file: #{f}\n"
 
       begin
-         parser = LibXML::XML::Parser.file(f)
-         LibXML::XML::Error.set_handler(&LibXML::XML::Error::QUIET_HANDLER)
-         doc = parser.parse()
+         fd = File.new(f)
+         doc = REXML::Document.new(fd)
+         doc = doc.root
       rescue Exception => e
          print "(!)Error: Failed trying to parse XML file: '#{f}'!\n"
          print "--)Exception: #{e.message}\n"
@@ -725,22 +727,22 @@ def GenerateReportData(files)
       end
 
       suites = []
-      doc.root.each do |suite|
+      doc.elements.each do |suite|
          next if (suite.name !~ /suite/)
          suites.push(suite)
       end
 
       suites.each do |suite|
          tmp_hash = {'tests' => []}
-         suite.children.each do |kid|
+         suite.elements.each do |kid|
             case (kid.name)
                when "suitefile"
-                  tmp_hash['suitefile'] = kid.content()
+                  tmp_hash['suitefile'] = kid.text
                when "test"
-                  tmp_test_data = GetTestInfo(kid.children)
+                  tmp_test_data = GetTestInfo(kid.elements)
                   tmp_hash['tests'].push(tmp_test_data)
                else
-                  tmp_hash[kid.name] = kid.content()
+                  tmp_hash[kid.name] = kid.text
             end # end case #
          end
          
@@ -751,6 +753,8 @@ def GenerateReportData(files)
 
       print "(*)Finished.\n"
    end
+
+   fd.close()
 
    return test_info
 end

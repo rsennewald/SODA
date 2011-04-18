@@ -66,6 +66,8 @@ def SodaFireFox.CreateFireFoxBrowser(options = nil)
       else 
          result['browser'] = Watir::Browser.new()
       end
+
+      result['browser'].maximize()
    rescue Exception => e
       result['exception'] = e
       result['browser'] = nil

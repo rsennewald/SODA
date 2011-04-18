@@ -34,11 +34,12 @@ require 'rubygems'
 require 'Soda'
 require 'sodainfo'
 require 'getoptlong'
-require 'libxml'
 require 'watir'
 require 'SodaReportSummery'
 require 'SodaSuiteSummary'
 require 'pp'
+require 'rexml/document'
+include REXML
 
 ###############################################################################
 # SodaSuite -- Class
@@ -370,21 +371,26 @@ end
 def ReadConfigFile(configfile)
    parser = nil
    doc = nil
+   fd = nil
    data = {
       "gvars" => {},
       "cmdopts" => [],
       "errorskip" => []
    }
 
-   parser = LibXML::XML::Parser.file(configfile)
-   doc = parser.parse()
+   fd = File.new(configfile)
+   doc = REXML::Document.new(fd)
+   doc = doc.root
 
-   doc.root.each do |node|
-      attrs = node.attributes()
-      attrs = attrs.to_h()
+   doc.elements.each do |node|
+      attrs = {}
+      node.attributes.each do |k,v|
+         attrs[k] = v
+      end
+
       name = attrs['name']
-      content = node.content()
-      case node.name
+      content = node.text
+      case (node.name)
          when "errorskip"
             data['errorskip'].push("#{attrs['type']}")
          when "gvar"
@@ -399,6 +405,8 @@ def ReadConfigFile(configfile)
       end
    end
    
+   fd.close()
+
    return data
 end
 
