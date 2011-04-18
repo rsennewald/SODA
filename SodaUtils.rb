@@ -106,11 +106,13 @@ JS
 def SodaUtils.GetOsType
    os = ""
 
-   if Config::CONFIG['host_os'] =~ /mswin/i
+   if (Config::CONFIG['host_os'] =~ /mswin/i)
        os = "WINDOWS"
-   elsif Config::CONFIG['host_os'] =~ /linux/i
+   elsif (Config::CONFIG['host_os'] =~ /mingw32/i)
+       os = "WINDOWS"
+   elsif (Config::CONFIG['host_os'] =~ /linux/i)
       os = "LINUX"
-   elsif Config::CONFIG['host_os'] =~ /darwin/i
+   elsif (Config::CONFIG['host_os'] =~ /darwin/i)
       os = "OSX"
    else
       os = Config::CONFIG['host_os'];
