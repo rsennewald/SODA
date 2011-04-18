@@ -2957,7 +2957,6 @@ JSCode
          doc = doc.root
 
          doc.elements.each do |node|
-            print "Name: #{node.name}\n"
             next if (node.name =~ /text/i)
             next if (node.name =~ /comment/i)
             
