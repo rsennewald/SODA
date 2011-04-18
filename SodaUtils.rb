@@ -108,7 +108,7 @@ def SodaUtils.GetOsType
 
    if (Config::CONFIG['host_os'] =~ /mswin/i)
        os = "WINDOWS"
-   if (Config::CONFIG['host_os'] =~ /mingw32/i)
+   elsif (Config::CONFIG['host_os'] =~ /mingw32/i)
        os = "WINDOWS"
    elsif (Config::CONFIG['host_os'] =~ /linux/i)
       os = "LINUX"
