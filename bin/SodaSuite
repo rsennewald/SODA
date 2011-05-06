@@ -251,6 +251,9 @@ Optional Flags:
 
    --nonzippytext: This turns on zippy text entry for Watir.
 
+   --testdelay: This forces a 10 second delay in between tests that run in a
+      suite. 
+
    --version: Print the Soda Version string.
 
 HLP
@@ -457,7 +460,8 @@ def Main
       'gvars' => {},
       'errorskip' => [],
       'restart_count' => 0,
-      'restart_test' => ""
+      'restart_test' => "",
+      'testdelay' => false
    }
 
    # turn off ruby i/o buffering #
@@ -505,7 +509,8 @@ def Main
                [ '--reruntest', '-3', GetoptLong::OPTIONAL_ARGUMENT ],
 					[ '--skipcsserrors', '-4', GetoptLong::OPTIONAL_ARGUMENT],
                [ '--nonzippytext', '-6', GetoptLong::OPTIONAL_ARGUMENT],
-               [ '--version', '-5', GetoptLong::OPTIONAL_ARGUMENT]
+               [ '--version', '-5', GetoptLong::OPTIONAL_ARGUMENT],
+               [ '--testdelay', '-8', GetoptLong::OPTIONAL_ARGUMENT]
             )
 
       opts.quiet = true
@@ -551,6 +556,8 @@ def Main
 					params['errorskip'].push("css")
             when "--nonzippytext"
                params['nonzippytext'] = true
+            when "--testdelay"
+               params['testdelay'] = true
             when "--version"
                SodaUtils.PrintSoda("(*)SODA Version: #{SODA_GEM_VERSION}\n")
                return 0

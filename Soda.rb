@@ -111,6 +111,7 @@ class Soda
       @non_lib_test_count = 0
       @last_test = ""
       @SugarWait = false
+      @testDelay = false
       @restart_test_running = false
       @FAILEDTESTS = []
       @GotWatchDog = false
@@ -125,6 +126,7 @@ class Soda
       ]
       err = 0
     
+      @testDelay = params['testdelay'] if (params.key?('testdelay'))
       @sugarFlavor = params['flavor'] if (params.key?('flavor'))
       @resultsDir = params['resultsdir'] if (params.key?('resultsdir'))
       @globalVars = params['gvars'] if (params.key?('gvars'))
@@ -3035,6 +3037,13 @@ JSCode
          if (test_dir !~ /lib/i)
             test_since_restart += 1
          end
+
+         if (@testDelay)
+            SodaUtils.PrintSoda("Starting Test Delay...\n")
+            sleep(10)
+            SodaUtils.PrintSoda("Finished Test Delay.\n")
+         end
+
       end
 
       return result
