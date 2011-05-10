@@ -56,6 +56,8 @@ class SodaReporter
       @debug = debug
       @start_time = nil
       @end_time = nil
+      @start_time_obj = nil
+      @end_time_obj = nil
       @js_error_count = 0
       @css_error_count = 0
       @asserts_count = 0
@@ -128,7 +130,14 @@ class SodaReporter
       log("[New Test]\n")
       log("Starting soda test: #{@sodatest_file}\n")
       log("Saving HTML files => #{@saveHtmlFiles.to_s()}.\n")
-      @start_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
+
+      # this is because ruby 1.8.7 strftime doesn't support fractions of a
+      # second.  Lame...
+      now = Time.now()
+      @start_time_obj = now
+      time_str = now.strftime("%m/%d/%Y-%H:%M:%S")
+      time_str = "#{time_str}.#{now.usec}"
+      @start_time = time_str
    end
 
 ###############################################################################
@@ -144,12 +153,14 @@ class SodaReporter
 ###############################################################################
    def GetRawResults()
 
-      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S") if (@end_time == nil)
-      start = DateTime.strptime("#{@start_time}",
-         "%m/%d/%Y-%H:%M:%S")
-      stop = DateTime.strptime("#{@end_time}",
-         "%m/%d/%Y-%H:%M:%S")
-      total_time = (stop - start)
+      if (@end_time == nil)
+         now = Time.now()
+         @end_time_obj = now
+         @end_time = now.strftime("%m/%d/%Y-%H:%M:%S")
+         @end_time = "#{@end_time}.#{now.usec}"
+      end
+
+      total_time = (@end_time_obj - @start_time_obj)
 
       results = {
          'Test Failure Count' => @failureCount,
@@ -472,7 +483,11 @@ class SodaReporter
       log("Soda test: #{@sodatest_file} finished.\n")
       log("[End Test]\n")
       @logfile.close()
-      @end_time = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
+
+      now = Time.now()
+      now_str = now.strftime("%m/%d/%Y-%H:%M:%S")
+      @end_time_obj = now
+      @end_time = "#{now_str}.#{now.usec}"
    end
 
 ###############################################################################

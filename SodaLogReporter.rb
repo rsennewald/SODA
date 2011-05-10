@@ -241,7 +241,7 @@ HTML
    def FormatTestResults (line)
       row_data = Hash.new()
       table_html = "<table>\n"
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "Results"
       rpt_msg = "#{$3}"
@@ -341,7 +341,7 @@ HTML
    def FormatHTMLSavedResults (line)
       row_data = Hash.new()
 
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       sav_msg = "#{$3}" 
@@ -412,7 +412,7 @@ HTML
    def FormatMajorException(line)
       row_data = Hash.new()
 
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       msg = "#{$3}"
@@ -446,7 +446,7 @@ HTML
    def FormatAssertionFailed (line)
       row_data = Hash.new()
       
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       msg = "#{$3}"
@@ -492,7 +492,7 @@ HTML
    def FormatAssertionPassed (line)
       row_data = Hash.new()
       
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "AP"
       msg = "#{$3}"
@@ -517,7 +517,7 @@ HTML
       href_id = "href_div_ed_#{@EventDumpID}"
       @EventDumpID += 1
       row_data = Hash.new()
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       msg = "#{$3}"
@@ -560,7 +560,7 @@ HTML
 ###############################################################################
    def FormatJSError(line)
       row_data = Hash.new()
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       msg = "#{$3}"
@@ -594,7 +594,7 @@ HTML
 ###############################################################################
    def FormatModuleLine(type, line)
       row_data = Hash.new()
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "M"
       msg = "#{$3}"
@@ -628,7 +628,7 @@ HTML
 ###############################################################################
    def FormatScreenShot(line)
       row_data = Hash.new()
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       msg = "#{$3}"
@@ -661,7 +661,7 @@ HTML
       row_data = Hash.new()
       msg = ""
 
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       
@@ -694,7 +694,7 @@ HTML
    def FormatClickingElement(line)
       row_data = {}
       tmp = ""
-      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+      line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
       row_data['date'] = "#{$1}"
       row_data['msg_type'] = "#{$2}"
       tmp = "#{$3}"
@@ -760,7 +760,7 @@ HTML
 			when /screenshot\staken/i
 				row_data = FormatScreenShot(line)
          else
-            line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+)\](\(.\))(.*)/
+            line =~ /\[(\d+\/\d+\/\d+-\d+:\d+:\d+\.\d+)\](\(.\))(.*)/
             row_data['date'] = "#{$1}"
             row_data['msg_type'] = "#{$2}"
             row_data['msg'] = SafeHTMLStr("#{$3}")

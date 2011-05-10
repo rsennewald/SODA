@@ -159,8 +159,9 @@ def SodaUtils.PrintSoda (str, error = 0, file = nil, debug = 0, notime = 0,
    stackmsg = ""
    now = nil
 
-   now = Time.now().strftime("%m/%d/%Y-%H:%M:%S")
-   header = "[#{now}]"
+   now = Time.now()
+   time_str = now.strftime("%m/%d/%Y-%H:%M:%S")
+   header = "[#{time_str}.#{now.usec}]"
    
    if (debug != 0)
       cstak = caller()   
