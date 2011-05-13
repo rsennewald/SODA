@@ -1,4 +1,4 @@
-<soda>
+﻿<soda>
 <!--
 Copyright (c) 2010, SugarCRM, Inc.
 All rights reserved.
@@ -58,6 +58,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          <accessor type="string">condition</accessor>
       </accessor_attributes>
    </wait>
+
+   <sugarwait>
+       <accessor_attributes>
+         <accessor type="integer">timeout</accessor>
+         <accessor type="string">condition</accessor>
+      </accessor_attributes>
+   </sugarwait>
 
    <puts>
       <accessor_attributes>
