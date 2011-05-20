@@ -748,6 +748,65 @@ def SodaUtils.IEConvertHref(event, url)
 end
 
 ###############################################################################
+# execute_script -- function
+#     Executes given javascript in the browser
+#
+# Input:
+#     script: javascript string to be executed
+#     browser: This is a watir browser object.
+#     reportobj: This is an active SodaReporter object.
+#
+# Returns:
+#     -1 on error else the javascript result.
+#
+###############################################################################
+def SodaUtils.execute_script(script, addUtils, browser, rep)
+    result = nil
+
+      if (script.length > 0)
+        script = script.gsub(/[\n\r]/, "")
+        escapedContent = script.gsub(/\\/, '\\').gsub(/"/, '\"')
+        js = <<JSCode
+current_browser_id = 0;
+if (current_browser_id > -1) {
+   var target = getWindows()[current_browser_id];
+   var browser = target.getBrowser();
+   var content = target.content;
+   var doc = browser.contentDocument;
+   var d = doc.createElement("script");
+   var tmp = null;
+
+   tmp = doc.getElementById("Sodahack");
+   if (tmp != null) {
+      doc.body.removeChild(tmp);
+   }
+
+   d.setAttribute("id", "Sodahack");
+   var src = "document.soda_js_result = (function(){#{escapedContent}})()";
+   d.innerHTML = src;
+   doc.body.appendChild(d);
+   print(doc.soda_js_result);
+   result = doc.soda_js_result;
+} else {
+   result = "No Browser to use";
+}
+print(result);
+JSCode
+
+        #Now actually execute the js in the browser
+        result = browser.js_eval(js)
+        result = result.chomp()
+    else
+        result = "No script passed"
+    end
+
+    return result
+end
+
+
+
+
+###############################################################################
 # WaitSugarAjaxDone -- function
 #     This function waits to make sure that sugar has finished all ajax
 #     actions.
@@ -760,9 +819,9 @@ end
 #     -1 on error else 0.
 #
 # Notes:
-#     I had to split up how Windows OS finds the windows, because Watir's 
+#     I had to split up how Windows OS finds the windows, because Watir's
 #     browser.url() method returns '' every time if there are more then
-#     one window open.  This is not the cause it Linux, as linux seems to 
+#     one window open.  This is not the cause it Linux, as linux seems to
 #     know what the current active browser is and returns the expected url.
 #
 ###############################################################################
@@ -776,74 +835,12 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    t1 = nil
    t2 = nil
 
-   os = GetOsType()
-
-   linux_js = <<JAVA
-var windows = getWindows();
-var win_count = windows.length -1;
-var current_browser_id = -1;
-var result = "undefined";
-
-for (var i = 0; i <= win_count; i++) {
-   var tmp_win = windows[i];
-   var tmp_url = tmp_win.getBrowser().contentDocument.URL;
-
-   if (tmp_url == "#{url}") {
-      current_browser_id = i;
-      break;
-   }
-}
-JAVA
-
-   other_js = <<JAVA
-var current_browser_id = 0;
-JAVA
-
-   if (os =~ /linux/i)
-      js = "#{linux_js}\n"
-   else
-      js = "#{other_js}\n"
-   end
-
-   js += <<JAVA
-   current_browser_id = 0;
-if (current_browser_id > -1) {
-   var target = getWindows()[current_browser_id];
-   var browser = target.getBrowser();
-   var content = target.content;
-   var doc = browser.contentDocument;
-   var d = doc.createElement("script");
-   var tmp = null;
-
-   tmp = doc.getElementById("Sodahack");
-   if (tmp != null) {
-      doc.body.removeChild(tmp);
-   }
-   
-   d.setAttribute("id", "Sodahack");
-   var src = "if (typeof SUGAR == 'undefined') {\n";
-   src += "   document.soda_sugar_done = 'undefined';\n";
-   src += "} else {\n";
-   src += "   document.soda_sugar_done = SUGAR.util.ajaxCallInProgress();\n";
-   src += "}";
-
-   d.innerHTML = src;
-   doc.body.appendChild(d);
-   print(doc.soda_sugar_done);
-   result = doc.soda_sugar_done;
-} else {
-   result = "undefined";
-}
-
-print(result);
-JAVA
-
+   js = "if(SUGAR && SUGAR.util && !SUGAR.util.ajaxCallInProgress()) return 'true'; else return 'false';"
    reportobj.log("Calling: SugarWait.\n")
    t1 = Time.now()
 
-   for i in 0..300
-      tmp = browser.js_eval(js)
-      tmp = tmp.chomp()
+   for i in 0..60
+      tmp = SodaUtils.execute_script(js, false, browser, reportobj)
 
       case (tmp)
          when /false/i
@@ -861,7 +858,7 @@ JAVA
                SodaUtils::WARN)
       end
 
-      if (tmp == false)
+      if (tmp == true)
          done = true
          break
       end

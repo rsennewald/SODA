@@ -1873,39 +1873,15 @@ class Soda
       result = nil
 
       if (event['content'].length > 0)
-        if (Watir::Browser.default == 'firefox')
-         # Executing javascript from within the firefox window context 
-         # (injection) requires firebug, for now.
-          toExec = "";
-          if (event.key?('addUtils') && (getStringBool(event['addUtils'])))
-            event['content'] = SodaUtils::getSodaJS() + event['content'];
-          end
-          
-          escapedContent = event['content'].gsub(/\\/, '\\').gsub(/"/, '\"');
-          
-          toExec = <<JSCode
-if (typeof window.Firebug != "undefined") { 
-   window.TabWatcher.watchBrowser(window.FirebugChrome.getCurrentBrowser());
-   window.Firebug.minimizeBar();
-   window.Firebug.CommandLine.evaluateInWebPage("#{escapedContent}", browser.contentDocument.defaultView);
-   window.Firebug.closeFirebug();
-}
-JSCode
-      
-          result = @browser.execute_script(toExec)
-        else
-          escapedContent = event['content'].gsub(/\\/, '\\').gsub(/"/, '\"')
-          toExec = 'browser.document.parentWindow.execScript("' + escapedContent + '")'
-          result = @browser.execute_script(event['content'])
-        end
-         result = result.to_s()
-         PrintDebug("JavaScript Results: \"#{result}\"\n")
+          addUtils = event.key?('addUtils') && (getStringBool(event['addUtils']))
+          result = SodaUtils.execute_script(event['content'], addUtils, @browser, @rep)
       else
          @rep.log("No javascript source content found!", SodaUtils::ERROR)
          return -1
       end
       
       CheckJavaScriptErrors()
+      return result;
    end
 
 ############################################################################### 
@@ -2638,7 +2614,7 @@ JSCode
                      e_dump = SodaUtils.DumpEvent(event)
                      @rep.log("No Element found for event!\n", 
                         SodaUtils::ERROR)
-                     @rep.log("Event Dump for unfound element: #{e_dump}!\n", 
+                     @rep.log("Event Dump for unfound element: #{e_dump}!\n",
                         SodaUtils::EVENT)
                   end
                else
@@ -2950,7 +2926,7 @@ JSCode
       result = {}
       tests = []
       suite_name = File.basename(suitefile, ".xml")
-     
+
       print "Running Suite: #{suitefile}\n"
 
       begin
@@ -2982,7 +2958,7 @@ JSCode
                end
             end
          end
-         
+
          fd.close()
       rescue Exception => e
          SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
