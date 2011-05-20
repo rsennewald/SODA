@@ -765,7 +765,7 @@ def SodaUtils.execute_script(script, addUtils, browser, rep)
 
       if (script.length > 0)
         script = script.gsub(/[\n\r]/, "")
-		escapedContent = script.gsub(/\\/, '\\').gsub(/"/, '\"')
+        escapedContent = script.gsub(/\\/, '\\').gsub(/"/, '\"')
         js = <<JSCode
 current_browser_id = 0;
 if (current_browser_id > -1) {
