@@ -747,7 +747,7 @@ def SodaUtils.IEConvertHref(event, url)
    return event
 end
 
-?###############################################################################
+###############################################################################
 # execute_script -- function
 #     Executes given javascript in the browser
 #
@@ -765,8 +765,7 @@ def SodaUtils.execute_script(script, addUtils, browser, rep)
 
       if (script.length > 0)
         script = script.gsub(/[\n\r]/, "");
-		rep.log("going to eval #{script}\n");
-        escapedContent = script.gsub(/\\/, '\\').gsub(/"/, '\"');
+		escapedContent = script.gsub(/\\/, '\\').gsub(/"/, '\"');
         js = <<JSCode
 current_browser_id = 0;
 if (current_browser_id > -1) {
@@ -840,7 +839,7 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    reportobj.log("Calling: SugarWait.\n")
    t1 = Time.now()
 
-   for i in 0..300
+   for i in 0..60
       tmp = SodaUtils.execute_script(js, false, browser, reportobj)
 
       case (tmp)
