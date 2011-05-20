@@ -1869,12 +1869,12 @@ class Soda
 #     None.
 #
 ############################################################################### 
-   ?def eventJavascript(event)
+   def eventJavascript(event)
       result = nil
 
       if (event['content'].length > 0)
           addUtils = event.key?('addUtils') && (getStringBool(event['addUtils']))
-          result = SodaUtils.execute_script(event['content'], addUtils, @browser, @rep);
+          result = SodaUtils.execute_script(event['content'], addUtils, @browser, @rep)
       else
          @rep.log("No javascript source content found!", SodaUtils::ERROR)
          return -1
@@ -2614,7 +2614,7 @@ class Soda
                      e_dump = SodaUtils.DumpEvent(event)
                      @rep.log("No Element found for event!\n", 
                         SodaUtils::ERROR)
-                     @rep.log("Event Dump for unfound element: #{e_dump}!\n", 
+                     @rep.log("Event Dump for unfound element: #{e_dump}!\n",
                         SodaUtils::EVENT)
                   end
                else
@@ -2926,7 +2926,7 @@ class Soda
       result = {}
       tests = []
       suite_name = File.basename(suitefile, ".xml")
-     
+
       print "Running Suite: #{suitefile}\n"
 
       begin
@@ -2958,7 +2958,7 @@ class Soda
                end
             end
          end
-         
+
          fd.close()
       rescue Exception => e
          SodaUtils.PrintSoda(e.message, SodaUtils::ERROR)
