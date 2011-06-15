@@ -841,9 +841,10 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
 
    #We need to give the browser enough time to start its ajax requests
    #This number can probably be lowered once tests start passing consistently
-   sleep(0.5)
+   sleep(0.1)
 
-   for i in 0..60
+   #Maximum 15 second wait time
+   for i in 0..30
       tmp = SodaUtils.execute_script(js, false, browser, reportobj)
 
       case (tmp)
