@@ -2509,6 +2509,7 @@ class Soda
                   eventRuby(event)
                   next
                when "wait"
+                  next
                   if (eventWait(event) == true) 
                      next
                   end
