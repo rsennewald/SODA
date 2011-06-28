@@ -839,7 +839,7 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    t1 = nil
    t2 = nil
 
-   js = "if(SUGAR && SUGAR.util && !SUGAR.util.ajaxCallInProgress()) return 'true'; else return 'false';"
+   js = "if(typeof(SUGAR) != 'undefined' && SUGAR.util && !SUGAR.util.ajaxCallInProgress()) return 'true'; else return 'false';"
    reportobj.log("Calling: SugarWait.\n")
    t1 = Time.now()
 
