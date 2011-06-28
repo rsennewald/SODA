@@ -783,10 +783,14 @@ if (current_browser_id > -1) {
 
    d.setAttribute("id", "Sodahack");
    var src = "document.soda_js_result = (function(){#{escapedContent}})()";
-   d.innerHTML = src;
-   doc.body.appendChild(d);
-   print(doc.soda_js_result);
-   result = doc.soda_js_result;
+   if (doc.body) {
+     doc.body.appendChild(d);
+     print(doc.soda_js_result);
+     result = doc.soda_js_result;
+   } else {
+     print("doc.body undefined, browser page not loaded");
+     result = "No Document Found";
+   }
 } else {
    result = "No Browser to use";
 }
@@ -835,7 +839,7 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
    t1 = nil
    t2 = nil
 
-   js = "if(SUGAR && SUGAR.util && !SUGAR.util.ajaxCallInProgress()) return 'true'; else return 'false';"
+   js = "if(typeof(SUGAR) != 'undefined' && SUGAR.util && !SUGAR.util.ajaxCallInProgress()) return 'true'; else return 'false';"
    reportobj.log("Calling: SugarWait.\n")
    t1 = Time.now()
 
@@ -870,7 +874,7 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
 
       if (undef_count > 30)
          msg = "WaitSugarAjaxDone: Can't find SUGAR object after 30 tries!\n"
-         reportobj.ReportFailure(msg)
+         reportobj.log(msg, SodaUtils::WARN)
          done = false
          break
       end
