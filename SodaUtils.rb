@@ -874,7 +874,8 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
 
       if (undef_count > 30)
          msg = "WaitSugarAjaxDone: Can't find SUGAR object after 30 tries!\n"
-         reportobj.ReportFailure(msg)
+         reportobj.log("WaitSugarAjaxDone: Unknown result: '#{tmp}'!\n",
+               SodaUtils::WARN)
          done = false
          break
       end
