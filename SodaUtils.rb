@@ -783,13 +783,13 @@ if (current_browser_id > -1) {
 
    d.setAttribute("id", "Sodahack");
    var src = "document.soda_js_result = (function(){#{escapedContent}})()";
-   if (doc.body) {
+   d.innerHTML = src;
+   if(typeof(doc) != "undefined" && typeof(doc.body) != "undefined")
+   {
      doc.body.appendChild(d);
-     print(doc.soda_js_result);
      result = doc.soda_js_result;
    } else {
-     print("doc.body undefined, browser page not loaded");
-     result = "No Document Found";
+     result = "No Document Object to use";
    }
 } else {
    result = "No Browser to use";
