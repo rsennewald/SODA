@@ -849,6 +849,7 @@ def SodaUtils.WaitSugarAjaxDone(browser, reportobj)
 
    #Maximum 15 second wait time
    for i in 0..30
+      browser.wait()
       tmp = SodaUtils.execute_script(js, false, browser, reportobj)
 
       case (tmp)
